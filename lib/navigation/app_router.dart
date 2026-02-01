@@ -1,0 +1,58 @@
+import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
+import 'package:promodoro/ui/screens/home_navigation/home_navigation.dart';
+import 'package:promodoro/ui/screens/languages/languages_page.dart';
+import 'package:promodoro/ui/screens/noises/noises_page.dart';
+import 'package:promodoro/ui/screens/static/static_page.dart';
+import '../ui/screens/settings/settings_page.dart';
+import '../ui/screens/timer/timer_page.dart';
+part 'route_paths.dart';
+
+class AppRouter {
+  static final router = GoRouter(
+    initialLocation: RoutePaths.timer,
+    routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => HomeNavigation(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [GoRoute(path: RoutePaths.timer, builder: (context, state) => const TimerPage())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: RoutePaths.static, builder: (context, state) => const StaticPage())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: RoutePaths.settings, builder: (context, state) => const SettingsPage())],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: RoutePaths.noises,
+        pageBuilder: (context, state) => const NoTransitionPage(child: NoisesPage()),
+        // pageBuilder: (context, state) =>
+        //     buildPageWithDefaultTransition<void>(context: context, state: state, child: NoisesPage()),
+      ),
+
+      GoRoute(
+        path: RoutePaths.language,
+        pageBuilder: (context, state) => const NoTransitionPage(child: LanguagesPage()),
+      ),
+    ],
+  );
+}
+
+CustomTransitionPage<T> buildPageWithDefaultTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutBack, reverseCurve: Curves.easeIn);
+
+      return ScaleTransition(scale: Tween<double>(begin: 0.90, end: 1.0).animate(curved), child: child);
+    },
+  );
+}
