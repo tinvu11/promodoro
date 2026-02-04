@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/ui/screens/home_navigation/home_navigation.dart';
 import 'package:promodoro/ui/screens/languages/languages_page.dart';
 import 'package:promodoro/ui/screens/noises/noises_page.dart';
+import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/static/static_page.dart';
+import '../configs/di.dart';
 import '../ui/screens/settings/settings_page.dart';
 import '../ui/screens/timer/timer_page.dart';
 part 'route_paths.dart';
@@ -22,20 +25,30 @@ class AppRouter {
             routes: [GoRoute(path: RoutePaths.static, builder: (context, state) => const StaticPage())],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: RoutePaths.settings, builder: (context, state) => const SettingsPage())],
+            routes: [
+              GoRoute(
+                path: RoutePaths.settings,
+                builder: (context, state) =>
+                    BlocProvider.value(value: DI.sl<SettingsBloc>(), child: const SettingsPage()),
+              ),
+            ],
           ),
         ],
       ),
       GoRoute(
         path: RoutePaths.noises,
-        pageBuilder: (context, state) => const NoTransitionPage(child: NoisesPage()),
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: BlocProvider.value(value: DI.sl<SettingsBloc>(), child: const NoisesPage()),
+        ),
         // pageBuilder: (context, state) =>
         //     buildPageWithDefaultTransition<void>(context: context, state: state, child: NoisesPage()),
       ),
 
       GoRoute(
         path: RoutePaths.language,
-        pageBuilder: (context, state) => const NoTransitionPage(child: LanguagesPage()),
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: BlocProvider.value(value: DI.sl<SettingsBloc>(), child: const LanguagesPage()),
+        ),
       ),
     ],
   );
