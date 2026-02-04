@@ -6,10 +6,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      // showPerformanceOverlay: true,
-      routerConfig: AppRouter.router,
-      theme: ThemeData.dark(),
-    );
+    return MaterialApp.router(showPerformanceOverlay: true, routerConfig: AppRouter.router, theme: ThemeData.dark());
   }
 }
