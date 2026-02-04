@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
 import '../data/data_sources/local_data.dart';
-import '../ui/screens/settings/bloc/settings_event.dart';
 import 'hive/app_hive.dart';
 
 class DI {

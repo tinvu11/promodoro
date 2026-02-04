@@ -15,8 +15,8 @@ class HiveDatabase implements LocalData {
   SettingsModel getSettings() {
     return _appHive.settingsBox.get(_settingsModelKey) ??
         SettingsModel(
-          workTime: 25,
-          breakTime: 5,
+          workTime: 1500,
+          breakTime: 300,
           repeatCount: 5,
           isSoundEnabled: true,
           selectedThemeId: "path theme",

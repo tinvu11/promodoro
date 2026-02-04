@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:promodoro/data/models/settings_model.dart';
+part of 'settings_bloc.dart';
 
 sealed class SettingsEvent extends Equatable {
   @override
@@ -9,9 +8,44 @@ sealed class SettingsEvent extends Equatable {
 final class GetSettingsEvent extends SettingsEvent {}
 
 final class SaveSettingsEvent extends SettingsEvent {
-  final SettingsModel settingsModel;
-  SaveSettingsEvent({required this.settingsModel});
+  final int? workTime;
+  final int? breakTime;
+  final int? repeatCount;
+  final bool? isSoundEnabled;
+  final String? selectedThemeId;
+  final String? alarmWork;
+  final String? alarmBreak;
+  final double? volumeWorkAlarm;
+  final double? volumeBreakAlarm;
+  final double? volumeNoise;
+  final bool? alwaysOnScreen;
+
+  SaveSettingsEvent({
+    this.workTime,
+    this.breakTime,
+    this.repeatCount,
+    this.isSoundEnabled,
+    this.selectedThemeId,
+    this.alarmWork,
+    this.alarmBreak,
+    this.volumeWorkAlarm,
+    this.volumeBreakAlarm,
+    this.volumeNoise,
+    this.alwaysOnScreen,
+  });
 
   @override
-  List<Object?> get props => [settingsModel];
+  List<Object?> get props => [
+    workTime,
+    breakTime,
+    repeatCount,
+    isSoundEnabled,
+    selectedThemeId,
+    alarmWork,
+    alarmBreak,
+    volumeWorkAlarm,
+    volumeBreakAlarm,
+    volumeNoise,
+    alwaysOnScreen,
+  ];
 }
