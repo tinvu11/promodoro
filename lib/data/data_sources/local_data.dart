@@ -1,3 +1,4 @@
+import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/data/models/settings_model.dart';
 import '../../configs/hive/app_hive.dart';
 
@@ -15,13 +16,13 @@ class HiveDatabase implements LocalData {
   SettingsModel getSettings() {
     return _appHive.settingsBox.get(_settingsModelKey) ??
         SettingsModel(
-          workTime: 1500,
+          workTime: 2500,
           breakTime: 300,
           repeatCount: 5,
           isSoundEnabled: true,
-          selectedThemeId: "path theme",
-          alarmWork: 'path alarmWork',
-          alarmBreak: 'path alarmBreak',
+          selectedThemeId: "1path theme",
+          alarmWork: AlarmModel(id: "1", name: "Happy", path: "assets/alarm/alarm1.mp3"),
+          alarmBreak: AlarmModel(id: "2", name: "Gentle", path: "assets/alarm/alarm2.mp3"),
           volumeWorkAlarm: 60,
           volumeBreakAlarm: 20,
           volumeNoise: 90,

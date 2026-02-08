@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive_ce/hive.dart';
 import '../../configs/hive/hive_types.dart';
+import 'alarm_model.dart';
 
 part 'settings_model.g.dart';
 
@@ -22,10 +23,10 @@ class SettingsModel extends HiveObject with EquatableMixin {
   final String selectedThemeId;
 
   @HiveField(5)
-  final String alarmWork; // Đường dẫn âm báo khi xong việc
+  final AlarmModel alarmWork; // Đường dẫn âm báo khi xong việc
 
   @HiveField(6)
-  final String alarmBreak; // Đường dẫn âm báo khi xong nghỉ
+  final AlarmModel alarmBreak; // Đường dẫn âm báo khi xong nghỉ
 
   @HiveField(7)
   final double volumeWorkAlarm;
@@ -59,8 +60,8 @@ class SettingsModel extends HiveObject with EquatableMixin {
     int? repeatCount,
     bool? isSoundEnabled,
     String? selectedThemeId,
-    String? alarmWork,
-    String? alarmBreak,
+    AlarmModel? alarmWork,
+    AlarmModel? alarmBreak,
     double? volumeWorkAlarm,
     double? volumeBreakAlarm,
     double? volumeNoise,

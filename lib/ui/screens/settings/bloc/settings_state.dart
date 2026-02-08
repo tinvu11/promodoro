@@ -1,26 +1,27 @@
 part of 'settings_bloc.dart';
 
-final class SettingsState extends Equatable {
+sealed class SettingsState extends Equatable {
+  const SettingsState();
+  @override
+  List<Object?> get props => [];
+}
+
+final class InitialSettingsState extends SettingsState {}
+
+//
+// final class LoadingSettingsState extends SettingsState {}
+//
+final class SuccessSettingState extends SettingsState {
   final SettingsModel settingsModel;
-  const SettingsState({required this.settingsModel});
-  SettingsState copyWith({SettingsModel? settingsModel}) {
-    return SettingsState(settingsModel: settingsModel ?? this.settingsModel);
+  const SuccessSettingState({required this.settingsModel});
+  SuccessSettingState copyWith({SettingsModel? settingsModel}) {
+    return SuccessSettingState(settingsModel: settingsModel ?? this.settingsModel);
   }
 
   @override
   List<Object?> get props => [settingsModel];
 }
 
-// final class InitialSettingsState extends SettingsState {}
-//
-// final class LoadingSettingsState extends SettingsState {}
-//
-// final class SuccessSettingState extends SettingsState {
-//   final SettingsModel settingsModel;
-//   SuccessSettingState({required this.settingsModel});
-//   @override
-//   List<Object?> get props => [settingsModel];
-// }
 //
 // final class ErrorSettingsState extends SettingsState {
 //   final String message;

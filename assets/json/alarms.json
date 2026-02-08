@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "name": "Happy",
+    "path": "assets/alarm/alarm1.mp3"
+  },
+  {
+    "id": "2",
+    "name": "Gentle",
+    "path": "assets/alarm/alarm2.mp3"
+  },
+  {
+    "id": "3",
+    "name": "Energetic",
+    "path": "assets/alarm/alarm3.mp3"
+  }
+]

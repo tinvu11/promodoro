@@ -18,11 +18,14 @@ class SoundSection extends StatelessWidget {
         children: [
           // Các phần khác tương tự...
           BlocBuilder<SettingsBloc, SettingsState>(
-            buildWhen: (p, c) =>
-                p.settingsModel.isSoundEnabled != c.settingsModel.isSoundEnabled ||
-                p.settingsModel.selectedThemeId != c.settingsModel.selectedThemeId ||
-                p.settingsModel.volumeNoise != c.settingsModel.volumeNoise,
+            buildWhen: (p, c) {
+              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
+              return p.settingsModel.isSoundEnabled != c.settingsModel.isSoundEnabled ||
+                  p.settingsModel.selectedThemeId != c.settingsModel.selectedThemeId ||
+                  p.settingsModel.volumeNoise != c.settingsModel.volumeNoise;
+            },
             builder: (context, state) {
+              state as SuccessSettingState;
               final settingsModel = state.settingsModel;
               return Column(
                 children: [
