@@ -24,7 +24,18 @@ class GlassTimer extends StatelessWidget {
             const _StaticGlassRing(strokeWidth: _strokeWidth),
             // LỚP 2: Tách riêng phần Progress (Sử dụng RepaintBoundary)
             RepaintBoundary(
-              child: _ProgressIndicator(progress: progress, strokeWidth: _strokeWidth, size: size),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 1.0, end: progress),
+                duration: const Duration(seconds: 1),
+                curve: Curves.linear,
+                builder: (context, value, child) {
+                  return _ProgressIndicator(
+                    progress: value,
+                    strokeWidth: _strokeWidth,
+                    size: size,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -32,6 +43,7 @@ class GlassTimer extends StatelessWidget {
     );
   }
 }
+
 
 // --- Widget 1: Vòng tròn Glassmorphism (Tĩnh) ---
 class _StaticGlassRing extends StatelessWidget {

@@ -3,16 +3,19 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
+import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/data/models/settings_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(AlarmModelAdapter());
     registerAdapter(SettingsModelAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(AlarmModelAdapter());
     registerAdapter(SettingsModelAdapter());
   }
 }

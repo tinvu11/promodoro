@@ -18,8 +18,12 @@ class SystemSection extends StatelessWidget {
       child: SectionWrapper(
         children: [
           BlocBuilder<SettingsBloc, SettingsState>(
-            buildWhen: (p, c) => p.settingsModel.alwaysOnScreen != c.settingsModel.alwaysOnScreen,
+            buildWhen: (p, c) {
+              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
+              return p.settingsModel.alwaysOnScreen != c.settingsModel.alwaysOnScreen;
+            },
             builder: (context, state) {
+              state as SuccessSettingState;
               final settingsModel = state.settingsModel;
               return Column(
                 children: [
