@@ -14,6 +14,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Mặc định khi init là đang ở foreground
+    FlutterBackgroundService().invoke('ui_state', {'is_foreground': true});
   }
 
   @override
@@ -24,8 +26,13 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached) {
-      FlutterBackgroundService().invoke('stopServiceIfPaused');
+    final service = FlutterBackgroundService();
+    if (state == AppLifecycleState.resumed) {
+      service.invoke('ui_state', {'is_foreground': true});
+    } else if (state == AppLifecycleState.paused) {
+      service.invoke('ui_state', {'is_foreground': false});
+    } else if (state == AppLifecycleState.detached) {
+      service.invoke('stopService');
     }
   }
 
