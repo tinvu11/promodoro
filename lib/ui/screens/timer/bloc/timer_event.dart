@@ -60,3 +60,8 @@ class _TimerTicked extends TimerEvent {
 class _LocalTick extends TimerEvent {
   const _LocalTick();
 }
+
+class _WorkSessionDone extends TimerEvent {
+  const _WorkSessionDone({required this.workDurationSeconds});
+  final int workDurationSeconds;
+}

@@ -122,7 +122,6 @@ void onStart(ServiceInstance service) async {
 
       _remainingOnPause = remaining;
       _isRunning = false;
-      // No need to update _endAtMs here as we use _remainingOnPause when invalid
 
       _timer?.cancel();
       await _updateNotification("Đã tạm dừng", remaining, _initialDuration);
@@ -229,7 +228,12 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
     final isWork = _mode == 'work';
 
     if (isWork) {
-      // Work xong -> nếu còn round thì sang Break, nếu không thì complete
+      // Work xong -> gửi thông báo hoàn thành 1 session về UI
+      service.invoke('work_session_done', {
+        'work_duration_seconds': _workDuration,
+      });
+
+      // Nếu còn round thì sang Break, không thì complete
       if (_round < _totalRounds) {
         await _playAlarm(_alarmWorkPath);
         final nextDuration = _breakDuration;
