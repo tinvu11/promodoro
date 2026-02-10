@@ -24,7 +24,18 @@ class GlassTimer extends StatelessWidget {
             const _StaticGlassRing(strokeWidth: _strokeWidth),
             // LỚP 2: Tách riêng phần Progress (Sử dụng RepaintBoundary)
             RepaintBoundary(
-              child: _ProgressIndicator(progress: progress, strokeWidth: _strokeWidth, size: size),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: progress, end: progress),
+                duration: const Duration(seconds: 1),
+                curve: Curves.linear,
+                builder: (context, value, child) {
+                  return _ProgressIndicator(
+                    progress: value,
+                    strokeWidth: _strokeWidth,
+                    size: size,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -47,7 +58,8 @@ class _StaticGlassRing extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.glassPrimary, // Đảm bảo màu có độ trong suốt (opacity)
+            color: AppColors
+                .glassPrimary, // Đảm bảo màu có độ trong suốt (opacity)
           ),
         ),
       ),
@@ -61,7 +73,11 @@ class _ProgressIndicator extends StatelessWidget {
   final double strokeWidth;
   final double size;
 
-  const _ProgressIndicator({required this.progress, required this.strokeWidth, required this.size});
+  const _ProgressIndicator({
+    required this.progress,
+    required this.strokeWidth,
+    required this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +95,17 @@ class RingClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    final outerPath = Path()..addOval(Rect.fromLTWH(0, 0, size.width, size.height));
+    final outerPath = Path()
+      ..addOval(Rect.fromLTWH(0, 0, size.width, size.height));
     final innerPath = Path()
-      ..addOval(Rect.fromLTWH(strokeWidth, strokeWidth, size.width - strokeWidth * 2, size.height - strokeWidth * 2));
+      ..addOval(
+        Rect.fromLTWH(
+          strokeWidth,
+          strokeWidth,
+          size.width - strokeWidth * 2,
+          size.height - strokeWidth * 2,
+        ),
+      );
     return Path.combine(PathOperation.difference, outerPath, innerPath);
   }
 
@@ -104,10 +128,16 @@ class TimerPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     double offset = strokeWidth / 2;
-    Rect rect = Rect.fromLTWH(offset, offset, size.width - strokeWidth, size.height - strokeWidth);
+    Rect rect = Rect.fromLTWH(
+      offset,
+      offset,
+      size.width - strokeWidth,
+      size.height - strokeWidth,
+    );
     canvas.drawArc(rect, -pi / 2, 2 * pi * progress, false, paint);
   }
 
   @override
-  bool shouldRepaint(TimerPainter oldDelegate) => oldDelegate.progress != progress;
+  bool shouldRepaint(TimerPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }

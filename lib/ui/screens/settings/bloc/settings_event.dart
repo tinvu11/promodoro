@@ -13,8 +13,8 @@ final class SaveSettingsEvent extends SettingsEvent {
   final int? repeatCount;
   final bool? isSoundEnabled;
   final String? selectedThemeId;
-  final String? alarmWork;
-  final String? alarmBreak;
+  final AlarmModel? alarmWork;
+  final AlarmModel? alarmBreak;
   final double? volumeWorkAlarm;
   final double? volumeBreakAlarm;
   final double? volumeNoise;

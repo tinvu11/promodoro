@@ -37,7 +37,7 @@ class StaticPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       ListTile(
-                        title: Text('Tuần này', style: AppFonts.medium_white_20),
+                        title: Text('10/2026', style: AppFonts.medium_white_22),
                         trailing: Text("Tổng: 3 giờ", style: AppFonts.regular_grey_16),
                       ),
                       Padding(
