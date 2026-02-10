@@ -9,10 +9,14 @@ final class TimerStarted extends TimerEvent {
     required this.workDuration,
     required this.breakDuration,
     required this.totalRounds,
+    required this.alarmWorkPath,
+    required this.alarmBreakPath,
   });
   final int workDuration;
   final int breakDuration;
   final int totalRounds;
+  final String alarmWorkPath;
+  final String alarmBreakPath;
 }
 
 final class TimerPaused extends TimerEvent {
@@ -44,7 +48,15 @@ class TimerSynced extends TimerEvent {
   final TimerMode mode;
 }
 
+class TimerFinished extends TimerEvent {
+  const TimerFinished();
+}
+
 class _TimerTicked extends TimerEvent {
   const _TimerTicked({required this.duration});
   final int duration;
+}
+
+class _LocalTick extends TimerEvent {
+  const _LocalTick();
 }

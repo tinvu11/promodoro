@@ -17,7 +17,7 @@ class AppRouter {
     initialLocation: RoutePaths.timer,
     routes: [
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => HomeNavigation(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) => BlocProvider.value(value: DI.sl<TimerBloc>(), child:  HomeNavigation(navigationShell: navigationShell)),
         branches: [
           StatefulShellBranch(
             routes: [

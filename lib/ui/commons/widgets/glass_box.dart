@@ -22,7 +22,7 @@ class GlassBox extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+          filter: ImageFilter.blur(sigmaX: 14.0, sigmaY: 14.0),
           child: Container(
             width: width,
             padding: padding,
@@ -30,6 +30,7 @@ class GlassBox extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(color: AppColors.glassBorder, width: 1.0),
               gradient: AppColors.glassGradient,
+              // color: Colors.white.withOpacity(0.1)
             ),
             child: RepaintBoundary(child: child),
           ),

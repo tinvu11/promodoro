@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
@@ -12,7 +13,7 @@ import '../../commons/widgets/glass_box.dart';
 import 'bloc/timer_bloc.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:audioplayers/audioplayers.dart';
+
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -22,7 +23,7 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+
   TimerMode? _currentMode;
 
   @override
@@ -33,209 +34,219 @@ class _TimerPageState extends State<TimerPage> {
 
   Future<void> _requestPermissions() async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch states
+    // Chỉ watch Settings vì nó ít khi thay đổi
     final settingsState = context.watch<SettingsBloc>().state;
-    final timerState = context.watch<TimerBloc>().state;
+    if (settingsState is! SuccessSettingState) return const Scaffold(body: SizedBox());
 
-    if (settingsState is! SuccessSettingState) return const SizedBox();
-
-    // Configuration from Settings (Convert minutes to seconds)
-    final int workDuration = settingsState.settingsModel.workTime;
-    final int breakDuration = settingsState.settingsModel.breakTime;
-    final int totalRounds = settingsState.settingsModel.repeatCount;
-
-    // Determine values for UI
-    final int currentSeconds = (timerState is TimerInitial)
-        ? workDuration
-        : timerState.duration;
-
-    final int initialDuration = (timerState is TimerInitial)
-        ? workDuration
-        : timerState.initialDuration;
-
-    // Progress Calculation
-    double progress = initialDuration > 0
-        ? currentSeconds / initialDuration
-        : 0.0;
-
-    if (progress > 1.0) progress = 1.0;
-    if (progress < 0.0) progress = 0.0;
-
-    // Display Text
-    String modeText = "Ready";
-    if (timerState is! TimerInitial) {
-       modeText = (timerState.mode == TimerMode.work) ? "Work" : "Break";
-    } else {
-       modeText = "Work"; // Default show Work
-    }
-
-    // Round Text
-    String roundText = "${timerState.round} / ${timerState.totalRounds}";
-    if (timerState is TimerInitial) {
-       roundText = "1 / $totalRounds";
-    }
+    final settings = settingsState.settingsModel;
 
     return BlocListener<TimerBloc, TimerState>(
-      listener: (context, state) async {
-        if (state is TimerInitial) return;
-
-        // Initialize mode tracker if null
-        _currentMode ??= state.mode;
-
-        // Detect completion or mode switch
-        if (state is TimerRunComplete) {
-            // Finished final round (Work)
-             await _playAlarm(settingsState.settingsModel.alarmWork.path);
-        } else if (state is TimerRunInProgress) {
-             // Check if mode changed
-             if (_currentMode != state.mode) {
-                // Determine what JUST finished
-                if (_currentMode == TimerMode.work && state.mode == TimerMode.breakMode) {
-                    // Work finished, Break started
-                    await _playAlarm(settingsState.settingsModel.alarmWork.path);
-                } else if (_currentMode == TimerMode.breakMode && state.mode == TimerMode.work) {
-                    // Break finished, Work started
-                    await _playAlarm(settingsState.settingsModel.alarmBreak.path);
-                }
-                _currentMode = state.mode;
-             }
+      listenWhen: (prev, curr) => prev.runtimeType != curr.runtimeType,
+      listener: (context, state) {
+        // Tự động ẩn/hiện Status bar hệ thống
+        if (state is TimerRunInProgress) {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        } else {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         }
       },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBodyBehindAppBar: true,
-        appBar: CommonAppBar(
-          showLeading: false,
-          actions: [
-            GestureDetector(
-              onTap: () => context.push(RoutePaths.noises),
-              child: GlassBox(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.music_note, color: AppColors.textSecondary, size: 16),
-                      SizedBox(width: 5),
-                      Text(settingsState.settingsModel.selectedThemeId, style: AppFonts.regular_grey_14),
-                    ],
-                  ),
+
+      child: BlocBuilder<TimerBloc, TimerState>(
+          builder: (context, state) {
+            final bool isRunning = state is TimerRunInProgress;
+
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBodyBehindAppBar: true,
+              appBar: isRunning ? null : _buildAppBar(
+                  context, settings.selectedThemeId),
+              body:
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+
+                  children: [
+                    // 1. Khu vực hiển thị Timer (Đã tối ưu Rebuild)
+                    GestureDetector(
+                        onTap: () {
+                          _onToggleTimer(context, state, settings);
+                        },
+                        child: _buildTimerDisplay(settings)),
+
+                    const SizedBox(height: 100,),
+
+                    // isRunning ? SizedBox(height: 60,) : _buildControlButtons(context, settings),
+
+                  ],
                 ),
+              ),
+            );
+          })
+    );
+  }
+  Widget _buildTimerDisplay(settingsModel) {
+    return BlocBuilder<TimerBloc, TimerState>(
+      buildWhen: (prev, curr) => prev.duration != curr.duration || prev.mode != curr.mode,
+      builder: (context, state) {
+        final int currentSeconds = state is TimerInitial ? settingsModel.workTime : state.duration;
+        final initialDuration = state is TimerInitial ? settingsModel.workTime : state.initialDuration;
+
+        double progress = initialDuration > 0 ? currentSeconds / initialDuration : 0.0;
+        String modeText = (state is TimerInitial || state.mode == TimerMode.work) ? "Work" : "Break";
+        String roundText = "${state.round} / ${state.totalRounds}";
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            GlassTimer(size: 280, progress: progress.clamp(0.0, 1.0)),
+
+            // Text Mode và Round
+            Column(
+              children: [
+                Row( mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Icon(true ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
+                    Text(modeText, style: AppFonts.medium_white_20.copyWith(
+                        color:  Colors.white
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 100),
+                Text(roundText, style: AppFonts.medium_white_20),
+              ],
+            ),
+
+            // Số giây chính giữa
+            Text(
+              currentSeconds.toTimer(),
+              style: AppFonts.semibold_white_40.copyWith(
+                fontSize: 60,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ],
-        ),
-        body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Timer Circle
-                  GlassTimer(size: 250, progress: progress),
-
-                  // Static Texts (Mode, Round) inside the circle
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(modeText, style: AppFonts.medium_white_20),
-                      const SizedBox(height: 80), // Gap where Time text sits
-                      Text(roundText, style: AppFonts.medium_white_20),
-                    ],
-                  ),
-
-                  // Countdown Time Text
-                  Text(
-                    currentSeconds.toTimer(),
-                    style: AppFonts.semibold_white_40.copyWith(fontSize: 54),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 120),
-
-              // Control Button
-              GestureDetector(
-                onTap: () {
-                  final timerBloc = context.read<TimerBloc>();
-                  if (timerState is TimerInitial) {
-                    // Reset current mode when starting
-                    _currentMode = TimerMode.work;
-                    timerBloc.add(TimerStarted(
-                      workDuration: workDuration,
-                      breakDuration: breakDuration,
-                      totalRounds: totalRounds,
-                    ));
-                  } else if (timerState is TimerRunInProgress) {
-                    timerBloc.add(const TimerPaused());
-                  } else if (timerState is TimerRunPause) {
-                    timerBloc.add(const TimerResumed());
-                  } else if (timerState is TimerRunComplete) {
-                    timerBloc.add(const TimerReset());
-                  }
-                },
-                child: GlassBox(
-                  borderRadius: 26,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          (timerState is TimerRunInProgress) ? Icons.pause : Icons.play_arrow,
-                          color: AppColors.textSecondary,
-                          size: 26,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          (timerState is TimerRunInProgress) ? "Tạm dừng" : "Bắt đầu",
-                          style: AppFonts.medium_grey_20,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Future<void> _playAlarm(String assetPath) async {
-    // Determine path. assetPath is assuming 'assets/alarm/filename.mp3'
-    // AssetSource needs path relative to assets/ ?? No, AssetSource takes path from assets root or internal?
-    // 'AssetSource' in audioplayers 6.0: "Represents a file in the assets directory".
-    // If path is "assets/alarm/alarm1.mp3", AssetSource should handle it?
-    // Usually AssetSource("alarm/alarm1.mp3") if configured in pubspec?
-    // Let's strip 'assets/' prefix if present to be safe, as AssetSource prepends it or looks in root.
-    // Actually, AssetSource prepends 'assets/' by default in some versions or looks for it.
-    // Let's check how ConfigSection did it: AssetSource(path.replaceFirst('assets/', ''))
-    
-    final cleanPath = assetPath.startsWith('assets/') ? assetPath.replaceFirst('assets/', '') : assetPath;
-    try {
-      await _audioPlayer.stop();
-      await _audioPlayer.play(AssetSource(cleanPath));
-    } catch (e) {
-      debugPrint("Error playing alarm: $e");
+  Widget _buildControlButtons(BuildContext context, settings) {
+    return BlocBuilder<TimerBloc, TimerState>(
+      builder: (context, state) {
+         String textButton = "Bắt đầu";
+        if(state is TimerRunPause){
+          textButton = "Tiếp tục";
+        }
+        else if(state is TimerRunInProgress){
+          textButton = "Tạm dừng";
+        }
+
+        final isRunning = state is TimerRunInProgress;
+         final isInitial = state is TimerInitial;
+         return Row(
+           mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+
+             // Nút Start/Pause
+             GestureDetector(
+               onTap: () => _onToggleTimer(context, state, settings),
+               child: GlassBox(
+                 borderRadius: 216,
+                 child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                   child: Row(
+                     children: [
+                       Icon(isRunning ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
+                       // const SizedBox(width: 8),
+                       // Text(isRunning ? "Tạm dừng" : "Bắt đầu", style: AppFonts.medium_white_20),
+                     ],
+                   ),
+                 ),
+               ),
+             ),
+
+             // Nút Reset (Chỉ hiện khi không ở trạng thái Initial)
+             // if (!isInitial) ...[
+             //   const SizedBox(width: 20),
+             //   GestureDetector(
+             //     onTap: () => context.read<TimerBloc>().add(const TimerReset()),
+             //     child: const GlassBox(
+             //       borderRadius: 26,
+             //       child: Padding(
+             //         padding: EdgeInsets.all(12.0),
+             //         child: Icon(Icons.refresh, color: Colors.white),
+             //       ),
+             //     ),
+             //   ),
+             // ]
+           ],
+         );
+      },
+    );
+  }
+
+  // Gom nhóm logic xử lý sự kiện
+  void _onToggleTimer(BuildContext context, TimerState state, settings) {
+    final bloc = context.read<TimerBloc>();
+    if (state is TimerInitial || state is TimerRunComplete) {
+      bloc.add(TimerStarted(
+        workDuration: settings.workTime,
+        breakDuration: settings.breakTime,
+        totalRounds: settings.repeatCount,
+        alarmWorkPath: settings.alarmWork.path,
+        alarmBreakPath: settings.alarmBreak.path,
+      ));
+    } else if (state is TimerRunInProgress) {
+      bloc.add(const TimerPaused());
+    } else {
+      bloc.add(const TimerResumed());
     }
+  }
+
+
+
+  void _handleModeChange(TimerState state) {
+    if (state is TimerRunInProgress && _currentMode != state.mode) {
+      _currentMode = state.mode;
+      // Có thể thêm rung hoặc âm thanh ngắn ở đây qua FlutterVibrate
+    }
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, String themeId) {
+    return CommonAppBar(
+      showLeading: false,
+      actions: [
+        GestureDetector(
+          onTap: () => context.push(RoutePaths.noises),
+          child: GlassBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.palette, color: Colors.white, size: 16),
+                  const SizedBox(width: 5),
+                  Text(themeId, style: AppFonts.regular_grey_14.copyWith(color: Colors.white)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

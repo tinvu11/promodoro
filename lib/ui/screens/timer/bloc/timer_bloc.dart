@@ -8,6 +8,9 @@ part 'timer_event.dart';
 part 'timer_state.dart';
 
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
+  Timer? _localTimer;
+  int _lastSyncMs = 0;
+
   TimerBloc()
     : super(
         const TimerInitial(
@@ -20,10 +23,13 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
     on<TimerReset>(_onReset);
-    // on<_TimerTicked>(_onTicked);
-
-    // ✅ THIẾU DÒNG NÀY
+    on<_LocalTick>(_onLocalTick);
     on<TimerSynced>(_onSynced);
+    on<TimerFinished>(_onFinished);
+
+    FlutterBackgroundService().on('finished').listen((event) {
+      add(const TimerFinished());
+    });
 
     FlutterBackgroundService().on('update').listen((event) {
       if (event != null) {
@@ -52,6 +58,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   }
 
   void _onSynced(TimerSynced event, Emitter<TimerState> emit) {
+    _lastSyncMs = DateTime.now().millisecondsSinceEpoch;
+
     if (event.isRunning) {
       emit(
         TimerRunInProgress(
@@ -62,8 +70,10 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
           mode: event.mode,
         ),
       );
+      if (_localTimer == null) _startLocalTimer();
     } else if (event.duration < event.initialDuration &&
         event.initialDuration > 0) {
+      _stopLocalTimer();
       emit(
         TimerRunPause(
           duration: event.duration,
@@ -74,6 +84,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
         ),
       );
     } else {
+      _stopLocalTimer();
       // nếu không chạy và chưa từng start, để Initial
       emit(
         TimerInitial(
@@ -121,11 +132,17 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       'round': 1,
       'totalRounds': _totalRounds,
       'mode': 'work',
+      'alarmWorkPath': event.alarmWorkPath,
+      'alarmBreakPath': event.alarmBreakPath,
     });
+
+    _lastSyncMs = DateTime.now().millisecondsSinceEpoch;
+    _startLocalTimer();
   }
 
   void _onPaused(TimerPaused event, Emitter<TimerState> emit) {
     if (state is TimerRunInProgress) {
+      _stopLocalTimer();
       FlutterBackgroundService().invoke('pauseTimer');
       emit(
         TimerRunPause(
@@ -152,10 +169,13 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
           initialDuration: state.initialDuration,
         ),
       );
+      _lastSyncMs = DateTime.now().millisecondsSinceEpoch;
+      _startLocalTimer();
     }
   }
 
   void _onReset(TimerReset event, Emitter<TimerState> emit) {
+    _stopLocalTimer();
     FlutterBackgroundService().invoke('stopService');
     emit(
       TimerInitial(
@@ -166,5 +186,47 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     );
   }
 
-  // _onTicked: nếu bạn đã cho loop sang service rồi thì phần chuyển work/break trong bloc có thể bỏ
+  void _onFinished(TimerFinished event, Emitter<TimerState> emit) {
+    _stopLocalTimer();
+    emit(TimerRunComplete(round: _totalRounds, totalRounds: _totalRounds));
+  }
+
+  /// Local tick chỉ kích hoạt khi service chưa sync trong >1.2s (backup khi IPC bị delay)
+  void _onLocalTick(_LocalTick event, Emitter<TimerState> emit) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (now - _lastSyncMs < 1200) return;
+
+    if (state is TimerRunInProgress) {
+      final newDuration = state.duration - 1;
+      if (newDuration >= 0) {
+        emit(
+          TimerRunInProgress(
+            duration: newDuration,
+            mode: state.mode,
+            round: state.round,
+            totalRounds: state.totalRounds,
+            initialDuration: state.initialDuration,
+          ),
+        );
+      }
+    }
+  }
+
+  void _startLocalTimer() {
+    _localTimer?.cancel();
+    _localTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      add(const _LocalTick());
+    });
+  }
+
+  void _stopLocalTimer() {
+    _localTimer?.cancel();
+    _localTimer = null;
+  }
+
+  @override
+  Future<void> close() {
+    _stopLocalTimer();
+    return super.close();
+  }
 }
