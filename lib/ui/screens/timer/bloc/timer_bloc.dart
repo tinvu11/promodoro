@@ -3,16 +3,19 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:promodoro/data/repositories/stat_repository.dart';
 
 part 'timer_event.dart';
 part 'timer_state.dart';
 
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
+  final StatRepository _statRepository;
   Timer? _localTimer;
   int _lastSyncMs = 0;
 
-  TimerBloc()
-    : super(
+  TimerBloc({required StatRepository statRepository})
+    : _statRepository = statRepository,
+      super(
         const TimerInitial(
           duration: _defaultDuration,
           round: 1,
@@ -26,6 +29,17 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     on<_LocalTick>(_onLocalTick);
     on<TimerSynced>(_onSynced);
     on<TimerFinished>(_onFinished);
+    on<_WorkSessionDone>(_onWorkSessionDone);
+
+    FlutterBackgroundService().on('work_session_done').listen((event) {
+      if (event != null) {
+        add(
+          _WorkSessionDone(
+            workDurationSeconds: (event['work_duration_seconds'] as int?) ?? 0,
+          ),
+        );
+      }
+    });
 
     FlutterBackgroundService().on('finished').listen((event) {
       add(const TimerFinished());
@@ -189,6 +203,22 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   void _onFinished(TimerFinished event, Emitter<TimerState> emit) {
     _stopLocalTimer();
     emit(TimerRunComplete(round: _totalRounds, totalRounds: _totalRounds));
+  }
+
+  Future<void> _onWorkSessionDone(
+    _WorkSessionDone event,
+    Emitter<TimerState> emit,
+  ) async {
+    final minutes = (event.workDurationSeconds / 60).round();
+    if (minutes <= 0) return;
+
+    final now = DateTime.now();
+    final today = _statRepository.getDailyStatByDate(now);
+    final updated = today.copyWith(
+      minutes: today.minutes + minutes,
+      sessions: today.sessions + 1,
+    );
+    await _statRepository.saveDailyStat(updated);
   }
 
   /// Local tick chỉ kích hoạt khi service chưa sync trong >1.2s (backup khi IPC bị delay)
