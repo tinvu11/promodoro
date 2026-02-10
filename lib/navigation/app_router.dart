@@ -8,6 +8,7 @@ import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/static/static_page.dart';
 import '../configs/di.dart';
 import '../ui/screens/settings/settings_page.dart';
+import '../ui/screens/timer/bloc/timer_bloc.dart';
 import '../ui/screens/timer/timer_page.dart';
 part 'route_paths.dart';
 
@@ -16,10 +17,17 @@ class AppRouter {
     initialLocation: RoutePaths.timer,
     routes: [
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => HomeNavigation(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) => BlocProvider.value(value: DI.sl<TimerBloc>(), child:  HomeNavigation(navigationShell: navigationShell)),
         branches: [
           StatefulShellBranch(
-            routes: [GoRoute(path: RoutePaths.timer, builder: (context, state) => const TimerPage())],
+            routes: [
+              GoRoute(
+                path: RoutePaths.timer,
+                // builder: (context, state) => BlocProvider.value(value: DI.sl<SettingsBloc>(), child: TimerPage()),
+                builder: (context, state) => MultiBlocProvider(providers: [BlocProvider.value(value: DI.sl<SettingsBloc>()),
+                  BlocProvider.value(value: DI.sl<TimerBloc>()),], child: TimerPage())
+              ),
+            ],
           ),
           StatefulShellBranch(
             routes: [GoRoute(path: RoutePaths.static, builder: (context, state) => const StaticPage())],

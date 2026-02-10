@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
 import 'package:promodoro/navigation/app_router.dart';
+import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/timer/widgets/GlassTimerPage.dart';
 import 'package:promodoro/utils/time_formatting.dart';
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
+import 'bloc/timer_bloc.dart';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -15,111 +22,231 @@ class TimerPage extends StatefulWidget {
   State<TimerPage> createState() => _TimerPageState();
 }
 
-class _TimerPageState extends State<TimerPage> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool isStarted = false;
+class _TimerPageState extends State<TimerPage> {
+
+  TimerMode? _currentMode;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 300));
+    _requestPermissions();
   }
 
-  void _toggleTimer() {
-    if (_controller.isAnimating) {
-      _controller.stop();
-    } else {
-      if (_controller.value == 0) _controller.value = 12.0;
-      _controller.reverse(from: _controller.value == 0 ? 1.0 : _controller.value);
-    }
-    setState(() {
-      isStarted = true;
-    });
+  Future<void> _requestPermissions() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: CommonAppBar(
-        showLeading: false,
-        actions: [
-          GestureDetector(
-            onTap: () => context.push(RoutePaths.noises),
-            child: GlassBox(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
+    // Chỉ watch Settings vì nó ít khi thay đổi
+    final settingsState = context.watch<SettingsBloc>().state;
+    if (settingsState is! SuccessSettingState) return const Scaffold(body: SizedBox());
+
+    final settings = settingsState.settingsModel;
+
+    return BlocListener<TimerBloc, TimerState>(
+      listenWhen: (prev, curr) => prev.runtimeType != curr.runtimeType,
+      listener: (context, state) {
+        // Tự động ẩn/hiện Status bar hệ thống
+        if (state is TimerRunInProgress) {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        } else {
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        }
+      },
+
+      child: BlocBuilder<TimerBloc, TimerState>(
+          builder: (context, state) {
+            final bool isRunning = state is TimerRunInProgress;
+
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBodyBehindAppBar: true,
+              appBar: isRunning ? null : _buildAppBar(
+                  context, settings.selectedThemeId),
+              body:
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+
                   children: [
-                    Icon(Icons.music_note, color: AppColors.textSecondary, size: 16),
-                    SizedBox(width: 5),
-                    Text('Thác nước', style: AppFonts.regular_grey_14),
+                    // 1. Khu vực hiển thị Timer (Đã tối ưu Rebuild)
+                    GestureDetector(
+                        onTap: () {
+                          _onToggleTimer(context, state, settings);
+                        },
+                        child: _buildTimerDisplay(settings)),
+
+                    const SizedBox(height: 100,),
+
+                    // isRunning ? SizedBox(height: 60,) : _buildControlButtons(context, settings),
+
                   ],
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+            );
+          })
+    );
+  }
+  Widget _buildTimerDisplay(settingsModel) {
+    return BlocBuilder<TimerBloc, TimerState>(
+      buildWhen: (prev, curr) => prev.duration != curr.duration || prev.mode != curr.mode,
+      builder: (context, state) {
+        final int currentSeconds = state is TimerInitial ? settingsModel.workTime : state.duration;
+        final initialDuration = state is TimerInitial ? settingsModel.workTime : state.initialDuration;
+
+        double progress = initialDuration > 0 ? currentSeconds / initialDuration : 0.0;
+        String modeText = (state is TimerInitial || state.mode == TimerMode.work) ? "Work" : "Break";
+        String roundText = "${state.round} / ${state.totalRounds}";
+
+        return Stack(
+          alignment: Alignment.center,
           children: [
-            // Tách child trong column ra khỏi build để không phải build lại nhiều lần
-            AnimatedBuilder(
-              animation: _controller,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Work", style: AppFonts.medium_white_20),
-                  const SizedBox(height: 80),
-                  Text("2 / 5", style: AppFonts.medium_white_20),
-                ],
-              ),
-              builder: (context, staticChild) {
-                final int remainingSeconds = (_controller.duration!.inSeconds * (1 - _controller.value)).ceil();
-                return Stack(
-                  alignment: Alignment.center,
+            GlassTimer(size: 280, progress: progress.clamp(0.0, 1.0)),
+
+            // Text Mode và Round
+            Column(
+              children: [
+                Row( mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GlassTimer(size: 250, progress: _controller.value),
-                    staticChild!,
-                    Text(remainingSeconds.toTimer(), style: AppFonts.semibold_white_40.copyWith(fontSize: 54)),
+                    // Icon(true ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
+                    Text(modeText, style: AppFonts.medium_white_20.copyWith(
+                        color:  Colors.white
+                    )),
                   ],
-                );
-              },
+                ),
+                const SizedBox(height: 100),
+                Text(roundText, style: AppFonts.medium_white_20),
+              ],
             ),
 
-            const SizedBox(height: 120),
-            GestureDetector(
-              onTap: _toggleTimer,
-              child: GlassBox(
-                borderRadius: 26,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isStarted && _controller.isAnimating ? Icons.pause : Icons.play_arrow,
-                        color: AppColors.textSecondary,
-                        size: 26,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isStarted && _controller.isAnimating ? "Tạm dừng" : "Bắt đầu",
-                        style: AppFonts.medium_grey_20,
-                      ),
-                    ],
-                  ),
-                ),
+            // Số giây chính giữa
+            Text(
+              currentSeconds.toTimer(),
+              style: AppFonts.semibold_white_40.copyWith(
+                fontSize: 60,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget _buildControlButtons(BuildContext context, settings) {
+    return BlocBuilder<TimerBloc, TimerState>(
+      builder: (context, state) {
+         String textButton = "Bắt đầu";
+        if(state is TimerRunPause){
+          textButton = "Tiếp tục";
+        }
+        else if(state is TimerRunInProgress){
+          textButton = "Tạm dừng";
+        }
+
+        final isRunning = state is TimerRunInProgress;
+         final isInitial = state is TimerInitial;
+         return Row(
+           mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+
+             // Nút Start/Pause
+             GestureDetector(
+               onTap: () => _onToggleTimer(context, state, settings),
+               child: GlassBox(
+                 borderRadius: 216,
+                 child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                   child: Row(
+                     children: [
+                       Icon(isRunning ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
+                       // const SizedBox(width: 8),
+                       // Text(isRunning ? "Tạm dừng" : "Bắt đầu", style: AppFonts.medium_white_20),
+                     ],
+                   ),
+                 ),
+               ),
+             ),
+
+             // Nút Reset (Chỉ hiện khi không ở trạng thái Initial)
+             // if (!isInitial) ...[
+             //   const SizedBox(width: 20),
+             //   GestureDetector(
+             //     onTap: () => context.read<TimerBloc>().add(const TimerReset()),
+             //     child: const GlassBox(
+             //       borderRadius: 26,
+             //       child: Padding(
+             //         padding: EdgeInsets.all(12.0),
+             //         child: Icon(Icons.refresh, color: Colors.white),
+             //       ),
+             //     ),
+             //   ),
+             // ]
+           ],
+         );
+      },
+    );
+  }
+
+  // Gom nhóm logic xử lý sự kiện
+  void _onToggleTimer(BuildContext context, TimerState state, settings) {
+    final bloc = context.read<TimerBloc>();
+    if (state is TimerInitial || state is TimerRunComplete) {
+      bloc.add(TimerStarted(
+        workDuration: settings.workTime,
+        breakDuration: settings.breakTime,
+        totalRounds: settings.repeatCount,
+        alarmWorkPath: settings.alarmWork.path,
+        alarmBreakPath: settings.alarmBreak.path,
+      ));
+    } else if (state is TimerRunInProgress) {
+      bloc.add(const TimerPaused());
+    } else {
+      bloc.add(const TimerResumed());
+    }
+  }
+
+
+
+  void _handleModeChange(TimerState state) {
+    if (state is TimerRunInProgress && _currentMode != state.mode) {
+      _currentMode = state.mode;
+      // Có thể thêm rung hoặc âm thanh ngắn ở đây qua FlutterVibrate
+    }
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, String themeId) {
+    return CommonAppBar(
+      showLeading: false,
+      actions: [
+        GestureDetector(
+          onTap: () => context.push(RoutePaths.noises),
+          child: GlassBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.palette, color: Colors.white, size: 16),
+                  const SizedBox(width: 5),
+                  Text(themeId, style: AppFonts.regular_grey_14.copyWith(color: Colors.white)),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
