@@ -20,6 +20,8 @@ int _remainingOnPause = 0; // Store remaining seconds when paused
 bool _isUIForeground = true; // Track UI state
 String _alarmWorkPath = '';
 String _alarmBreakPath = '';
+double _volumeWorkAlarm = 100.0;
+double _volumeBreakAlarm = 100.0;
 final AudioPlayer _audioPlayer = AudioPlayer();
 
 int get _remainingSeconds {
@@ -102,6 +104,8 @@ void onStart(ServiceInstance service) async {
       _mode = (event['mode'] as String?) ?? 'work';
       _alarmWorkPath = (event['alarmWorkPath'] as String?) ?? '';
       _alarmBreakPath = (event['alarmBreakPath'] as String?) ?? '';
+      _volumeWorkAlarm = (event['volumeWorkAlarm'] as num?)?.toDouble() ?? 100.0;
+      _volumeBreakAlarm = (event['volumeBreakAlarm'] as num?)?.toDouble() ?? 100.0;
       _initialDuration = initialDuration;
 
       final nowMs = DateTime.now().millisecondsSinceEpoch;
@@ -235,7 +239,7 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
 
       // Nếu còn round thì sang Break, không thì complete
       if (_round < _totalRounds) {
-        await _playAlarm(_alarmWorkPath);
+        await _playAlarm(_alarmWorkPath, _volumeWorkAlarm);
         final nextDuration = _breakDuration;
         final nowMs = DateTime.now().millisecondsSinceEpoch;
 
@@ -254,7 +258,7 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
         service.invoke('finished');
 
         // Phát alarm và đợi phát xong trước khi dừng service
-        await _playAlarmAndWait(_alarmWorkPath);
+        await _playAlarmAndWait(_alarmWorkPath, _volumeWorkAlarm);
 
         _disposeListeners();
         service.stopSelf();
@@ -262,7 +266,7 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
       }
     } else {
       // Break xong -> sang Work, tăng round
-      await _playAlarm(_alarmBreakPath);
+      await _playAlarm(_alarmBreakPath, _volumeBreakAlarm);
       final nextRound = _round + 1;
       final nextDuration = _workDuration;
       final nowMs = DateTime.now().millisecondsSinceEpoch;
@@ -312,7 +316,7 @@ Future<void> _updateNotification(String content, int current, int max) async {
   }
 }
 
-Future<void> _playAlarm(String assetPath) async {
+Future<void> _playAlarm(String assetPath, double volumePercent) async {
   if (assetPath.isEmpty) return;
 
   final cleanPath = assetPath.startsWith('assets/')
@@ -320,6 +324,7 @@ Future<void> _playAlarm(String assetPath) async {
       : assetPath;
   try {
     await _audioPlayer.stop();
+    await _audioPlayer.setVolume(volumePercent / 100.0);
     await _audioPlayer.play(AssetSource(cleanPath));
   } catch (e) {
     print("Error playing alarm in background: $e");
@@ -327,7 +332,7 @@ Future<void> _playAlarm(String assetPath) async {
 }
 
 /// Phát alarm và đợi audio phát xong (hoặc timeout 10s) trước khi return
-Future<void> _playAlarmAndWait(String assetPath) async {
+Future<void> _playAlarmAndWait(String assetPath, double volumePercent) async {
   if (assetPath.isEmpty) return;
 
   final completer = Completer<void>();
@@ -342,7 +347,7 @@ Future<void> _playAlarmAndWait(String assetPath) async {
     if (!completer.isCompleted) completer.complete();
   });
 
-  await _playAlarm(assetPath);
+  await _playAlarm(assetPath, volumePercent);
   await completer.future;
 
   timer.cancel();

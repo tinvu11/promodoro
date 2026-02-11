@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
 import 'package:promodoro/navigation/app_router.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/timer/widgets/GlassTimerPage.dart';
 import 'package:promodoro/utils/time_formatting.dart';
-import '../../../core/Theme/app_colors.dart';
+
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
 import 'bloc/timer_bloc.dart';
-
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -23,7 +21,6 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-
   TimerMode? _currentMode;
 
   @override
@@ -34,10 +31,11 @@ class _TimerPageState extends State<TimerPage> {
 
   Future<void> _requestPermissions() async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+        FlutterLocalNotificationsPlugin();
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.requestNotificationsPermission();
   }
 
@@ -50,7 +48,8 @@ class _TimerPageState extends State<TimerPage> {
   Widget build(BuildContext context) {
     // Chỉ watch Settings vì nó ít khi thay đổi
     final settingsState = context.watch<SettingsBloc>().state;
-    if (settingsState is! SuccessSettingState) return const Scaffold(body: SizedBox());
+    if (settingsState is! SuccessSettingState)
+      return const Scaffold(body: SizedBox());
 
     final settings = settingsState.settingsModel;
 
@@ -66,49 +65,61 @@ class _TimerPageState extends State<TimerPage> {
       },
 
       child: BlocBuilder<TimerBloc, TimerState>(
-          builder: (context, state) {
-            final bool isRunning = state is TimerRunInProgress;
+        builder: (context, state) {
+          final bool isRunning = state is TimerRunInProgress;
 
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              extendBodyBehindAppBar: true,
-              appBar: isRunning ? null : _buildAppBar(
-                  context, settings.selectedThemeId),
-              body:
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            extendBodyBehindAppBar: true,
+            appBar: isRunning
+                ? null
+                : _buildAppBar(context, settings.selectedThemeId),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
 
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 1. Khu vực hiển thị Timer (Đã tối ưu Rebuild)
+                  GestureDetector(
+                    onTap: () {
+                      _onToggleTimer(context, state, settings);
+                    },
+                    child: _buildTimerDisplay(settings),
+                  ),
 
-                  children: [
-                    // 1. Khu vực hiển thị Timer (Đã tối ưu Rebuild)
-                    GestureDetector(
-                        onTap: () {
-                          _onToggleTimer(context, state, settings);
-                        },
-                        child: _buildTimerDisplay(settings)),
+                  const SizedBox(height: 100),
 
-                    const SizedBox(height: 100,),
-
-                    // isRunning ? SizedBox(height: 60,) : _buildControlButtons(context, settings),
-
-                  ],
-                ),
+                  // isRunning ? SizedBox(height: 60,) : _buildControlButtons(context, settings),
+                ],
               ),
-            );
-          })
+            ),
+          );
+        },
+      ),
     );
   }
+
   Widget _buildTimerDisplay(settingsModel) {
     return BlocBuilder<TimerBloc, TimerState>(
-      buildWhen: (prev, curr) => prev.duration != curr.duration || prev.mode != curr.mode,
+      buildWhen: (prev, curr) =>
+          prev.duration != curr.duration || prev.mode != curr.mode,
       builder: (context, state) {
-        final int currentSeconds = state is TimerInitial ? settingsModel.workTime : state.duration;
-        final initialDuration = state is TimerInitial ? settingsModel.workTime : state.initialDuration;
+        final int currentSeconds = state is TimerInitial
+            ? settingsModel.workTime
+            : state.duration;
+        final initialDuration = state is TimerInitial
+            ? settingsModel.workTime
+            : state.initialDuration;
 
-        double progress = initialDuration > 0 ? currentSeconds / initialDuration : 0.0;
-        String modeText = (state is TimerInitial || state.mode == TimerMode.work) ? "Work" : "Break";
-        String roundText = "${state.round} / ${state.totalRounds}";
+        double progress = initialDuration > 0
+            ? currentSeconds / initialDuration
+            : 0.0;
+        String modeText =
+            (state is TimerInitial || state.mode == TimerMode.work)
+            ? "Work"
+            : "Break";
+        // String roundText = "${state.round} / ${state.totalRounds}";
+        String roundText = "${state.round} / ${settingsModel.repeatCount}";
 
         return Stack(
           alignment: Alignment.center,
@@ -118,12 +129,16 @@ class _TimerPageState extends State<TimerPage> {
             // Text Mode và Round
             Column(
               children: [
-                Row( mainAxisAlignment: MainAxisAlignment.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Icon(true ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
-                    Text(modeText, style: AppFonts.medium_white_20.copyWith(
-                        color:  Colors.white
-                    )),
+                    Text(
+                      modeText,
+                      style: AppFonts.medium_white_20.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 100),
@@ -148,54 +163,59 @@ class _TimerPageState extends State<TimerPage> {
   Widget _buildControlButtons(BuildContext context, settings) {
     return BlocBuilder<TimerBloc, TimerState>(
       builder: (context, state) {
-         String textButton = "Bắt đầu";
-        if(state is TimerRunPause){
+        String textButton = "Bắt đầu";
+        if (state is TimerRunPause) {
           textButton = "Tiếp tục";
-        }
-        else if(state is TimerRunInProgress){
+        } else if (state is TimerRunInProgress) {
           textButton = "Tạm dừng";
         }
 
         final isRunning = state is TimerRunInProgress;
-         final isInitial = state is TimerInitial;
-         return Row(
-           mainAxisAlignment: MainAxisAlignment.center,
-           children: [
+        final isInitial = state is TimerInitial;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Nút Start/Pause
+            GestureDetector(
+              onTap: () => _onToggleTimer(context, state, settings),
+              child: GlassBox(
+                borderRadius: 216,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isRunning ? Icons.pause : Icons.play_arrow,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      // const SizedBox(width: 8),
+                      // Text(isRunning ? "Tạm dừng" : "Bắt đầu", style: AppFonts.medium_white_20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-             // Nút Start/Pause
-             GestureDetector(
-               onTap: () => _onToggleTimer(context, state, settings),
-               child: GlassBox(
-                 borderRadius: 216,
-                 child: Padding(
-                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                   child: Row(
-                     children: [
-                       Icon(isRunning ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
-                       // const SizedBox(width: 8),
-                       // Text(isRunning ? "Tạm dừng" : "Bắt đầu", style: AppFonts.medium_white_20),
-                     ],
-                   ),
-                 ),
-               ),
-             ),
-
-             // Nút Reset (Chỉ hiện khi không ở trạng thái Initial)
-             // if (!isInitial) ...[
-             //   const SizedBox(width: 20),
-             //   GestureDetector(
-             //     onTap: () => context.read<TimerBloc>().add(const TimerReset()),
-             //     child: const GlassBox(
-             //       borderRadius: 26,
-             //       child: Padding(
-             //         padding: EdgeInsets.all(12.0),
-             //         child: Icon(Icons.refresh, color: Colors.white),
-             //       ),
-             //     ),
-             //   ),
-             // ]
-           ],
-         );
+            // Nút Reset (Chỉ hiện khi không ở trạng thái Initial)
+            // if (!isInitial) ...[
+            //   const SizedBox(width: 20),
+            //   GestureDetector(
+            //     onTap: () => context.read<TimerBloc>().add(const TimerReset()),
+            //     child: const GlassBox(
+            //       borderRadius: 26,
+            //       child: Padding(
+            //         padding: EdgeInsets.all(12.0),
+            //         child: Icon(Icons.refresh, color: Colors.white),
+            //       ),
+            //     ),
+            //   ),
+            // ]
+          ],
+        );
       },
     );
   }
@@ -204,21 +224,23 @@ class _TimerPageState extends State<TimerPage> {
   void _onToggleTimer(BuildContext context, TimerState state, settings) {
     final bloc = context.read<TimerBloc>();
     if (state is TimerInitial || state is TimerRunComplete) {
-      bloc.add(TimerStarted(
-        workDuration: settings.workTime,
-        breakDuration: settings.breakTime,
-        totalRounds: settings.repeatCount,
-        alarmWorkPath: settings.alarmWork.path,
-        alarmBreakPath: settings.alarmBreak.path,
-      ));
+      bloc.add(
+        TimerStarted(
+          workDuration: settings.workTime,
+          breakDuration: settings.breakTime,
+          totalRounds: settings.repeatCount,
+          alarmWorkPath: settings.alarmWork.path,
+          alarmBreakPath: settings.alarmBreak.path,
+          volumeWorkAlarm: settings.volumeWorkAlarm,
+          volumeBreakAlarm: settings.volumeBreakAlarm,
+        ),
+      );
     } else if (state is TimerRunInProgress) {
       bloc.add(const TimerPaused());
     } else {
       bloc.add(const TimerResumed());
     }
   }
-
-
 
   void _handleModeChange(TimerState state) {
     if (state is TimerRunInProgress && _currentMode != state.mode) {
@@ -240,7 +262,12 @@ class _TimerPageState extends State<TimerPage> {
                 children: [
                   const Icon(Icons.palette, color: Colors.white, size: 16),
                   const SizedBox(width: 5),
-                  Text(themeId, style: AppFonts.regular_grey_14.copyWith(color: Colors.white)),
+                  Text(
+                    themeId,
+                    style: AppFonts.regular_grey_14.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),
