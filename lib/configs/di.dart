@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:promodoro/data/repositories/settings_repository.dart';
 import 'package:promodoro/data/repositories/stat_repository.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
 import 'package:promodoro/ui/screens/timer/bloc/timer_bloc.dart';
 import 'package:promodoro/ui/screens/timer/ticker.dart';
 
@@ -30,5 +31,8 @@ class DI {
     );
     sl.registerLazySingleton(() => Ticker());
     sl.registerLazySingleton(() => TimerBloc(statRepository: sl()));
+    sl.registerLazySingleton(
+      () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
+    );
   }
 }

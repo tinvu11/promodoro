@@ -1,20 +1,19 @@
 import 'dart:convert';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:promodoro/data/models/alarm_model.dart';
-
 import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 import 'package:promodoro/ui/screens/settings/widgets/slider_minute.dart';
 import 'package:promodoro/ui/screens/settings/widgets/slider_sessions.dart';
 import 'package:promodoro/utils/time_formatting.dart';
 
-import 'package:audioplayers/audioplayers.dart';
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
 import '../../../../data/models/settings_model.dart';
 import '../../home_navigation/bottom_sheet/glass_bottom_sheet.dart';
 import '../bloc/settings_bloc.dart';
-
 
 class ConfigSection extends StatefulWidget {
   const ConfigSection({super.key});
@@ -45,10 +44,12 @@ class ConfigSectionState extends State<ConfigSection> {
         children: [
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
+              if (p is! SuccessSettingState || c is! SuccessSettingState)
+                return false;
               return p.settingsModel.workTime != c.settingsModel.workTime ||
                   p.settingsModel.alarmWork != c.settingsModel.alarmWork ||
-                  p.settingsModel.volumeWorkAlarm != c.settingsModel.volumeWorkAlarm;
+                  p.settingsModel.volumeWorkAlarm !=
+                      c.settingsModel.volumeWorkAlarm;
             },
 
             builder: (context, state) {
@@ -69,13 +70,19 @@ class ConfigSectionState extends State<ConfigSection> {
                       settingsModel.workTime ~/ 60,
                       "Tập trung",
                       (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(workTime: newValue.toInt() * 60));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(workTime: newValue.toInt() * 60),
+                        );
                       },
                       (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(workTime: newValue.toInt() * 60));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(workTime: newValue.toInt() * 60),
+                        );
                       },
                       (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(workTime: newValue.toInt() * 60));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(workTime: newValue.toInt() * 60),
+                        );
                       },
                     ),
                   ),
@@ -83,23 +90,32 @@ class ConfigSectionState extends State<ConfigSection> {
                     context,
                     "Âm báo",
                     settingsModel.alarmWork.name,
-                    () => _showAlarmPicker(context, settingsModel, settingsModel.alarmWork.id, (alarm) {
-                      context.read<SettingsBloc>().add(SaveSettingsEvent(alarmWork: alarm));
-                    }),
-
+                    () => _showAlarmPicker(
+                      context,
+                      settingsModel,
+                      settingsModel.alarmWork.id,
+                      (alarm) {
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(alarmWork: alarm),
+                        );
+                      },
+                    ),
                   ),
                   _buildSubTile(
                     context,
                     "Âm lượng",
-                    "${settingsModel.volumeWorkAlarm}%",
+                    "${settingsModel.volumeWorkAlarm.toInt()}%",
                     () => _showSessionSlider(
                       context: context,
                       initialValue: settingsModel.volumeWorkAlarm,
 
                       onChanged: (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(volumeBreakAlarm: newValue));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(volumeWorkAlarm: newValue),
+                        );
                       },
                       maxValue: 100,
+                      minValue: 0,
                       divisions: 10,
                       title: 'Âm lượng',
                     ),
@@ -110,10 +126,12 @@ class ConfigSectionState extends State<ConfigSection> {
           ),
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
+              if (p is! SuccessSettingState || c is! SuccessSettingState)
+                return false;
               return p.settingsModel.breakTime != c.settingsModel.breakTime ||
                   p.settingsModel.alarmBreak != c.settingsModel.alarmBreak ||
-                  p.settingsModel.volumeBreakAlarm != c.settingsModel.volumeBreakAlarm;
+                  p.settingsModel.volumeBreakAlarm !=
+                      c.settingsModel.volumeBreakAlarm;
             },
 
             builder: (context, state) {
@@ -134,13 +152,19 @@ class ConfigSectionState extends State<ConfigSection> {
                       settingsModel.breakTime ~/ 60,
                       "Nghỉ ngơi",
                       (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(breakTime: newValue.toInt() * 60));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(breakTime: newValue.toInt() * 60),
+                        );
                       },
                       (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(breakTime: newValue.toInt() * 60));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(breakTime: newValue.toInt() * 60),
+                        );
                       },
                       (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(breakTime: newValue.toInt() * 60));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(breakTime: newValue.toInt() * 60),
+                        );
                       },
                     ),
                   ),
@@ -148,23 +172,32 @@ class ConfigSectionState extends State<ConfigSection> {
                     context,
                     "Âm báo",
                     settingsModel.alarmBreak.name,
-                    () => _showAlarmPicker(context, settingsModel, settingsModel.alarmBreak.id, (alarm) {
-                      context.read<SettingsBloc>().add(SaveSettingsEvent(alarmBreak: alarm));
-                    }),
-
+                    () => _showAlarmPicker(
+                      context,
+                      settingsModel,
+                      settingsModel.alarmBreak.id,
+                      (alarm) {
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(alarmBreak: alarm),
+                        );
+                      },
+                    ),
                   ),
                   _buildSubTile(
                     context,
                     "Âm lượng",
-                    "${settingsModel.volumeBreakAlarm}%",
+                    "${settingsModel.volumeBreakAlarm.toInt()}%",
                     () => _showSessionSlider(
                       context: context,
                       initialValue: settingsModel.volumeBreakAlarm,
 
                       onChanged: (newValue) {
-                        context.read<SettingsBloc>().add(SaveSettingsEvent(volumeBreakAlarm: newValue));
+                        context.read<SettingsBloc>().add(
+                          SaveSettingsEvent(volumeBreakAlarm: newValue),
+                        );
                       },
                       maxValue: 100,
+                      minValue: 0,
                       divisions: 10,
                       title: 'Âm lượng',
                     ),
@@ -175,7 +208,8 @@ class ConfigSectionState extends State<ConfigSection> {
           ),
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
+              if (p is! SuccessSettingState || c is! SuccessSettingState)
+                return false;
               return p.settingsModel.repeatCount != c.settingsModel.repeatCount;
             },
             builder: (context, state) {
@@ -188,10 +222,13 @@ class ConfigSectionState extends State<ConfigSection> {
                   initialValue: settingsModel.repeatCount.toDouble(),
                   title: "Lần lặp",
                   onChanged: (newValue) {
-                    context.read<SettingsBloc>().add(SaveSettingsEvent(repeatCount: newValue.toInt()));
+                    context.read<SettingsBloc>().add(
+                      SaveSettingsEvent(repeatCount: newValue.toInt()),
+                    );
                   },
                   maxValue: 12,
-                  divisions: 12,
+                  minValue: 1,
+                  divisions: 11,
                   context: context,
                 ),
               );
@@ -216,13 +253,20 @@ class ConfigSectionState extends State<ConfigSection> {
         AnimatedSize(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeInOut,
-          child: isExpanded ? Column(children: [...children, const SizedBox(height: 8)]) : const SizedBox.shrink(),
+          child: isExpanded
+              ? Column(children: [...children, const SizedBox(height: 8)])
+              : const SizedBox.shrink(),
         ),
       ],
     );
   }
 
-  Widget _buildSubTile(BuildContext context, String title, String value, VoidCallback onTap) {
+  Widget _buildSubTile(
+    BuildContext context,
+    String title,
+    String value,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: onTap,
@@ -241,9 +285,11 @@ class ConfigSectionState extends State<ConfigSection> {
 
   Widget _buildSimpleTile(String title, String value, {VoidCallback? onTap}) {
     return Theme(
-      data: Theme.of(
-        context,
-      ).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent),
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
       child: ListTile(
         onTap: onTap,
         title: Text(title, style: AppFonts.medium_white_20),
@@ -269,7 +315,12 @@ class ConfigSectionState extends State<ConfigSection> {
   ) {
     _showGlassBottomSheet(
       context,
-      SliderMinute(initialValue: val, onChanged: onChanged, onIncrement: onIncrement, onDecrement: onDecrement),
+      SliderMinute(
+        initialValue: val,
+        onChanged: onChanged,
+        onIncrement: onIncrement,
+        onDecrement: onDecrement,
+      ),
       title,
     );
   }
@@ -280,21 +331,37 @@ class ConfigSectionState extends State<ConfigSection> {
     required String title,
     required ValueChanged<double> onChanged,
     required int maxValue,
+    required int minValue,
     required int divisions,
   }) {
     _showGlassBottomSheet(
       context,
-      SliderSessions(initialValue: initialValue, maxValue: maxValue, divisions: divisions, onChanged: onChanged),
+      SliderSessions(
+        initialValue: initialValue,
+        maxValue: maxValue,
+        minValue: minValue,
+        divisions: divisions,
+        onChanged: onChanged,
+      ),
       title,
     );
   }
 
   void _showAlarmPicker(
-      BuildContext context, SettingsModel settingsModel, String currentSelection, void Function(AlarmModel path) onSelect) {
+    BuildContext context,
+    SettingsModel settingsModel,
+    String currentSelection,
+    void Function(AlarmModel path) onSelect,
+  ) {
     _showGlassBottomSheet(
-        context, _buildSettingAlarm(currentSelection: currentSelection, onSelect: onSelect), "Âm báo");
+      context,
+      _buildSettingAlarm(
+        currentSelection: currentSelection,
+        onSelect: onSelect,
+      ),
+      "Âm báo",
+    );
   }
-
 
   void _showGlassBottomSheet(BuildContext context, Widget child, String title) {
     showModalBottomSheet(
@@ -326,16 +393,17 @@ class ConfigSectionState extends State<ConfigSection> {
                 Navigator.pop(context);
                 onSelect(alarm);
                 await _audioPlayer.stop();
-                await _audioPlayer.play(AssetSource(alarm.path.replaceFirst('assets/', '')));
+                await _audioPlayer.play(
+                  AssetSource(alarm.path.replaceFirst('assets/', '')),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Container(
-
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                     leading: Icon(
-                       Icons.music_note,
+                      Icons.music_note,
                       color: AppColors.textPrimary,
                       size: 22,
                     ),
@@ -346,7 +414,9 @@ class ConfigSectionState extends State<ConfigSection> {
                     ),
                     title: Text(
                       alarm.name,
-                      style: isSelected ? AppFonts.medium_white_20 : AppFonts.regular_white_20,
+                      style: isSelected
+                          ? AppFonts.medium_white_20
+                          : AppFonts.regular_white_20,
                     ),
                   ),
                 ),
@@ -359,11 +429,10 @@ class ConfigSectionState extends State<ConfigSection> {
   }
 
   Future<List<AlarmModel>> _getAlarmsFromJson() async {
-    final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/json/alarms.json');
+    final String jsonString = await DefaultAssetBundle.of(
+      context,
+    ).loadString('assets/json/alarms.json');
     final List<dynamic> jsonList = json.decode(jsonString);
-    return jsonList.map((item) =>
-      AlarmModel.fromJson(item)
-    ).toList();
+    return jsonList.map((item) => AlarmModel.fromJson(item)).toList();
   }
 }
-

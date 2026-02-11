@@ -5,6 +5,7 @@ import '../../../../core/Theme/app_colors.dart';
 class SliderSessions extends StatefulWidget {
   final double initialValue;
   final int maxValue;
+  final int minValue;
   final int divisions;
   final ValueChanged<double> onChanged;
 
@@ -12,6 +13,7 @@ class SliderSessions extends StatefulWidget {
     super.key,
     required this.initialValue,
     required this.maxValue,
+    required this.minValue,
     required this.divisions,
     required this.onChanged,
   });
@@ -34,11 +36,15 @@ class _SliderSessionsState extends State<SliderSessions> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("${_currentValue.toInt()}", style: const TextStyle(color: Colors.white, fontSize: 35)),
+        Text(
+          "${_currentValue.toInt()}",
+          style: const TextStyle(color: Colors.white, fontSize: 35),
+        ),
         const SizedBox(height: 25),
         Slider(
           value: _currentValue,
           max: widget.maxValue.toDouble(),
+          min: widget.minValue.toDouble(),
           divisions: widget.divisions,
           inactiveColor: AppColors.glassPrimary,
           activeColor: AppColors.textPrimary,
