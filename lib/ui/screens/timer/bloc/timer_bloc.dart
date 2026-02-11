@@ -148,6 +148,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       'mode': 'work',
       'alarmWorkPath': event.alarmWorkPath,
       'alarmBreakPath': event.alarmBreakPath,
+      'volumeWorkAlarm': event.volumeWorkAlarm,
+      'volumeBreakAlarm': event.volumeBreakAlarm,
     });
 
     _lastSyncMs = DateTime.now().millisecondsSinceEpoch;

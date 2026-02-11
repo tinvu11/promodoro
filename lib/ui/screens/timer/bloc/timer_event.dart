@@ -11,12 +11,16 @@ final class TimerStarted extends TimerEvent {
     required this.totalRounds,
     required this.alarmWorkPath,
     required this.alarmBreakPath,
+    required this.volumeWorkAlarm,
+    required this.volumeBreakAlarm,
   });
   final int workDuration;
   final int breakDuration;
   final int totalRounds;
   final String alarmWorkPath;
   final String alarmBreakPath;
+  final double volumeWorkAlarm;
+  final double volumeBreakAlarm;
 }
 
 final class TimerPaused extends TimerEvent {
