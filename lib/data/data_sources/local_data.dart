@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/data/models/daily_stat.dart';
 import 'package:promodoro/data/models/settings_model.dart';
+import 'package:promodoro/data/models/theme_model.dart';
 
 import '../../configs/hive/app_hive.dart';
 
@@ -21,6 +22,11 @@ abstract interface class LocalData {
   int getTotalMinutes();
 
   int getTotalSessions();
+
+  /// Theme cache methods
+  List<ThemeModel> getCachedThemes();
+
+  Future<void> cacheThemes(List<ThemeModel> themes);
 }
 
 class HiveDatabase implements LocalData {
@@ -92,5 +98,18 @@ class HiveDatabase implements LocalData {
   @override
   Future<void> saveDailyStat(DailyStat dailyStat) async {
     await _appHive.dailyStatBox.put(dailyStat.id, dailyStat);
+  }
+
+  @override
+  List<ThemeModel> getCachedThemes() {
+    return _appHive.themesBox.values.toList();
+  }
+
+  @override
+  Future<void> cacheThemes(List<ThemeModel> themes) async {
+    await _appHive.themesBox.clear();
+    for (final theme in themes) {
+      await _appHive.themesBox.put(theme.id, theme);
+    }
   }
 }

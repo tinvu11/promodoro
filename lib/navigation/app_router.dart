@@ -3,14 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/ui/screens/home_navigation/home_navigation.dart';
 import 'package:promodoro/ui/screens/languages/languages_page.dart';
+import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
 import 'package:promodoro/ui/screens/noises/noises_page.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
 import 'package:promodoro/ui/screens/static/static_page.dart';
+
 import '../configs/di.dart';
 import '../ui/screens/settings/settings_page.dart';
 import '../ui/screens/timer/bloc/timer_bloc.dart';
 import '../ui/screens/timer/timer_page.dart';
+
 part 'route_paths.dart';
 
 class AppRouter {
@@ -66,7 +69,7 @@ class AppRouter {
         path: RoutePaths.noises,
         pageBuilder: (context, state) => NoTransitionPage(
           child: BlocProvider.value(
-            value: DI.sl<SettingsBloc>(),
+            value: DI.sl<NoisesBloc>(),
             child: const NoisesPage(),
           ),
         ),

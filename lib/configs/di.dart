@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
+import 'package:promodoro/data/data_sources/remote_data.dart';
+import 'package:promodoro/data/repositories/remote_data_repo.dart';
 import 'package:promodoro/data/repositories/settings_repository.dart';
 import 'package:promodoro/data/repositories/stat_repository.dart';
+import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
+import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
 import 'package:promodoro/ui/screens/timer/bloc/timer_bloc.dart';
@@ -11,6 +16,7 @@ import 'hive/app_hive.dart';
 
 class DI {
   static final sl = GetIt.instance;
+
   static Future<void> init() async {
     final appHive = AppHive();
     await appHive.init();
@@ -33,6 +39,16 @@ class DI {
     sl.registerLazySingleton(() => TimerBloc(statRepository: sl()));
     sl.registerLazySingleton(
       () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
+    );
+    sl.registerLazySingleton(
+      () => NoisesBloc(remoteDataRepo: sl())..add(LoadNoises()),
+    );
+    sl.registerLazySingleton<FirebaseFirestore>(
+      () => FirebaseFirestore.instance,
+    );
+    sl.registerLazySingleton<RemoteData>(() => RemoteDataImpl(firestore: sl()));
+    sl.registerLazySingleton<RemoteDataRepo>(
+      () => RemoteDataRepoImpl(remoteData: sl(), localData: sl()),
     );
   }
 }

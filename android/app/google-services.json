@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "889783600683",
+    "project_id": "white-noises-pomodoro",
+    "storage_bucket": "white-noises-pomodoro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889783600683:android:d1145b86b1121b3a38cc6e",
+        "android_client_info": {
+          "package_name": "com.example.promodoro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrHGwTdjT15f56Ws_H1hklIjvh2IiJ7kI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
