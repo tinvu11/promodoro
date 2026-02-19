@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +17,10 @@ class RemoteDataImpl implements RemoteData {
   @override
   Future<List<ThemeModel>> getResources() async {
     try {
-      final querySnapshot = await _firestore.collection('resources').get();
+      final querySnapshot = await _firestore
+          .collection('resources')
+          .get()
+          .timeout(const Duration(seconds: 10));
       return querySnapshot.docs.map((doc) {
         final data = doc.data();
         return ThemeModel.formFirebase(data, doc.id);

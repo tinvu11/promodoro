@@ -27,6 +27,12 @@ class _NoisesPageState extends State<NoisesPage> {
   void initState() {
     super.initState();
     _noisesBloc = context.read<NoisesBloc>();
+
+    // Load noises nếu chưa được load (lazy init)
+    if (_noisesBloc.state.status == NoiseStatus.initial) {
+      _noisesBloc.add(LoadNoises());
+    }
+
     // Khởi tạo preview cho theme đang active
     final settingsState = context.read<SettingsBloc>().state;
     if (settingsState is SuccessSettingState) {

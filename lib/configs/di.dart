@@ -8,7 +8,6 @@ import 'package:promodoro/data/repositories/stat_repository.dart';
 import 'package:promodoro/services/noise_audio_service.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
 import 'package:promodoro/ui/screens/timer/bloc/timer_bloc.dart';
@@ -34,6 +33,15 @@ class DI {
       () => StatRepositoryImpl(localData: sl()),
     );
 
+    // Firebase (đăng ký trước các dependency phụ thuộc)
+    sl.registerLazySingleton<FirebaseFirestore>(
+      () => FirebaseFirestore.instance,
+    );
+    sl.registerLazySingleton<RemoteData>(() => RemoteDataImpl(firestore: sl()));
+    sl.registerLazySingleton<RemoteDataRepo>(
+      () => RemoteDataRepoImpl(remoteData: sl(), localData: sl()),
+    );
+
     // Services
     sl.registerLazySingleton<ThemeStorageService>(
       () => ThemeStorageService(dio: AppDio.instance),
@@ -51,17 +59,9 @@ class DI {
     sl.registerLazySingleton(
       () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
     );
+    // NoisesBloc: KHÔNG fire LoadNoises ở đây — defer đến khi mở NoisesPage
     sl.registerLazySingleton(
-      () =>
-          NoisesBloc(remoteDataRepo: sl(), themeStorageService: sl())
-            ..add(LoadNoises()),
-    );
-    sl.registerLazySingleton<FirebaseFirestore>(
-      () => FirebaseFirestore.instance,
-    );
-    sl.registerLazySingleton<RemoteData>(() => RemoteDataImpl(firestore: sl()));
-    sl.registerLazySingleton<RemoteDataRepo>(
-      () => RemoteDataRepoImpl(remoteData: sl(), localData: sl()),
+      () => NoisesBloc(remoteDataRepo: sl(), themeStorageService: sl()),
     );
   }
 }

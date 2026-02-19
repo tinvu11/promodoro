@@ -55,7 +55,7 @@ class _TimerPageState extends State<TimerPage> {
     // Chỉ watch Settings vì nó ít khi thay đổi
     final settingsState = context.watch<SettingsBloc>().state;
     if (settingsState is! SuccessSettingState)
-      return const Scaffold(body: SizedBox());
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
     final settings = settingsState.settingsModel;
 
