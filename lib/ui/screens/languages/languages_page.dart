@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/background.dart';
 import '../../commons/widgets/common_appbar.dart';
@@ -17,7 +18,11 @@ class LanguagesPage extends StatelessWidget {
           GlassBox(
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.check_rounded, color: AppColors.textSecondary, size: 22),
+              child: Icon(
+                Icons.check_rounded,
+                color: AppColors.textSecondary,
+                size: 22,
+              ),
             ),
           ),
         ],
@@ -26,7 +31,12 @@ class LanguagesPage extends StatelessWidget {
       body: Stack(
         children: [
           const RepaintBoundary(
-            child: Background(image: 'assets/images/trees.jpg', sigmaX: 20, sigmaY: 20, darkAlpha: 0.35),
+            child: Background(
+              image: 'assets/images/brd.webpiird',
+              sigmaX: 20,
+              sigmaY: 20,
+              darkAlpha: 0.35,
+            ),
           ),
           SafeArea(
             child: Padding(

@@ -21,8 +21,11 @@ class AppRouter {
     initialLocation: RoutePaths.timer,
     routes: [
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => BlocProvider.value(
-          value: DI.sl<TimerBloc>(),
+        builder: (context, state, navigationShell) => MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: DI.sl<TimerBloc>()),
+            BlocProvider.value(value: DI.sl<SettingsBloc>()),
+          ],
           child: HomeNavigation(navigationShell: navigationShell),
         ),
         branches: [
@@ -68,8 +71,11 @@ class AppRouter {
       GoRoute(
         path: RoutePaths.noises,
         pageBuilder: (context, state) => NoTransitionPage(
-          child: BlocProvider.value(
-            value: DI.sl<NoisesBloc>(),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: DI.sl<NoisesBloc>()),
+              BlocProvider.value(value: DI.sl<SettingsBloc>()),
+            ],
             child: const NoisesPage(),
           ),
         ),

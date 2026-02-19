@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
+import 'package:promodoro/configs/dio/app_dio.dart';
 import 'package:promodoro/data/data_sources/remote_data.dart';
 import 'package:promodoro/data/repositories/remote_data_repo.dart';
 import 'package:promodoro/data/repositories/settings_repository.dart';
 import 'package:promodoro/data/repositories/stat_repository.dart';
+import 'package:promodoro/services/noise_audio_service.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
@@ -31,6 +34,14 @@ class DI {
       () => StatRepositoryImpl(localData: sl()),
     );
 
+    // Services
+    sl.registerLazySingleton<ThemeStorageService>(
+      () => ThemeStorageService(dio: AppDio.instance),
+    );
+    sl.registerLazySingleton<NoiseAudioService>(
+      () => NoiseAudioService(themeStorageService: sl()),
+    );
+
     // BLoCs
     sl.registerLazySingleton(
       () => SettingsBloc(settingsRepository: sl())..add(GetSettingsEvent()),
@@ -41,7 +52,9 @@ class DI {
       () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
     );
     sl.registerLazySingleton(
-      () => NoisesBloc(remoteDataRepo: sl())..add(LoadNoises()),
+      () =>
+          NoisesBloc(remoteDataRepo: sl(), themeStorageService: sl())
+            ..add(LoadNoises()),
     );
     sl.registerLazySingleton<FirebaseFirestore>(
       () => FirebaseFirestore.instance,

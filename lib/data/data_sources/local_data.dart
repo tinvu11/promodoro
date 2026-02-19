@@ -3,6 +3,7 @@ import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/data/models/daily_stat.dart';
 import 'package:promodoro/data/models/settings_model.dart';
 import 'package:promodoro/data/models/theme_model.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
 
 import '../../configs/hive/app_hive.dart';
 
@@ -39,11 +40,11 @@ class HiveDatabase implements LocalData {
   SettingsModel getSettings() {
     return _appHive.settingsBox.get(_settingsModelKey) ??
         SettingsModel(
-          workTime: 2500,
+          workTime: 1500,
           breakTime: 300,
           repeatCount: 5,
           isSoundEnabled: true,
-          selectedThemeId: "1path theme",
+          selectedThemeId: ThemeStorageService.defaultThemeId,
           alarmWork: AlarmModel(
             id: "1",
             name: "Happy",
@@ -58,6 +59,7 @@ class HiveDatabase implements LocalData {
           volumeBreakAlarm: 20,
           volumeNoise: 90,
           alwaysOnScreen: true,
+          themeName: ThemeStorageService.defaultThemeName,
         );
   }
 

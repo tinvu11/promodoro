@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive_ce/hive.dart';
+
 import '../../configs/hive/hive_types.dart';
 import 'alarm_model.dart';
 
@@ -40,6 +41,9 @@ class SettingsModel extends HiveObject with EquatableMixin {
   @HiveField(10)
   final bool alwaysOnScreen;
 
+  @HiveField(11)
+  final String themeName;
+
   SettingsModel({
     required this.workTime,
     required this.breakTime,
@@ -52,6 +56,7 @@ class SettingsModel extends HiveObject with EquatableMixin {
     required this.volumeBreakAlarm,
     required this.volumeNoise,
     required this.alwaysOnScreen,
+    required this.themeName,
   });
 
   SettingsModel copyWith({
@@ -66,6 +71,7 @@ class SettingsModel extends HiveObject with EquatableMixin {
     double? volumeBreakAlarm,
     double? volumeNoise,
     bool? alwaysOnScreen,
+    String? themeNane,
   }) {
     return SettingsModel(
       workTime: workTime ?? this.workTime,
@@ -79,6 +85,7 @@ class SettingsModel extends HiveObject with EquatableMixin {
       volumeBreakAlarm: volumeBreakAlarm ?? this.volumeBreakAlarm,
       volumeNoise: volumeNoise ?? this.volumeNoise,
       alwaysOnScreen: alwaysOnScreen ?? this.alwaysOnScreen,
+      themeName: themeNane ?? this.themeName,
     );
   }
 
