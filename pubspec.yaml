@@ -53,6 +53,7 @@ dependencies:
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
   dio: ^5.9.1
+  firebase_auth: ^6.1.4
   connectivity_plus: ^7.0.0
   google_mobile_ads: ^7.0.0
 

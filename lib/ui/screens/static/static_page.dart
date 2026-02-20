@@ -7,6 +7,7 @@ import 'package:promodoro/utils/time_formatting.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../../data/models/daily_stat.dart';
+import '../../commons/widgets/banner_ad_widget.dart';
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
 
@@ -101,6 +102,8 @@ class _StaticPageState extends State<StaticPage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    const SizedBox(height: 8),
+                    const BannerAdWidget(),
                     const SizedBox(height: 8),
                     GlassBox(
                       child: SizedBox(

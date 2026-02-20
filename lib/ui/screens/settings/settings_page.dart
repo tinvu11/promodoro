@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:promodoro/ui/commons/widgets/banner_ad_widget.dart';
 import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
 import 'package:promodoro/ui/screens/settings/widgets/config_section.dart';
 import 'package:promodoro/ui/screens/settings/widgets/sound_section.dart';
@@ -15,7 +16,16 @@ class SettingsPage extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          child: Column(children: const [ConfigSection(), SoundSection(), SystemSection(), SizedBox(height: 20)]),
+          child: Column(
+            children: const [
+              BannerAdWidget(),
+              SizedBox(height: 8),
+              ConfigSection(),
+              SoundSection(),
+              SystemSection(),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
