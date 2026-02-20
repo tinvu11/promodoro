@@ -8,8 +8,14 @@ import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_state.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
+import 'package:promodoro/configs/di.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:developer';
+import 'dart:io';
+import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/theme_background.dart';
 
@@ -23,23 +29,27 @@ class NoisesPage extends StatefulWidget {
 class _NoisesPageState extends State<NoisesPage> {
   late final NoisesBloc _noisesBloc;
 
+  /// Đường dẫn bg tính sync để tránh nháy frame đầu tiên.
+  String? _initialBgPath;
+
   @override
   void initState() {
     super.initState();
     _noisesBloc = context.read<NoisesBloc>();
-
-    // Load noises nếu chưa được load (lazy init)
-    if (_noisesBloc.state.status == NoiseStatus.initial) {
-      _noisesBloc.add(LoadNoises());
-    }
 
     // Khởi tạo preview cho theme đang active
     final settingsState = context.read<SettingsBloc>().state;
     if (settingsState is SuccessSettingState) {
       final themeId = settingsState.settingsModel.selectedThemeId;
       if (themeId.isNotEmpty) {
+        // Lấy path sync để hiện đúng bg ngay frame đầu tiên
+        final service = DI.sl<ThemeStorageService>();
+        _initialBgPath = service.bgPathOfSync(themeId);
         _noisesBloc.add(InitPreview(themeId: themeId));
       }
+    }
+    if (_noisesBloc.state.status == NoiseStatus.initial) {
+      _noisesBloc.add(LoadNoises());
     }
   }
 
@@ -82,12 +92,14 @@ class _NoisesPageState extends State<NoisesPage> {
               buildWhen: (prev, curr) =>
                   prev.previewBgPath != curr.previewBgPath,
               builder: (context, state) {
+                // Dùng path sync làm fallback để không nháy frame đầu
+                final bgPath = state.previewBgPath ?? _initialBgPath;
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 500),
                   child: RepaintBoundary(
-                    key: ValueKey(state.previewBgPath ?? 'default'),
+                    key: ValueKey(bgPath ?? 'default'),
                     child: ThemeBackground(
-                      localImagePath: state.previewBgPath,
+                      localImagePath: bgPath,
                       sigmaX: 15,
                       sigmaY: 15,
                       darkAlpha: 0.55,
@@ -96,6 +108,7 @@ class _NoisesPageState extends State<NoisesPage> {
                 );
               },
             ),
+
             BlocBuilder<NoisesBloc, NoisesState>(
               builder: (BuildContext context, state) {
                 if (state.status == NoiseStatus.loading) {

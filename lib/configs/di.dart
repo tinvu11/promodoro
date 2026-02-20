@@ -43,9 +43,9 @@ class DI {
     );
 
     // Services
-    sl.registerLazySingleton<ThemeStorageService>(
-      () => ThemeStorageService(dio: AppDio.instance),
-    );
+    final themeStorageService = ThemeStorageService(dio: AppDio.instance);
+    await themeStorageService.init();
+    sl.registerLazySingleton<ThemeStorageService>(() => themeStorageService);
     sl.registerLazySingleton<NoiseAudioService>(
       () => NoiseAudioService(themeStorageService: sl()),
     );

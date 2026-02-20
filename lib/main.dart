@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:promodoro/services/background_service.dart';
 import 'package:promodoro/simple_bloc_observer.dart';
 
@@ -17,7 +18,7 @@ void main() async {
 
   // DI phải init SAU Firebase vì một số dependency cần Firebase
   await DI.init();
-
+  await MobileAds.instance.initialize();
   Bloc.observer = SimpleBlocObserver();
   runApp(const App());
 }
@@ -40,7 +41,9 @@ Future<void> _initFirebase() async {
 
 class TimeoutException implements Exception {
   final String message;
+
   const TimeoutException(this.message);
+
   @override
   String toString() => message;
 }

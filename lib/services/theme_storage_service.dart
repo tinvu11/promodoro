@@ -31,14 +31,35 @@ class ThemeStorageService {
   static bool isDefaultTheme(String themeId) => themeId == defaultThemeId;
 
   final Dio _dio;
+  String? _cachedRootPath;
 
   ThemeStorageService({required Dio dio}) : _dio = dio;
+
+  /// Pre-cache đường dẫn thư mục app để các method sync hoạt động.
+  Future<void> init() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    _cachedRootPath = '${appDir.path}/$_themeDir';
+    final dir = Directory(_cachedRootPath!);
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+  }
+
+  /// Lấy đường dẫn ảnh nền **đồng bộ** (trả null nếu chưa init).
+  String? bgPathOfSync(String themeId) {
+    if (_cachedRootPath == null) return null;
+    return '$_cachedRootPath/$themeId/$_bgFile';
+  }
 
   // ──────────────────────────── Paths ────────────────────────────
 
   Future<Directory> _getThemeRootDir() async {
+    if (_cachedRootPath != null) {
+      return Directory(_cachedRootPath!);
+    }
     final appDir = await getApplicationDocumentsDirectory();
-    final themeDir = Directory('${appDir.path}/$_themeDir');
+    _cachedRootPath = '${appDir.path}/$_themeDir';
+    final themeDir = Directory(_cachedRootPath!);
     if (!await themeDir.exists()) {
       await themeDir.create(recursive: true);
       log('[ThemeStorage] Created theme root: ${themeDir.path}');

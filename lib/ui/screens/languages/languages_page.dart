@@ -32,7 +32,7 @@ class LanguagesPage extends StatelessWidget {
         children: [
           const RepaintBoundary(
             child: Background(
-              image: 'assets/images/brd.webpiird',
+              image: 'assets/images/bird.webp',
               sigmaX: 20,
               sigmaY: 20,
               darkAlpha: 0.35,

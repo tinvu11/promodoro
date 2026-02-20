@@ -36,7 +36,6 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
     Emitter<NoisesState> emit,
   ) async {
     emit(state.copyWith(status: NoiseStatus.loading));
-
     // Load danh sách theme đã tải về local
     try {
       final downloadedIds = await _themeStorageService.getDownloadedThemeIds();
@@ -176,17 +175,16 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
   ) async {
     final themeId = event.themeId;
     if (themeId.isEmpty) return;
-    log('[NoisesBloc] Init preview for theme: $themeId');
     try {
       // Theme mặc định → dùng asset, không cần file local
       if (ThemeStorageService.isDefaultTheme(themeId)) {
-        emit(
-          state.copyWith(
-            previewBgPath: ThemeStorageService.defaultBgAsset,
-            previewThemeId: themeId,
-          ),
-        );
-        return;
+        // emit(
+        //   state.copyWith(
+        //     previewBgPath: ThemeStorageService.defaultBgAsset,
+        //     previewThemeId: themeId,
+        //   ),
+        // );
+        // return;
       }
       final bgPath = await _themeStorageService.bgPathOf(themeId);
       final hasLocal = await _themeStorageService.hasLocalBg(themeId);
