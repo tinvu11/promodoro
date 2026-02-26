@@ -7,6 +7,7 @@ import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/data/models/daily_stat.dart';
 import 'package:promodoro/data/models/pomodoro_stats.dart';
 import 'package:promodoro/data/models/settings_model.dart';
+import 'package:promodoro/data/models/theme_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
@@ -14,6 +15,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(DailyStatAdapter());
     registerAdapter(PomodoroStatsAdapter());
     registerAdapter(SettingsModelAdapter());
+    registerAdapter(ThemeModelAdapter());
   }
 }
 
@@ -23,5 +25,6 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(DailyStatAdapter());
     registerAdapter(PomodoroStatsAdapter());
     registerAdapter(SettingsModelAdapter());
+    registerAdapter(ThemeModelAdapter());
   }
 }

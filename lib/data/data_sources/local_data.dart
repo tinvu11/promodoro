@@ -2,6 +2,8 @@ import 'package:intl/intl.dart';
 import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/data/models/daily_stat.dart';
 import 'package:promodoro/data/models/settings_model.dart';
+import 'package:promodoro/data/models/theme_model.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
 
 import '../../configs/hive/app_hive.dart';
 
@@ -21,6 +23,11 @@ abstract interface class LocalData {
   int getTotalMinutes();
 
   int getTotalSessions();
+
+  /// Theme cache methods
+  List<ThemeModel> getCachedThemes();
+
+  Future<void> cacheThemes(List<ThemeModel> themes);
 }
 
 class HiveDatabase implements LocalData {
@@ -33,11 +40,11 @@ class HiveDatabase implements LocalData {
   SettingsModel getSettings() {
     return _appHive.settingsBox.get(_settingsModelKey) ??
         SettingsModel(
-          workTime: 2500,
+          workTime: 1500,
           breakTime: 300,
           repeatCount: 5,
           isSoundEnabled: true,
-          selectedThemeId: "1path theme",
+          selectedThemeId: ThemeStorageService.defaultThemeId,
           alarmWork: AlarmModel(
             id: "1",
             name: "Happy",
@@ -52,6 +59,7 @@ class HiveDatabase implements LocalData {
           volumeBreakAlarm: 20,
           volumeNoise: 90,
           alwaysOnScreen: true,
+          themeName: ThemeStorageService.defaultThemeName,
         );
   }
 
@@ -92,5 +100,18 @@ class HiveDatabase implements LocalData {
   @override
   Future<void> saveDailyStat(DailyStat dailyStat) async {
     await _appHive.dailyStatBox.put(dailyStat.id, dailyStat);
+  }
+
+  @override
+  List<ThemeModel> getCachedThemes() {
+    return _appHive.themesBox.values.toList();
+  }
+
+  @override
+  Future<void> cacheThemes(List<ThemeModel> themes) async {
+    await _appHive.themesBox.clear();
+    for (final theme in themes) {
+      await _appHive.themesBox.put(theme.id, theme);
+    }
   }
 }

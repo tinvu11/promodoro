@@ -19,9 +19,12 @@ class SoundSection extends StatelessWidget {
           // Các phần khác tương tự...
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
-              return p.settingsModel.isSoundEnabled != c.settingsModel.isSoundEnabled ||
-                  p.settingsModel.selectedThemeId != c.settingsModel.selectedThemeId ||
+              if (p is! SuccessSettingState || c is! SuccessSettingState)
+                return false;
+              return p.settingsModel.isSoundEnabled !=
+                      c.settingsModel.isSoundEnabled ||
+                  p.settingsModel.selectedThemeId !=
+                      c.settingsModel.selectedThemeId ||
                   p.settingsModel.volumeNoise != c.settingsModel.volumeNoise;
             },
             builder: (context, state) {
@@ -29,20 +32,40 @@ class SoundSection extends StatelessWidget {
               final settingsModel = state.settingsModel;
               return Column(
                 children: [
-                  _buildSwitchTile("Âm thanh", settingsModel.isSoundEnabled, (val) {
-                    context.read<SettingsBloc>().add(SaveSettingsEvent(isSoundEnabled: val));
+                  _buildSwitchTile("Âm thanh", settingsModel.isSoundEnabled, (
+                    val,
+                  ) {
+                    context.read<SettingsBloc>().add(
+                      SaveSettingsEvent(isSoundEnabled: val),
+                    );
                   }),
-                  const Divider(color: AppColors.glassSecondary, height: 1, indent: 16, endIndent: 16),
+                  const Divider(
+                    color: AppColors.glassSecondary,
+                    height: 1,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
                   _buildSimpleTile(
                     context,
                     "Âm thanh nền",
-                    settingsModel.selectedThemeId,
+                    settingsModel.themeName,
                     onTap: () => context.push(RoutePaths.noises),
                   ),
-                  const Divider(color: AppColors.glassSecondary, height: 1, indent: 16, endIndent: 16),
-                  _buildVolumeSliderTile("Âm lượng", settingsModel.volumeNoise, (val) {
-                    context.read<SettingsBloc>().add(SaveSettingsEvent(volumeNoise: val));
-                  }),
+                  const Divider(
+                    color: AppColors.glassSecondary,
+                    height: 1,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+                  _buildVolumeSliderTile(
+                    "Âm lượng",
+                    settingsModel.volumeNoise,
+                    (val) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(volumeNoise: val),
+                      );
+                    },
+                  ),
                 ],
               );
             },
@@ -52,7 +75,11 @@ class SoundSection extends StatelessWidget {
     );
   }
 
-  Widget _buildVolumeSliderTile(String title, double initialValue, ValueChanged<double> onChanged) {
+  Widget _buildVolumeSliderTile(
+    String title,
+    double initialValue,
+    ValueChanged<double> onChanged,
+  ) {
     double value = initialValue;
 
     return StatefulBuilder(
@@ -78,7 +105,10 @@ class SoundSection extends StatelessWidget {
                       onChangeEnd: (value) => onChanged(value),
                     ),
                   ),
-                  Padding(padding: const EdgeInsets.only(right: 12.0), child: Text("${value.toInt()}%")),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Text("${value.toInt()}%"),
+                  ),
                 ],
               ),
             ],
@@ -88,7 +118,11 @@ class SoundSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSwitchTile(String title, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildSwitchTile(
+    String title,
+    bool value,
+    ValueChanged<bool> onChanged,
+  ) {
     return ListTile(
       title: Text(title, style: AppFonts.medium_white_20),
       trailing: Switch(
@@ -104,11 +138,18 @@ class SoundSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSimpleTile(BuildContext context, String title, String value, {VoidCallback? onTap}) {
+  Widget _buildSimpleTile(
+    BuildContext context,
+    String title,
+    String value, {
+    VoidCallback? onTap,
+  }) {
     return Theme(
-      data: Theme.of(
-        context,
-      ).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent),
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
       child: ListTile(
         onTap: onTap,
         title: Text(title, style: AppFonts.medium_white_20),

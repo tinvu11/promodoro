@@ -10,6 +10,7 @@ part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SettingsRepository settingsRepository;
+
   SettingsBloc({required this.settingsRepository})
     : super(InitialSettingsState()) {
     on<GetSettingsEvent>(_onGetSettings);
@@ -44,6 +45,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       volumeBreakAlarm: event.volumeBreakAlarm ?? currentModel.volumeBreakAlarm,
       volumeNoise: event.volumeNoise ?? currentModel.volumeNoise,
       alwaysOnScreen: event.alwaysOnScreen ?? currentModel.alwaysOnScreen,
+      themeNane: event.themeName ?? currentModel.themeName,
     );
     emit(currentState.copyWith(settingsModel: updatedModel));
     await settingsRepository.saveSettings(updatedModel);

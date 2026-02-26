@@ -7,6 +7,8 @@ import 'package:promodoro/utils/time_formatting.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../../data/models/daily_stat.dart';
+import '../../bloc/iap/iap_bloc.dart';
+import '../../commons/widgets/banner_ad_widget.dart';
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
 
@@ -46,6 +48,8 @@ class _StaticPageState extends State<StaticPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isPremium = context.watch<IapBloc>().state.boughtNoAdsTime != null;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: CommonAppBar(
@@ -96,94 +100,110 @@ class _StaticPageState extends State<StaticPage> {
             );
           }
           if (state is StaticLoaded) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    GlassBox(
-                      child: SizedBox(
-                        height: 300,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(
-                                _monthLabel,
-                                style: AppFonts.medium_white_22,
-                              ),
-                              trailing: Text(
-                                "Tổng: ${_totalMonthlyFormatted(state.allStats)}",
-                                style: AppFonts.regular_grey_16,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                              ),
-                              child: Divider(color: AppColors.glassSecondary),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                child: StaticBarChart(
-                                  allStats: state.allStats,
-                                  onMonthChanged: _onMonthChanged,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+            return Column(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      BannerAdWidget(
+                        isPremium: isPremium,
+                        paddingHorizontal: 16,
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    GlassBox(
-                      width: double.infinity,
-                      child: Padding(
+                      const SizedBox(height: 16),
+                      Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.calendar_month,
-                                color: AppColors.textSecondary,
-                              ),
-                              title: Text(
-                                "Hôm nay",
-                                style: AppFonts.medium_white_18,
-                              ),
-                              subtitle: Text(
-                                "${(state.todayStat.minutes * 60).toHour()} - ${state.todayStat.sessions} sessions",
-                                style: AppFonts.regular_grey_16,
-                              ),
+                        child: GlassBox(
+                          child: SizedBox(
+                            height: 300,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                ListTile(
+                                  title: Text(
+                                    _monthLabel,
+                                    style: AppFonts.medium_white_22,
+                                  ),
+                                  trailing: Text(
+                                    "Tổng: ${_totalMonthlyFormatted(state.allStats)}",
+                                    style: AppFonts.regular_grey_16,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                  ),
+                                  child: Divider(
+                                    color: AppColors.glassSecondary,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    child: StaticBarChart(
+                                      allStats: state.allStats,
+                                      onMonthChanged: _onMonthChanged,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            Divider(color: AppColors.glassSecondary),
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(
-                                Icons.watch_later_outlined,
-                                color: AppColors.textSecondary,
-                              ),
-                              title: Text(
-                                "Tổng",
-                                style: AppFonts.medium_white_18,
-                              ),
-                              subtitle: Text(
-                                "${(state.totalMinutes * 60).toHour()} - ${state.totalSessions} sessions",
-                                style: AppFonts.regular_grey_16,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+
+                        child: GlassBox(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: const Icon(
+                                    Icons.calendar_month,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  title: Text(
+                                    "Hôm nay",
+                                    style: AppFonts.medium_white_18,
+                                  ),
+                                  subtitle: Text(
+                                    "${(state.todayStat.minutes * 60).toHour()} - ${state.todayStat.sessions} sessions",
+                                    style: AppFonts.regular_grey_16,
+                                  ),
+                                ),
+                                Divider(color: AppColors.glassSecondary),
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: const Icon(
+                                    Icons.watch_later_outlined,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  title: Text(
+                                    "Tổng",
+                                    style: AppFonts.medium_white_18,
+                                  ),
+                                  subtitle: Text(
+                                    "${(state.totalMinutes * 60).toHour()} - ${state.totalSessions} sessions",
+                                    style: AppFonts.regular_grey_16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             );
           }
           return const SizedBox.shrink();

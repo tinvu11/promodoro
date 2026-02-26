@@ -13,6 +13,7 @@ final class SaveSettingsEvent extends SettingsEvent {
   final int? repeatCount;
   final bool? isSoundEnabled;
   final String? selectedThemeId;
+  final String? themeName;
   final AlarmModel? alarmWork;
   final AlarmModel? alarmBreak;
   final double? volumeWorkAlarm;
@@ -26,6 +27,7 @@ final class SaveSettingsEvent extends SettingsEvent {
     this.repeatCount,
     this.isSoundEnabled,
     this.selectedThemeId,
+    this.themeName,
     this.alarmWork,
     this.alarmBreak,
     this.volumeWorkAlarm,
@@ -46,6 +48,7 @@ final class SaveSettingsEvent extends SettingsEvent {
     volumeWorkAlarm,
     volumeBreakAlarm,
     volumeNoise,
+    themeName,
     alwaysOnScreen,
   ];
 }

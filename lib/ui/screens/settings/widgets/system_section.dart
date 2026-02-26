@@ -19,21 +19,49 @@ class SystemSection extends StatelessWidget {
         children: [
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState) return false;
-              return p.settingsModel.alwaysOnScreen != c.settingsModel.alwaysOnScreen;
+              if (p is! SuccessSettingState || c is! SuccessSettingState)
+                return false;
+              return p.settingsModel.alwaysOnScreen !=
+                  c.settingsModel.alwaysOnScreen;
             },
             builder: (context, state) {
               state as SuccessSettingState;
               final settingsModel = state.settingsModel;
               return Column(
                 children: [
-                  _buildSimpleTile(context, "Ngôn ngữ", "Tiếng Việt", onTap: () => context.push(RoutePaths.language)),
-                  const Divider(color: AppColors.glassSecondary, height: 1, indent: 16, endIndent: 16),
-                  _buildSwitchTile("Luôn bật màn hình", settingsModel.alwaysOnScreen, (val) {
-                    context.read<SettingsBloc>().add(SaveSettingsEvent(alwaysOnScreen: val));
-                  }),
-                  const Divider(color: AppColors.glassSecondary, height: 1, indent: 16, endIndent: 16),
-                  _buildSimpleTile(context, "Thông tin", ""),
+                  _buildSimpleTile(
+                    context,
+                    "Ngôn ngữ",
+                    "Tiếng Việt",
+                    onTap: () => context.push(RoutePaths.language),
+                  ),
+                  const Divider(
+                    color: AppColors.glassSecondary,
+                    height: 1,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+                  _buildSwitchTile(
+                    "Luôn bật màn hình",
+                    settingsModel.alwaysOnScreen,
+                    (val) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(alwaysOnScreen: val),
+                      );
+                    },
+                  ),
+                  const Divider(
+                    color: AppColors.glassSecondary,
+                    height: 1,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+                  _buildSimpleTile(
+                    context,
+                    "Thông tin",
+                    "",
+                    onTap: () => context.push(RoutePaths.infos),
+                  ),
                 ],
               );
             },
@@ -43,7 +71,11 @@ class SystemSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSwitchTile(String title, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildSwitchTile(
+    String title,
+    bool value,
+    ValueChanged<bool> onChanged,
+  ) {
     return ListTile(
       title: Text(title, style: AppFonts.medium_white_20),
       trailing: Switch(
@@ -58,11 +90,18 @@ class SystemSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSimpleTile(BuildContext context, String title, String value, {VoidCallback? onTap}) {
+  Widget _buildSimpleTile(
+    BuildContext context,
+    String title,
+    String value, {
+    VoidCallback? onTap,
+  }) {
     return Theme(
-      data: Theme.of(
-        context,
-      ).copyWith(splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent),
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
       child: ListTile(
         onTap: onTap,
         title: Text(title, style: AppFonts.medium_white_20),

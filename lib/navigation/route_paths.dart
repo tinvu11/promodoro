@@ -7,4 +7,5 @@ class RoutePaths {
   static const String settings = '/setting';
   static const String noises = '/noises';
   static const String language = '/language';
+  static const String infos = '/infos';
 }

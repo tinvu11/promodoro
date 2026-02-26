@@ -28,13 +28,14 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       volumeBreakAlarm: (fields[8] as num).toDouble(),
       volumeNoise: (fields[9] as num).toDouble(),
       alwaysOnScreen: fields[10] as bool,
+      themeName: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, SettingsModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.workTime)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       ..writeByte(9)
       ..write(obj.volumeNoise)
       ..writeByte(10)
-      ..write(obj.alwaysOnScreen);
+      ..write(obj.alwaysOnScreen)
+      ..writeByte(11)
+      ..write(obj.themeName);
   }
 
   @override
