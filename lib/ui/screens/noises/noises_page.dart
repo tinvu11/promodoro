@@ -1,21 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:promodoro/configs/di.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
 import 'package:promodoro/data/models/theme_model.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_state.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/configs/di.dart';
 import 'package:shimmer/shimmer.dart';
-import 'dart:developer';
-import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/theme_background.dart';
 

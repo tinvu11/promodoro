@@ -1,11 +1,13 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:promodoro/services/background_service.dart';
 import 'package:promodoro/simple_bloc_observer.dart';
+import 'package:promodoro/ui/bloc/iap/iap_bloc.dart';
+import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
 import 'app.dart';
 import 'configs/di.dart';
@@ -18,9 +20,21 @@ void main() async {
 
   // DI phải init SAU Firebase vì một số dependency cần Firebase
   await DI.init();
+
+  // Đăng nhập ẩn danh (tạo tài khoản nếu chưa có)
+  // await DI.sl<AuthRepository>().signInAnonymously();
+
   await MobileAds.instance.initialize();
   Bloc.observer = SimpleBlocObserver();
-  runApp(const App());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => DI.sl<IapBloc>()),
+        BlocProvider(create: (context) => DI.sl<SettingsBloc>()),
+      ],
+      child: const App(),
+    ),
+  );
 }
 
 /// Khởi tạo Firebase với timeout 15s để tránh treo app

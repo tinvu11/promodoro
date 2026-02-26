@@ -103,52 +103,56 @@ class _HomeNavigationState extends State<HomeNavigation> {
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: BlocBuilder<TimerBloc, TimerState>(
+        buildWhen: (prev, curr) =>
+            (prev is TimerRunInProgress) != (curr is TimerRunInProgress),
         builder: (context, state) {
           // if (state is TimerRunInProgress) return const SizedBox.shrink();
           final bool isRunning = state is TimerRunInProgress;
-          return AnimatedContainer(
-            duration: const Duration(
-              milliseconds: 300,
-            ), // Thời gian chạy hiệu ứng
-            curve: Curves.easeInOut, // Kiểu chuyển động mượt
-            height: isRunning ? 0 : 80,
-            child: NavigationBar(
-              height: 56,
-              elevation: 0,
-              indicatorColor: Colors.transparent,
-              selectedIndex: widget.navigationShell.currentIndex,
-              onDestinationSelected: _onTap,
-              backgroundColor: Colors.transparent,
-              overlayColor: WidgetStateProperty.all(Colors.transparent),
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(
-                    Icons.timer_outlined,
-                    color: AppColors.textSecondary,
+          return ClipRect(
+            child: AnimatedContainer(
+              duration: const Duration(
+                milliseconds: 300,
+              ), // Thời gian chạy hiệu ứng
+              curve: Curves.easeInOut, // Kiểu chuyển động mượt
+              height: isRunning ? 0 : 80,
+              child: NavigationBar(
+                height: 56,
+                elevation: 0,
+                indicatorColor: Colors.transparent,
+                selectedIndex: widget.navigationShell.currentIndex,
+                onDestinationSelected: _onTap,
+                backgroundColor: Colors.transparent,
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(
+                      Icons.timer_outlined,
+                      color: AppColors.textSecondary,
+                    ),
+                    selectedIcon: Icon(Icons.timer, color: Colors.white),
+                    label: "Timer",
                   ),
-                  selectedIcon: Icon(Icons.timer, color: Colors.white),
-                  label: "Timer",
-                ),
-                NavigationDestination(
-                  icon: Icon(
-                    Icons.stacked_bar_chart_rounded,
-                    color: AppColors.textSecondary,
+                  NavigationDestination(
+                    icon: Icon(
+                      Icons.stacked_bar_chart_rounded,
+                      color: AppColors.textSecondary,
+                    ),
+                    selectedIcon: Icon(
+                      Icons.stacked_bar_chart_rounded,
+                      color: Colors.white,
+                    ),
+                    label: "Static",
                   ),
-                  selectedIcon: Icon(
-                    Icons.stacked_bar_chart_rounded,
-                    color: Colors.white,
+                  NavigationDestination(
+                    icon: Icon(
+                      Icons.settings_outlined,
+                      color: AppColors.textSecondary,
+                    ),
+                    selectedIcon: Icon(Icons.settings, color: Colors.white),
+                    label: "Setting",
                   ),
-                  label: "Static",
-                ),
-                NavigationDestination(
-                  icon: Icon(
-                    Icons.settings_outlined,
-                    color: AppColors.textSecondary,
-                  ),
-                  selectedIcon: Icon(Icons.settings, color: Colors.white),
-                  label: "Setting",
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

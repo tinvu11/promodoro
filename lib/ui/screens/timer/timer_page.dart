@@ -7,12 +7,16 @@ import 'package:promodoro/configs/di.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
 import 'package:promodoro/navigation/app_router.dart';
 import 'package:promodoro/services/noise_audio_service.dart';
+import 'package:promodoro/ui/commons/widgets/banner_ad_widget.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/timer/widgets/GlassTimerPage.dart';
 import 'package:promodoro/utils/time_formatting.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
+import '../../commons/widgets/paywall_dialog.dart';
 import 'bloc/timer_bloc.dart';
 
 class TimerPage extends StatefulWidget {
@@ -70,36 +74,65 @@ class _TimerPageState extends State<TimerPage> {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         }
 
+        // ── Giữ màn hình sáng (WakelockPlus phải gọi ở UI side) ──
+        if (state is TimerRunInProgress && settings.alwaysOnScreen) {
+          WakelockPlus.enable();
+        } else if (state is! TimerRunInProgress) {
+          WakelockPlus.disable();
+        }
+
         // ── Quản lý nhạc nền (ambient noises) ──
         _handleNoiseAudio(state, settings);
       },
 
       child: BlocBuilder<TimerBloc, TimerState>(
+        buildWhen: (prev, curr) =>
+            (prev is TimerRunInProgress) != (curr is TimerRunInProgress),
         builder: (context, state) {
           final bool isRunning = state is TimerRunInProgress;
 
           return Scaffold(
             backgroundColor: Colors.transparent,
             extendBodyBehindAppBar: true,
-            appBar: isRunning
-                ? null
-                : _buildAppBar(context, settings.themeName),
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(kToolbarHeight),
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                offset: isRunning ? const Offset(0, -1) : Offset.zero,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 250),
+                  opacity: isRunning ? 0.0 : 1.0,
+                  child: _buildAppBar(context, settings.themeName),
+                ),
+              ),
+            ),
             body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-
+              child: Stack(
+                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // 1. Khu vực hiển thị Timer (Đã tối ưu Rebuild)
                   GestureDetector(
                     onTap: () {
-                      _onToggleTimer(context, state, settings);
+                      final currentState = context.read<TimerBloc>().state;
+                      _onToggleTimer(context, currentState, settings);
                     },
                     child: _buildTimerDisplay(settings),
                   ),
 
                   const SizedBox(height: 100),
 
-                  // isRunning ? SizedBox(height: 60,) : _buildControlButtons(context, settings),
+                  isRunning
+                      ? Positioned(
+                          bottom: 16,
+                          right: 0,
+                          left: 0,
+                          child: BannerAdWidget(
+                            isPremium: false,
+                            paddingHorizontal: 16,
+                          ),
+                        )
+                      : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -138,6 +171,7 @@ class _TimerPageState extends State<TimerPage> {
 
             // Text Mode và Round
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -290,6 +324,7 @@ class _TimerPageState extends State<TimerPage> {
   PreferredSizeWidget _buildAppBar(BuildContext context, String themeId) {
     return CommonAppBar(
       showLeading: false,
+
       actions: [
         GestureDetector(
           onTap: () => context.push(RoutePaths.noises),
@@ -298,7 +333,7 @@ class _TimerPageState extends State<TimerPage> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  const Icon(Icons.palette, color: Colors.white, size: 16),
+                  const Icon(Icons.palette, color: Colors.white, size: 18),
                   const SizedBox(width: 5),
                   Text(
                     themeId,
@@ -307,6 +342,21 @@ class _TimerPageState extends State<TimerPage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 8),
+        GestureDetector(
+          // onTap: () => _showPremiumDialog(context),
+          onTap: () => PaywallDialog.show(context),
+          child: GlassBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.workspace_premium,
+                color: AppColors.textSecondary,
+                size: 22,
               ),
             ),
           ),

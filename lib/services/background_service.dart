@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 Timer? _timer;
 List<StreamSubscription>? _subscriptions;
@@ -22,6 +23,7 @@ String _alarmWorkPath = '';
 String _alarmBreakPath = '';
 double _volumeWorkAlarm = 100.0;
 double _volumeBreakAlarm = 100.0;
+bool _alwayOnScreen = true;
 final AudioPlayer _audioPlayer = AudioPlayer();
 
 int get _remainingSeconds {
@@ -104,9 +106,12 @@ void onStart(ServiceInstance service) async {
       _mode = (event['mode'] as String?) ?? 'work';
       _alarmWorkPath = (event['alarmWorkPath'] as String?) ?? '';
       _alarmBreakPath = (event['alarmBreakPath'] as String?) ?? '';
-      _volumeWorkAlarm = (event['volumeWorkAlarm'] as num?)?.toDouble() ?? 100.0;
-      _volumeBreakAlarm = (event['volumeBreakAlarm'] as num?)?.toDouble() ?? 100.0;
+      _volumeWorkAlarm =
+          (event['volumeWorkAlarm'] as num?)?.toDouble() ?? 100.0;
+      _volumeBreakAlarm =
+          (event['volumeBreakAlarm'] as num?)?.toDouble() ?? 100.0;
       _initialDuration = initialDuration;
+      _alwayOnScreen = (event['alwayOnScreen'] as bool?) ?? true;
 
       final nowMs = DateTime.now().millisecondsSinceEpoch;
       _endAtMs = nowMs + duration * 1000;
@@ -115,6 +120,9 @@ void onStart(ServiceInstance service) async {
       _timer?.cancel();
       _startTick(service);
       _broadcastUpdate(service);
+
+      // WakelockPlus được xử lý ở UI side (timer_page.dart)
+      // vì background isolate không có Activity Window
     }),
   );
 
