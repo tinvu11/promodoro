@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -90,11 +91,14 @@ void onStart(ServiceInstance service) async {
   _isRunning = false;
   _remainingOnPause = 0;
   _isUIForeground = true;
-  _broadcastUpdate(service);
+  // _broadcastUpdate(service); // DO NOT BROADCAST YET!
 
   _subscriptions!.add(
     service.on('startTimer').listen((event) async {
       if (event == null) return;
+
+      // Stop any previously playing alarm exactly when starting a new session
+      // await _audioPlayer.stop();
 
       final duration = (event['duration'] as int);
       final initialDuration = (event['initialDuration'] as int);
@@ -239,6 +243,10 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
   try {
     final isWork = _mode == 'work';
 
+    // Tạm bỏ IsRunning để block tick tiếp theo
+    _isRunning = false;
+    _timer?.cancel();
+
     if (isWork) {
       // Work xong -> gửi thông báo hoàn thành 1 session về UI
       service.invoke('work_session_done', {
@@ -247,21 +255,19 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
 
       // Nếu còn round thì sang Break, không thì complete
       if (_round < _totalRounds) {
-        await _playAlarm(_alarmWorkPath, _volumeWorkAlarm);
+        await _playAlarmAndWait(_alarmWorkPath, _volumeWorkAlarm);
         final nextDuration = _breakDuration;
         final nowMs = DateTime.now().millisecondsSinceEpoch;
 
         _endAtMs = nowMs + nextDuration * 1000;
         _initialDuration = nextDuration;
-        _isRunning = true;
         _mode = 'break';
-        // round, totalRounds, workDuration, breakDuration unchanged
-        // Vì Timer.periodic vẫn còn chạy nên không cần phải gọi hàm _startTick vì nó sẽ dựa vào _remainingSeconds để làm mới
+        _isRunning = true;
 
         _broadcastUpdate(service);
+        _startTick(service);
       } else {
         // hoàn thành tất cả
-        _timer?.cancel();
         await _updateNotification("Hoàn thành!", 0, _initialDuration);
         service.invoke('finished');
 
@@ -274,18 +280,20 @@ Future<void> _handleSessionFinished(ServiceInstance service) async {
       }
     } else {
       // Break xong -> sang Work, tăng round
-      await _playAlarm(_alarmBreakPath, _volumeBreakAlarm);
+      log('Break xong -> sang Work, tăng round');
+      await _playAlarmAndWait(_alarmBreakPath, _volumeBreakAlarm);
       final nextRound = _round + 1;
       final nextDuration = _workDuration;
       final nowMs = DateTime.now().millisecondsSinceEpoch;
 
       _endAtMs = nowMs + nextDuration * 1000;
       _initialDuration = nextDuration;
-      _isRunning = true;
       _round = nextRound;
       _mode = 'work';
+      _isRunning = true;
 
       _broadcastUpdate(service);
+      _startTick(service);
     }
   } catch (e) {
     print('Error handling session finished: $e');

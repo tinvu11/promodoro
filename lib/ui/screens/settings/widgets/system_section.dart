@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:promodoro/services/locale_service.dart';
+import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
 import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 
 import '../../../../core/Theme/app_colors.dart';
@@ -13,10 +16,8 @@ class SystemSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      // Tối ưu GPU cho hiệu ứng Glass
-      child: SectionWrapper(
-        children: [
+    return SectionWrapper(
+      children: [
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
               if (p is! SuccessSettingState || c is! SuccessSettingState)
@@ -27,12 +28,16 @@ class SystemSection extends StatelessWidget {
             builder: (context, state) {
               state as SuccessSettingState;
               final settingsModel = state.settingsModel;
+              final l10n = AppLocalizations.of(context)!;
+              final currentLangCode = context
+                  .watch<LocaleCubit>()
+                  .currentLanguageCode;
               return Column(
                 children: [
                   _buildSimpleTile(
                     context,
-                    "Ngôn ngữ",
-                    "Tiếng Việt",
+                    l10n.language,
+                    LocaleService.displayName(currentLangCode),
                     onTap: () => context.push(RoutePaths.language),
                   ),
                   const Divider(
@@ -42,7 +47,7 @@ class SystemSection extends StatelessWidget {
                     endIndent: 16,
                   ),
                   _buildSwitchTile(
-                    "Luôn bật màn hình",
+                    l10n.alwaysOnScreen,
                     settingsModel.alwaysOnScreen,
                     (val) {
                       context.read<SettingsBloc>().add(
@@ -58,7 +63,7 @@ class SystemSection extends StatelessWidget {
                   ),
                   _buildSimpleTile(
                     context,
-                    "Thông tin",
+                    l10n.information,
                     "",
                     onTap: () => context.push(RoutePaths.infos),
                   ),
@@ -67,7 +72,6 @@ class SystemSection extends StatelessWidget {
             },
           ),
         ],
-      ),
     );
   }
 

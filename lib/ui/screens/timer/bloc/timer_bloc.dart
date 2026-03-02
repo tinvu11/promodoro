@@ -12,6 +12,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   final StatRepository _statRepository;
   Timer? _localTimer;
   int _lastSyncMs = 0;
+  final List<StreamSubscription> _subscriptions = [];
 
   TimerBloc({required StatRepository statRepository})
     : _statRepository = statRepository,
@@ -31,36 +32,43 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     on<TimerFinished>(_onFinished);
     on<_WorkSessionDone>(_onWorkSessionDone);
 
-    FlutterBackgroundService().on('work_session_done').listen((event) {
-      if (event != null) {
-        add(
-          _WorkSessionDone(
-            workDurationSeconds: (event['work_duration_seconds'] as int?) ?? 0,
-          ),
-        );
-      }
-    });
+    _subscriptions.add(
+      FlutterBackgroundService().on('work_session_done').listen((event) {
+        if (event != null) {
+          add(
+            _WorkSessionDone(
+              workDurationSeconds:
+                  (event['work_duration_seconds'] as int?) ?? 0,
+            ),
+          );
+        }
+      }),
+    );
 
-    FlutterBackgroundService().on('finished').listen((event) {
-      add(const TimerFinished());
-    });
+    _subscriptions.add(
+      FlutterBackgroundService().on('finished').listen((event) {
+        add(const TimerFinished());
+      }),
+    );
 
-    FlutterBackgroundService().on('update').listen((event) {
-      if (event != null) {
-        add(
-          TimerSynced(
-            duration: event['current_duration'] as int,
-            initialDuration: event['initial_duration'] as int,
-            round: event['round'] as int,
-            totalRounds: event['total_rounds'] as int,
-            isRunning: event['is_running'] as bool,
-            mode: (event['mode'] == 'work')
-                ? TimerMode.work
-                : TimerMode.breakMode,
-          ),
-        );
-      }
-    });
+    _subscriptions.add(
+      FlutterBackgroundService().on('update').listen((event) {
+        if (event != null) {
+          add(
+            TimerSynced(
+              duration: event['current_duration'] as int,
+              initialDuration: event['initial_duration'] as int,
+              round: event['round'] as int,
+              totalRounds: event['total_rounds'] as int,
+              isRunning: event['is_running'] as bool,
+              mode: (event['mode'] == 'work')
+                  ? TimerMode.work
+                  : TimerMode.breakMode,
+            ),
+          );
+        }
+      }),
+    );
     _requestSync();
   }
 
@@ -204,7 +212,13 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onFinished(TimerFinished event, Emitter<TimerState> emit) {
     _stopLocalTimer();
-    emit(TimerRunComplete(round: _totalRounds, totalRounds: _totalRounds));
+    emit(
+      TimerRunComplete(
+        round: _totalRounds,
+        totalRounds: _totalRounds,
+        initialDuration: _workDuration,
+      ),
+    );
   }
 
   Future<void> _onWorkSessionDone(
@@ -259,6 +273,9 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   @override
   Future<void> close() {
     _stopLocalTimer();
+    for (var sub in _subscriptions) {
+      sub.cancel();
+    }
     return super.close();
   }
 }

@@ -17,7 +17,13 @@ sealed class TimerState extends Equatable {
   final int initialDuration;
 
   @override
-  List<Object> get props => [duration, mode, round, totalRounds, initialDuration];
+  List<Object> get props => [
+    duration,
+    mode,
+    round,
+    totalRounds,
+    initialDuration,
+  ];
 }
 
 final class TimerInitial extends TimerState {
@@ -26,12 +32,12 @@ final class TimerInitial extends TimerState {
     required int round,
     required int totalRounds,
   }) : super(
-          duration: duration,
-          mode: TimerMode.work,
-          round: round,
-          totalRounds: totalRounds,
-          initialDuration: duration,
-        );
+         duration: duration,
+         mode: TimerMode.work,
+         round: round,
+         totalRounds: totalRounds,
+         initialDuration: duration,
+       );
 
   @override
   String toString() => 'TimerInitial { duration: $duration }';
@@ -45,12 +51,12 @@ final class TimerRunPause extends TimerState {
     required int totalRounds,
     required int initialDuration,
   }) : super(
-          duration: duration,
-          mode: mode,
-          round: round,
-          totalRounds: totalRounds,
-          initialDuration: initialDuration,
-        );
+         duration: duration,
+         mode: mode,
+         round: round,
+         totalRounds: totalRounds,
+         initialDuration: initialDuration,
+       );
 
   @override
   String toString() => 'TimerRunPause { duration: $duration }';
@@ -64,12 +70,12 @@ final class TimerRunInProgress extends TimerState {
     required int totalRounds,
     required int initialDuration,
   }) : super(
-          duration: duration,
-          mode: mode,
-          round: round,
-          totalRounds: totalRounds,
-          initialDuration: initialDuration,
-        );
+         duration: duration,
+         mode: mode,
+         round: round,
+         totalRounds: totalRounds,
+         initialDuration: initialDuration,
+       );
 
   @override
   String toString() => 'TimerRunInProgress { duration: $duration }';
@@ -79,11 +85,12 @@ final class TimerRunComplete extends TimerState {
   const TimerRunComplete({
     required int round,
     required int totalRounds,
+    required int initialDuration,
   }) : super(
-          duration: 0,
-          mode: TimerMode.work,
-          round: round,
-          totalRounds: totalRounds,
-          initialDuration: 0,
-        );
+         duration: 0,
+         mode: TimerMode.work,
+         round: round,
+         totalRounds: totalRounds,
+         initialDuration: initialDuration,
+       );
 }

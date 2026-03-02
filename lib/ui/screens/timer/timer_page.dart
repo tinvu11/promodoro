@@ -5,15 +5,16 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/configs/di.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/navigation/app_router.dart';
 import 'package:promodoro/services/noise_audio_service.dart';
-import 'package:promodoro/ui/commons/widgets/banner_ad_widget.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/timer/widgets/GlassTimerPage.dart';
 import 'package:promodoro/utils/time_formatting.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/Theme/app_colors.dart';
+import '../../commons/widgets/banner_ad_widget.dart';
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
 import '../../commons/widgets/paywall_dialog.dart';
@@ -87,6 +88,7 @@ class _TimerPageState extends State<TimerPage> {
 
       child: BlocBuilder<TimerBloc, TimerState>(
         buildWhen: (prev, curr) =>
+            prev.runtimeType != curr.runtimeType ||
             (prev is TimerRunInProgress) != (curr is TimerRunInProgress),
         builder: (context, state) {
           final bool isRunning = state is TimerRunInProgress;
@@ -100,11 +102,7 @@ class _TimerPageState extends State<TimerPage> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 offset: isRunning ? const Offset(0, -1) : Offset.zero,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 250),
-                  opacity: isRunning ? 0.0 : 1.0,
-                  child: _buildAppBar(context, settings.themeName),
-                ),
+                child: _buildAppBar(context, settings.themeName),
               ),
             ),
             body: Center(
@@ -122,17 +120,20 @@ class _TimerPageState extends State<TimerPage> {
 
                   const SizedBox(height: 100),
 
-                  isRunning
-                      ? Positioned(
-                          bottom: 16,
-                          right: 0,
-                          left: 0,
-                          child: BannerAdWidget(
-                            isPremium: false,
-                            paddingHorizontal: 16,
-                          ),
-                        )
-                      : SizedBox.shrink(),
+                  Positioned(
+                    bottom: 16,
+                    right: 0,
+                    left: 0,
+                    child: AnimatedSlide(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                      offset: isRunning ? Offset.zero : const Offset(0, 1.5),
+                      child: const BannerAdWidget(
+                        isPremium: false,
+                        paddingHorizontal: 16,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -145,12 +146,16 @@ class _TimerPageState extends State<TimerPage> {
   Widget _buildTimerDisplay(settingsModel) {
     return BlocBuilder<TimerBloc, TimerState>(
       buildWhen: (prev, curr) =>
-          prev.duration != curr.duration || prev.mode != curr.mode,
+          prev.runtimeType != curr.runtimeType ||
+          prev.duration != curr.duration ||
+          prev.mode != curr.mode,
       builder: (context, state) {
-        final int currentSeconds = state is TimerInitial
+        final int currentSeconds =
+            (state is TimerInitial || state is TimerRunComplete)
             ? settingsModel.workTime
             : state.duration;
-        final initialDuration = state is TimerInitial
+        final initialDuration =
+            (state is TimerInitial || state is TimerRunComplete)
             ? settingsModel.workTime
             : state.initialDuration;
 
@@ -158,9 +163,11 @@ class _TimerPageState extends State<TimerPage> {
             ? currentSeconds / initialDuration
             : 0.0;
         String modeText =
-            (state is TimerInitial || state.mode == TimerMode.work)
-            ? "Work"
-            : "Break";
+            (state is TimerInitial ||
+                state.mode == TimerMode.work ||
+                state is TimerRunComplete)
+            ? AppLocalizations.of(context)!.work
+            : AppLocalizations.of(context)!.breakLabel;
         // String roundText = "${state.round} / ${state.totalRounds}";
         String roundText = "${state.round} / ${settingsModel.repeatCount}";
 
@@ -207,11 +214,11 @@ class _TimerPageState extends State<TimerPage> {
   Widget _buildControlButtons(BuildContext context, settings) {
     return BlocBuilder<TimerBloc, TimerState>(
       builder: (context, state) {
-        String textButton = "Bắt đầu";
+        String textButton = AppLocalizations.of(context)!.start;
         if (state is TimerRunPause) {
-          textButton = "Tiếp tục";
+          textButton = AppLocalizations.of(context)!.continueLabel;
         } else if (state is TimerRunInProgress) {
-          textButton = "Tạm dừng";
+          textButton = AppLocalizations.of(context)!.pause;
         }
 
         final isRunning = state is TimerRunInProgress;

@@ -1,0 +1,93 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Promodoro",
+
+  "timerTab": "Timer",
+  "statisticsTab": "Statistics",
+  "settingsTab": "Settings",
+
+  "settings": "Settings",
+  "workTime": "Focus",
+  "breakTime": "Rest",
+  "duration": "Duration",
+  "focus": "Focus",
+  "rest": "Rest",
+  "alarm": "Alarm",
+  "volume": "Volume",
+  "repeatCount": "Session",
+  "repeatTimes": "{count} ses",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "repeat": "Repeat",
+  "minutes": "{count} min",
+  "@minutes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "sound": "Sound",
+  "backgroundSound": "Background sound",
+
+  "language": "Language",
+  "alwaysOnScreen": "Always on screen",
+  "information": "Information",
+
+  "work": "Work",
+  "breakLabel": "Break",
+  "start": "Start",
+  "continueLabel": "Continue",
+  "pause": "Pause",
+
+  "statistics": "Statistics",
+  "total": "Total",
+  "today": "Today",
+  "sessions": "sessions",
+  "hoursAndMinutes": "{hours}h {mins}m",
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "mins": { "type": "int" }
+    }
+  },
+  "hoursOnly": "{hours}h",
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "minutesOnly": "{mins}m",
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": { "type": "int" }
+    }
+  },
+  "totalLabel": "Total: {value}",
+  "@totalLabel": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+
+  "premiumFeatures": "Premium Features",
+  "unlockAllFeatures": "Unlock all features",
+  "noAds": "No ads at all",
+  "prioritySupport": "Priority team support",
+  "optimizePerformance": "Optimize performance",
+  "lifetime": "Lifetime",
+  "buyOnce": "Buy once, use forever",
+  "yearly": "Yearly",
+  "save40": "Save 40%",
+  "terms": "Terms",
+  "restore": "Restore",
+  "policy": "Policy",
+  "hot": "HOT",
+
+  "vietnamese": "Vietnamese",
+  "english": "English",
+  "languageSelection": "Language"
+}

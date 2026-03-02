@@ -1,0 +1,93 @@
+{
+  "@@locale": "vi",
+
+  "appTitle": "Promodoro",
+
+  "timerTab": "Hẹn giờ",
+  "statisticsTab": "Thống kê",
+  "settingsTab": "Cài đặt",
+
+  "settings": "Cài đặt",
+  "workTime": "Tập trung",
+  "breakTime": "Thư giãn",
+  "duration": "Thời lượng",
+  "focus": "Tập trung",
+  "rest": "Thư giãn",
+  "alarm": "Âm báo",
+  "volume": "Âm lượng",
+  "repeatCount": "Vòng lặp",
+  "repeatTimes": "{count} lần",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "repeat": "Lần lặp",
+  "minutes": "{count} phút",
+  "@minutes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "sound": "Âm thanh",
+  "backgroundSound": "Âm thanh nền",
+
+  "language": "Ngôn ngữ",
+  "alwaysOnScreen": "Luôn bật màn hình",
+  "information": "Thông tin",
+
+  "work": "Tập trung",
+  "breakLabel": "Nghỉ ngơi",
+  "start": "Bắt đầu",
+  "continueLabel": "Tiếp tục",
+  "pause": "Tạm dừng",
+
+  "statistics": "Thống kê",
+  "total": "Tổng",
+  "today": "Hôm nay",
+  "sessions": "phiên",
+  "hoursAndMinutes": "{hours} giờ {mins} phút",
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "mins": { "type": "int" }
+    }
+  },
+  "hoursOnly": "{hours} giờ",
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "minutesOnly": "{mins} phút",
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": { "type": "int" }
+    }
+  },
+  "totalLabel": "Tổng: {value}",
+  "@totalLabel": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+
+  "premiumFeatures": "Tính năng Premium",
+  "unlockAllFeatures": "Mở khoá toàn bộ tính năng",
+  "noAds": "Không có bất kỳ quảng cáo",
+  "prioritySupport": "Ưu tiên hỗ trợ từ nhóm",
+  "optimizePerformance": "Tối ưu hoá hiệu năng",
+  "lifetime": "Vĩnh viễn",
+  "buyOnce": "Mua 1 lần, dùng mãi mãi",
+  "yearly": "Hàng năm",
+  "save40": "Tiết kiệm 40%",
+  "terms": "Điều khoản",
+  "restore": "Khôi phục",
+  "policy": "Chính sách",
+  "hot": "HOT",
+
+  "vietnamese": "Tiếng Việt",
+  "english": "Tiếng Anh",
+  "languageSelection": "Ngôn ngữ"
+}

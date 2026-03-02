@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/core/Theme/app_colors.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
@@ -108,13 +109,13 @@ class _HomeNavigationState extends State<HomeNavigation> {
         builder: (context, state) {
           // if (state is TimerRunInProgress) return const SizedBox.shrink();
           final bool isRunning = state is TimerRunInProgress;
-          return ClipRect(
-            child: AnimatedContainer(
-              duration: const Duration(
-                milliseconds: 300,
-              ), // Thời gian chạy hiệu ứng
-              curve: Curves.easeInOut, // Kiểu chuyển động mượt
-              height: isRunning ? 0 : 80,
+          return RepaintBoundary(
+            // Tối ưu 1: Tách layer cho thanh Nav
+            child: AnimatedSlide(
+              // Tối ưu 2: Dùng Slide thay vì thay đổi Height
+              offset: isRunning ? const Offset(0, 1) : const Offset(0, 0),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
               child: NavigationBar(
                 height: 56,
                 elevation: 0,
@@ -123,14 +124,14 @@ class _HomeNavigationState extends State<HomeNavigation> {
                 onDestinationSelected: _onTap,
                 backgroundColor: Colors.transparent,
                 overlayColor: WidgetStateProperty.all(Colors.transparent),
-                destinations: const [
+                destinations: [
                   NavigationDestination(
                     icon: Icon(
                       Icons.timer_outlined,
                       color: AppColors.textSecondary,
                     ),
                     selectedIcon: Icon(Icons.timer, color: Colors.white),
-                    label: "Timer",
+                    label: AppLocalizations.of(context)!.timerTab,
                   ),
                   NavigationDestination(
                     icon: Icon(
@@ -141,7 +142,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
                       Icons.stacked_bar_chart_rounded,
                       color: Colors.white,
                     ),
-                    label: "Static",
+                    label: AppLocalizations.of(context)!.statisticsTab,
                   ),
                   NavigationDestination(
                     icon: Icon(
@@ -149,7 +150,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
                       color: AppColors.textSecondary,
                     ),
                     selectedIcon: Icon(Icons.settings, color: Colors.white),
-                    label: "Setting",
+                    label: AppLocalizations.of(context)!.settingsTab,
                   ),
                 ],
               ),

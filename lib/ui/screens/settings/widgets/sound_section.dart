@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
 import '../../../../navigation/app_router.dart';
+import '../../../commons/widgets/stop_dialog.dart';
+import '../../timer/bloc/timer_bloc.dart';
 import '../bloc/settings_bloc.dart';
 
 class SoundSection extends StatelessWidget {
@@ -13,10 +16,9 @@ class SoundSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: SectionWrapper(
-        children: [
-          // Các phần khác tương tự...
+    return SectionWrapper(
+      children: [
+        // Các phần khác tương tự...
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
               if (p is! SuccessSettingState || c is! SuccessSettingState)
@@ -30,9 +32,10 @@ class SoundSection extends StatelessWidget {
             builder: (context, state) {
               state as SuccessSettingState;
               final settingsModel = state.settingsModel;
+              final l10n = AppLocalizations.of(context)!;
               return Column(
                 children: [
-                  _buildSwitchTile("Âm thanh", settingsModel.isSoundEnabled, (
+                  _buildSwitchTile(l10n.sound, settingsModel.isSoundEnabled, (
                     val,
                   ) {
                     context.read<SettingsBloc>().add(
@@ -47,9 +50,22 @@ class SoundSection extends StatelessWidget {
                   ),
                   _buildSimpleTile(
                     context,
-                    "Âm thanh nền",
+                    l10n.backgroundSound,
                     settingsModel.themeName,
-                    onTap: () => context.push(RoutePaths.noises),
+                    onTap: () {
+                      final timerState = context.read<TimerBloc>().state;
+                      if (timerState is TimerRunInProgress ||
+                          timerState is TimerRunPause) {
+                        StopDialog.show(
+                          context,
+                          onConfirm: () {
+                            context.push(RoutePaths.noises);
+                          },
+                        );
+                        return;
+                      }
+                      context.push(RoutePaths.noises);
+                    },
                   ),
                   const Divider(
                     color: AppColors.glassSecondary,
@@ -58,7 +74,7 @@ class SoundSection extends StatelessWidget {
                     endIndent: 16,
                   ),
                   _buildVolumeSliderTile(
-                    "Âm lượng",
+                    l10n.volume,
                     settingsModel.volumeNoise,
                     (val) {
                       context.read<SettingsBloc>().add(
@@ -71,7 +87,6 @@ class SoundSection extends StatelessWidget {
             },
           ),
         ],
-      ),
     );
   }
 

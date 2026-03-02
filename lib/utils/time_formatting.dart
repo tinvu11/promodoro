@@ -22,7 +22,7 @@ extension TimeFormatting on int {
       final totalMinutes = this ~/ 60;
 
       // Nếu bạn chỉ muốn hiện mỗi số phút (VD: "60", "45")
-      return totalMinutes.toString() + ' phút';
+      return totalMinutes.toString() + ' 1phút';
 
       // HOẶC nếu bạn muốn hiện cả giây (VD: "10:05") như comment của bạn:
       // return '${totalMinutes}:${seconds.toString().padLeft(2, '0')}';
@@ -31,6 +31,6 @@ extension TimeFormatting on int {
 
   String toMinute() {
     int minutes = this ~/ 60;
-    return "$minutes phút";
+    return "$minutes";
   }
 }

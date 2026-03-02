@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/ui/commons/widgets/banner_ad_widget.dart';
 import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
 import 'package:promodoro/ui/screens/settings/widgets/config_section.dart';
@@ -13,26 +14,29 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPremium = context
-        .watch<IapBloc>()
-        .state
-        .boughtNoAdsTime != null;
+    final isPremium = context.watch<IapBloc>().state.boughtNoAdsTime != null;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: const CommonAppBar(title: "Settings", showLeading: false),
+      appBar: CommonAppBar(
+        title: AppLocalizations.of(context)!.settings,
+        showLeading: false,
+      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: Column(
             children: [
               BannerAdWidget(isPremium: isPremium, paddingHorizontal: 16),
-              SizedBox(height: 8),
-              ConfigSection(),
-              SoundSection(),
-              SystemSection(),
-              SizedBox(height: 20),
+             const SizedBox(height: 8),
+              const ConfigSection(),
+              const SoundSection(),
+              const SystemSection(),
+             const SizedBox(height: 20),
             ],
+          ),
           ),
         ),
       ),

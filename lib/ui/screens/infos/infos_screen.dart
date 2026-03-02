@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/configs/di.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
 import '../../commons/widgets/theme_background.dart';
@@ -16,8 +16,6 @@ class InfosPage extends StatefulWidget {
 }
 
 class _InfosPageState extends State<InfosPage> {
-  late final NoisesBloc _noisesBloc;
-
   /// Đường dẫn bg tính sync để tránh nháy frame đầu tiên.
   String? _initialBgPath;
 
@@ -46,7 +44,7 @@ class _InfosPageState extends State<InfosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CommonAppBar(title: "Thông tin"),
+      appBar: CommonAppBar(title: AppLocalizations.of(context)!.information),
       body: Stack(
         children: [
           RepaintBoundary(

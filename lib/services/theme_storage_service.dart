@@ -95,17 +95,17 @@ class ThemeStorageService {
   Future<bool> isThemeDownloaded(String themeId) async {
     final bg = File(await bgPathOf(themeId));
     final audio = File(await audioPathOf(themeId));
-    return bg.existsSync() && audio.existsSync();
+    return await bg.exists() && await audio.exists();
   }
 
   /// Kiểm tra xem có ảnh nền local cho theme [themeId] không.
   Future<bool> hasLocalBg(String themeId) async {
-    return File(await bgPathOf(themeId)).existsSync();
+    return await File(await bgPathOf(themeId)).exists();
   }
 
   /// Kiểm tra xem có audio local cho theme [themeId] không.
   Future<bool> hasLocalAudio(String themeId) async {
-    return File(await audioPathOf(themeId)).existsSync();
+    return await File(await audioPathOf(themeId)).exists();
   }
 
   /// Lấy danh sách ID các theme đã tải.
@@ -121,7 +121,7 @@ class ThemeStorageService {
         // Chỉ đếm nếu cả 2 file đều tồn tại
         final bg = File('${entity.path}/$_bgFile');
         final audio = File('${entity.path}/$_audioFile');
-        if (bg.existsSync() && audio.existsSync()) {
+        if (await bg.exists() && await audio.exists()) {
           ids.add(themeId);
         }
       }

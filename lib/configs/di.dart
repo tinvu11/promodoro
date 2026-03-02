@@ -8,8 +8,11 @@ import 'package:promodoro/data/repositories/iap_repository.dart';
 import 'package:promodoro/data/repositories/remote_data_repo.dart';
 import 'package:promodoro/data/repositories/settings_repository.dart';
 import 'package:promodoro/data/repositories/stat_repository.dart';
+import 'package:promodoro/services/locale_service.dart';
+import 'package:promodoro/services/locale_service.dart';
 import 'package:promodoro/services/noise_audio_service.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
+import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
@@ -18,6 +21,7 @@ import 'package:promodoro/ui/screens/timer/ticker.dart';
 
 import '../data/data_sources/local_data.dart';
 import '../ui/bloc/iap/iap_bloc.dart';
+import '../ui/bloc/locale/locale_cubit.dart';
 import 'hive/app_hive.dart';
 
 class DI {
@@ -28,6 +32,14 @@ class DI {
     await appHive.init();
     sl.registerLazySingleton<AppHive>(() => appHive);
     sl.registerLazySingleton<LocalData>(() => HiveDatabase(appHive: sl()));
+
+    // Locale service
+    final localeService = LocaleService();
+    await localeService.init();
+    sl.registerLazySingleton<LocaleService>(() => localeService);
+    sl.registerLazySingleton<LocaleCubit>(
+      () => LocaleCubit(localeService: sl()),
+    );
 
     // Repositories
     sl.registerLazySingleton<SettingsRepository>(

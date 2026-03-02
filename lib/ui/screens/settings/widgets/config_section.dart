@@ -4,15 +4,17 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:promodoro/data/models/alarm_model.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 import 'package:promodoro/ui/screens/settings/widgets/slider_minute.dart';
 import 'package:promodoro/ui/screens/settings/widgets/slider_sessions.dart';
-import 'package:promodoro/utils/time_formatting.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
 import '../../../../data/models/settings_model.dart';
+import '../../../commons/widgets/stop_dialog.dart';
 import '../../home_navigation/bottom_sheet/glass_bottom_sheet.dart';
+import '../../timer/bloc/timer_bloc.dart';
 import '../bloc/settings_bloc.dart';
 
 class ConfigSection extends StatefulWidget {
@@ -38,10 +40,9 @@ class ConfigSectionState extends State<ConfigSection> {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      // Tối ưu GPU cho hiệu ứng Glass
-      child: SectionWrapper(
-        children: [
+    final l10n = AppLocalizations.of(context)!;
+    return SectionWrapper(
+      children: [
           BlocBuilder<SettingsBloc, SettingsState>(
             buildWhen: (p, c) {
               if (p is! SuccessSettingState || c is! SuccessSettingState)
@@ -56,19 +57,24 @@ class ConfigSectionState extends State<ConfigSection> {
               state as SuccessSettingState;
               final settingsModel = state.settingsModel;
               return _buildExpandableTile(
-                title: "Thời gian làm việc",
-                value: settingsModel.workTime.toMinute(),
+                title: l10n.workTime,
+                value: AppLocalizations.of(
+                  context,
+                )!.minutes((settingsModel.workTime / 60).toInt()),
                 isExpanded: _expandedIndex == 0,
                 onTap: () => _toggleExpanded(0),
                 children: [
                   _buildSubTile(
                     context,
-                    "Thời lượng",
-                    settingsModel.workTime.toMinute(),
+                    l10n.duration,
+                    AppLocalizations.of(
+                      context,
+                    )!.minutes((settingsModel.workTime / 60).toInt()),
+
                     () => _showSlider(
                       context,
                       settingsModel.workTime ~/ 60,
-                      "Tập trung",
+                      l10n.focus,
                       (newValue) {
                         context.read<SettingsBloc>().add(
                           SaveSettingsEvent(workTime: newValue.toInt() * 60),
@@ -88,7 +94,7 @@ class ConfigSectionState extends State<ConfigSection> {
                   ),
                   _buildSubTile(
                     context,
-                    "Âm báo",
+                    l10n.alarm,
                     settingsModel.alarmWork.name,
                     () => _showAlarmPicker(
                       context,
@@ -103,7 +109,7 @@ class ConfigSectionState extends State<ConfigSection> {
                   ),
                   _buildSubTile(
                     context,
-                    "Âm lượng",
+                    l10n.volume,
                     "${settingsModel.volumeWorkAlarm.toInt()}%",
                     () => _showSessionSlider(
                       context: context,
@@ -117,7 +123,7 @@ class ConfigSectionState extends State<ConfigSection> {
                       maxValue: 100,
                       minValue: 0,
                       divisions: 10,
-                      title: 'Âm lượng',
+                      title: l10n.volume,
                     ),
                   ),
                 ],
@@ -138,19 +144,25 @@ class ConfigSectionState extends State<ConfigSection> {
               state as SuccessSettingState;
               final settingsModel = state.settingsModel;
               return _buildExpandableTile(
-                title: "Thời gian nghỉ",
-                value: settingsModel.breakTime.toMinute(),
+                title: l10n.breakTime,
+                value: AppLocalizations.of(
+                  context,
+                )!.minutes((settingsModel.breakTime / 60).toInt()),
+
                 isExpanded: _expandedIndex == 1,
                 onTap: () => _toggleExpanded(1),
                 children: [
                   _buildSubTile(
                     context,
-                    "Thời lượng",
-                    settingsModel.breakTime.toMinute(),
+                    l10n.duration,
+                    AppLocalizations.of(
+                      context,
+                    )!.minutes((settingsModel.breakTime / 60).toInt()),
+
                     () => _showSlider(
                       context,
                       settingsModel.breakTime ~/ 60,
-                      "Nghỉ ngơi",
+                      l10n.rest,
                       (newValue) {
                         context.read<SettingsBloc>().add(
                           SaveSettingsEvent(breakTime: newValue.toInt() * 60),
@@ -170,7 +182,7 @@ class ConfigSectionState extends State<ConfigSection> {
                   ),
                   _buildSubTile(
                     context,
-                    "Âm báo",
+                    l10n.alarm,
                     settingsModel.alarmBreak.name,
                     () => _showAlarmPicker(
                       context,
@@ -185,7 +197,7 @@ class ConfigSectionState extends State<ConfigSection> {
                   ),
                   _buildSubTile(
                     context,
-                    "Âm lượng",
+                    l10n.volume,
                     "${settingsModel.volumeBreakAlarm.toInt()}%",
                     () => _showSessionSlider(
                       context: context,
@@ -199,7 +211,7 @@ class ConfigSectionState extends State<ConfigSection> {
                       maxValue: 100,
                       minValue: 0,
                       divisions: 10,
-                      title: 'Âm lượng',
+                      title: l10n.volume,
                     ),
                   ),
                 ],
@@ -216,11 +228,11 @@ class ConfigSectionState extends State<ConfigSection> {
               state as SuccessSettingState;
               final settingsModel = state.settingsModel;
               return _buildSimpleTile(
-                "Số lần lặp",
-                "${settingsModel.repeatCount} lần",
+                l10n.repeatCount,
+                l10n.repeatTimes(settingsModel.repeatCount),
                 onTap: () => _showSessionSlider(
                   initialValue: settingsModel.repeatCount.toDouble(),
-                  title: "Lần lặp",
+                  title: l10n.repeat,
                   onChanged: (newValue) {
                     context.read<SettingsBloc>().add(
                       SaveSettingsEvent(repeatCount: newValue.toInt()),
@@ -236,7 +248,6 @@ class ConfigSectionState extends State<ConfigSection> {
           ),
           // Các phần khác tương tự...
         ],
-      ),
     );
   }
 
@@ -353,23 +364,78 @@ class ConfigSectionState extends State<ConfigSection> {
     String currentSelection,
     void Function(AlarmModel path) onSelect,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     _showGlassBottomSheet(
       context,
       _buildSettingAlarm(
         currentSelection: currentSelection,
         onSelect: onSelect,
       ),
-      "Âm báo",
+      l10n.alarm,
     );
   }
 
   void _showGlassBottomSheet(BuildContext context, Widget child, String title) {
+    final timerState = context.read<TimerBloc>().state;
+    if (timerState is TimerRunInProgress || timerState is TimerRunPause) {
+      // _showStopTimerDialog(context);
+      StopDialog.show(
+        context,
+        onConfirm: () {
+          showModalBottomSheet(
+            context: context,
+            useRootNavigator: true,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (_) => GlassBottomSheet(child: child, title: title),
+          );
+        },
+      );
+      return;
+    }
+
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => GlassBottomSheet(child: child, title: title),
+    );
+  }
+
+  void _showStopTimerDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xff1E1E1E),
+        // AppColors.darkBackground or similar
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          "Yêu cầu dừng Timer",
+          // style: AppFonts.semibold_white_24.copyWith(fontSize: 20),
+        ),
+        content: Text(
+          "Vui lòng dừng Timer hiện tại trước khi thay đổi thông số cấu hình!",
+          style: AppFonts.regular_grey_18,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Đóng", style: AppFonts.regular_grey_18),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<TimerBloc>().add(const TimerReset());
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Dừng Timer",
+              style: AppFonts.medium_white_20.copyWith(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

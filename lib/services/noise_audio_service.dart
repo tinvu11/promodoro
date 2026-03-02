@@ -46,7 +46,7 @@ class NoiseAudioService {
       // Set volume (audioplayers dùng 0.0 → 1.0)
       await _player.setVolume(volume / 100.0);
 
-      if (file.existsSync()) {
+      if (await file.exists()) {
         // Có file local → phát từ device
         await _player.play(DeviceFileSource(audioPath));
         log(

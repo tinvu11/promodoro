@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
@@ -57,7 +58,10 @@ class _SliderMinuteState extends State<SliderMinute> {
                 }
               },
             ),
-            Text("${_val.toInt()} phút", style: AppFonts.medium_white_28),
+            Text(
+              AppLocalizations.of(context)!.minutes(_val.toInt()),
+              style: AppFonts.medium_white_28,
+            ),
             _buildActionButton(
               icon: Icons.add,
               onTap: () {
@@ -89,7 +93,10 @@ class _SliderMinuteState extends State<SliderMinute> {
     );
   }
 
-  Widget _buildActionButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildActionButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Icon(icon, color: Colors.white70, size: 30),

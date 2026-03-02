@@ -5,6 +5,7 @@ import 'package:amplitude_flutter/events/base_event.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -90,14 +91,14 @@ class _PaywallDialogState extends State<PaywallDialog> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Premium Features',
+                        AppLocalizations.of(context)!.premiumFeatures,
                         style: AppFonts.semibold_white_20.copyWith(
                           fontSize: 28,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Mở khoá toàn bộ tính năng',
+                        AppLocalizations.of(context)!.unlockAllFeatures,
                         style: AppFonts.regular_grey_14,
                       ),
                       const SizedBox(height: 20),
@@ -107,18 +108,18 @@ class _PaywallDialogState extends State<PaywallDialog> {
                         children: [
                           _buildFeatureRow(
                             Icons.shield,
-                            "Không có bất kỳ quảng cáo",
+                            AppLocalizations.of(context)!.noAds,
                           ),
                           SizedBox(height: 12),
                           _buildFeatureRow(
                             Icons.flash_on,
-                            "Ưu tiên hỗ trợ từ nhóm",
+                            AppLocalizations.of(context)!.prioritySupport,
                           ),
                           SizedBox(height: 12),
 
                           _buildFeatureRow(
                             Icons.support,
-                            "Tối ưu hoá hiệu năng",
+                            AppLocalizations.of(context)!.optimizePerformance,
                           ),
                         ],
                       ),
@@ -127,8 +128,8 @@ class _PaywallDialogState extends State<PaywallDialog> {
                       // ── Plan cards ──
                       _buildPlanCard(
                         // icon: Icons.all_inclusive,
-                        title: 'Vĩnh viễn',
-                        subtitle: 'Mua 1 lần, dùng mãi mãi',
+                        title: AppLocalizations.of(context)!.lifetime,
+                        subtitle: AppLocalizations.of(context)!.buyOnce,
                         price: primaryPrice,
                         highlight: true,
                         onTap: () {
@@ -144,8 +145,8 @@ class _PaywallDialogState extends State<PaywallDialog> {
                       const SizedBox(height: 10),
                       _buildPlanCard(
                         // icon: Icons.calendar_today,
-                        title: 'Hàng năm',
-                        subtitle: 'Tiết kiệm 40%',
+                        title: AppLocalizations.of(context)!.yearly,
+                        subtitle: AppLocalizations.of(context)!.save40,
                         price: secondaryPrice,
                         onTap: () {
                           _amplitude.track(
@@ -166,7 +167,7 @@ class _PaywallDialogState extends State<PaywallDialog> {
                           GestureDetector(
                             onTap: _openTermsOfUse,
                             child: Text(
-                              'Điều khoản',
+                              AppLocalizations.of(context)!.terms,
                               style: AppFonts.medium_grey_14.copyWith(
                                 decorationColor: AppColors.textSecondary,
                               ),
@@ -176,7 +177,7 @@ class _PaywallDialogState extends State<PaywallDialog> {
                           GestureDetector(
                             onTap: () => _onRestorePurchase(context),
                             child: Text(
-                              'Khôi phục',
+                              AppLocalizations.of(context)!.restore,
                               style: AppFonts.medium_grey_14.copyWith(
                                 decorationColor: AppColors.textSecondary,
                               ),
@@ -185,7 +186,7 @@ class _PaywallDialogState extends State<PaywallDialog> {
                           GestureDetector(
                             onTap: _openPrivacyPolicy,
                             child: Text(
-                              'Chính sách',
+                              AppLocalizations.of(context)!.policy,
                               style: AppFonts.medium_grey_14.copyWith(
                                 decorationColor: AppColors.textSecondary,
                               ),

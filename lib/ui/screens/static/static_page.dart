@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
 import 'package:promodoro/ui/screens/static/widgets/static_bar_chart.dart';
 import 'package:promodoro/utils/time_formatting.dart';
@@ -25,16 +26,19 @@ class _StaticPageState extends State<StaticPage> {
 
   String get _monthLabel => '$_visibleMonth/$_visibleYear';
 
-  String _totalMonthlyFormatted(List<DailyStat> allStats) {
+  String _totalMonthlyFormatted(
+    List<DailyStat> allStats,
+    AppLocalizations l10n,
+  ) {
     final monthStats = allStats.where(
       (s) => s.date.year == _visibleYear && s.date.month == _visibleMonth,
     );
     final totalMinutes = monthStats.fold(0, (sum, s) => sum + s.minutes);
     final hours = totalMinutes ~/ 60;
     final mins = totalMinutes % 60;
-    if (hours > 0 && mins > 0) return '$hours giờ $mins phút';
-    if (hours > 0) return '$hours giờ';
-    return '$mins phút';
+    if (hours > 0 && mins > 0) return l10n.hoursAndMinutes(hours, mins);
+    if (hours > 0) return l10n.hoursOnly(hours);
+    return l10n.minutesOnly(mins);
   }
 
   void _onMonthChanged(int year, int month) {
@@ -49,11 +53,12 @@ class _StaticPageState extends State<StaticPage> {
   @override
   Widget build(BuildContext context) {
     final isPremium = context.watch<IapBloc>().state.boughtNoAdsTime != null;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: CommonAppBar(
-        title: "Thống kê",
+        title: l10n.statistics,
         showLeading: false,
         actions: [
           GestureDetector(
@@ -100,110 +105,155 @@ class _StaticPageState extends State<StaticPage> {
             );
           }
           if (state is StaticLoaded) {
-            return Column(
-              children: [
-                SingleChildScrollView(
+            return SizedBox(
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+                child: SingleChildScrollView(
                   child: Column(
-                    children: [
-                      BannerAdWidget(
-                        isPremium: isPremium,
-                        paddingHorizontal: 16,
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: GlassBox(
-                          child: SizedBox(
-                            height: 300,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                ListTile(
-                                  title: Text(
-                                    _monthLabel,
-                                    style: AppFonts.medium_white_22,
-                                  ),
-                                  trailing: Text(
-                                    "Tổng: ${_totalMonthlyFormatted(state.allStats)}",
-                                    style: AppFonts.regular_grey_16,
-                                  ),
+                  children: [
+                    BannerAdWidget(isPremium: isPremium, paddingHorizontal: 16),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: GlassBox(
+                        child: SizedBox(
+                          height: 300,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                  _monthLabel,
+                                  style: AppFonts.medium_white_22,
                                 ),
-                                Padding(
+                                trailing: Text(
+                                  l10n.totalLabel(
+                                    _totalMonthlyFormatted(
+                                      state.allStats,
+                                      l10n,
+                                    ),
+                                  ),
+                                  style: AppFonts.regular_grey_16,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
+                                child: Divider(color: AppColors.glassSecondary),
+                              ),
+                              Expanded(
+                                child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0,
+                                    vertical: 8,
                                   ),
-                                  child: Divider(
-                                    color: AppColors.glassSecondary,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    child: StaticBarChart(
-                                      allStats: state.allStats,
-                                      onMonthChanged: _onMonthChanged,
-                                    ),
+                                  child: StaticBarChart(
+                                    allStats: state.allStats,
+                                    onMonthChanged: _onMonthChanged,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: GlassBox(
+                        child: SizedBox(
+                          height: 300,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                  _monthLabel,
+                                  style: AppFonts.medium_white_22,
+                                ),
+                                trailing: Text(
+                                  l10n.totalLabel(
+                                    _totalMonthlyFormatted(
+                                      state.allStats,
+                                      l10n,
+                                    ),
+                                  ),
+                                  style: AppFonts.regular_grey_16,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
+                                child: Divider(color: AppColors.glassSecondary),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: StaticBarChart(
+                                    allStats: state.allStats,
+                                    onMonthChanged: _onMonthChanged,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
 
-                        child: GlassBox(
-                          width: double.infinity,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: const Icon(
-                                    Icons.calendar_month,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  title: Text(
-                                    "Hôm nay",
-                                    style: AppFonts.medium_white_18,
-                                  ),
-                                  subtitle: Text(
-                                    "${(state.todayStat.minutes * 60).toHour()} - ${state.todayStat.sessions} sessions",
-                                    style: AppFonts.regular_grey_16,
-                                  ),
+                      child: GlassBox(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(
+                                  Icons.calendar_month,
+                                  color: AppColors.textSecondary,
                                 ),
-                                Divider(color: AppColors.glassSecondary),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: const Icon(
-                                    Icons.watch_later_outlined,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  title: Text(
-                                    "Tổng",
-                                    style: AppFonts.medium_white_18,
-                                  ),
-                                  subtitle: Text(
-                                    "${(state.totalMinutes * 60).toHour()} - ${state.totalSessions} sessions",
-                                    style: AppFonts.regular_grey_16,
-                                  ),
+                                title: Text(
+                                  l10n.today,
+                                  style: AppFonts.medium_white_18,
                                 ),
-                              ],
-                            ),
+                                subtitle: Text(
+                                  "${(state.todayStat.minutes * 60).toHour()} - ${state.todayStat.sessions} ${l10n.sessions}",
+                                  style: AppFonts.regular_grey_16,
+                                ),
+                              ),
+                              Divider(color: AppColors.glassSecondary),
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(
+                                  Icons.watch_later_outlined,
+                                  color: AppColors.textSecondary,
+                                ),
+                                title: Text(
+                                  l10n.total,
+                                  style: AppFonts.medium_white_18,
+                                ),
+                                subtitle: Text(
+                                  "${(state.totalMinutes * 60).toHour()} - ${state.totalSessions} ${l10n.sessions}",
+                                  style: AppFonts.regular_grey_16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+                ),
+              ),
             );
           }
           return const SizedBox.shrink();
