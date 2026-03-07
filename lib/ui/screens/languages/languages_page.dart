@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/configs/di.dart';
+import 'package:promodoro/core/Theme/app_fonts.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/services/locale_service.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
 import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
+import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/theme_background.dart';
 
 class LanguagesPage extends StatefulWidget {
@@ -98,9 +100,13 @@ Widget _itemLanguage(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(fontSize: 18)),
+          Text(title, style: AppFonts.regular_white_18),
           if (isSelected)
-            const Icon(Icons.check_circle, color: Colors.greenAccent, size: 24),
+            const Icon(
+              Icons.check_rounded,
+              color: AppColors.textPrimary,
+              size: 24,
+            ),
         ],
       ),
     ),

@@ -16,11 +16,12 @@ final class SaveNoises extends NoisesEvent {}
 /// Event khi người dùng chọn 1 theme từ grid.
 final class SelectTheme extends NoisesEvent {
   final ThemeModel theme;
+  final String languageCode;
 
-  SelectTheme({required this.theme});
+  SelectTheme({required this.theme, required this.languageCode});
 
   @override
-  List<Object?> get props => [theme];
+  List<Object?> get props => [theme, languageCode];
 }
 
 /// Event khởi tạo preview cho theme đang active (khi mở trang).

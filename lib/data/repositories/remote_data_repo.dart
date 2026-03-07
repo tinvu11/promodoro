@@ -6,6 +6,7 @@ import '../models/theme_model.dart';
 
 abstract interface class RemoteDataRepo {
   Future<List<ThemeModel>> getResources();
+  Future<List<ThemeModel>> fetchLatestResources();
 }
 
 class RemoteDataRepoImpl implements RemoteDataRepo {
@@ -20,35 +21,38 @@ class RemoteDataRepoImpl implements RemoteDataRepo {
 
   /// Cache-first strategy:
   /// 1. Trả về cache ngay nếu có → UI hiển thị tức thì
-  /// 2. Fetch Firebase nền, cập nhật cache
+  /// 2. Lần sau gọi fetchLatestResources() để lấy dữ liệu mới nhất
   /// 3. Nếu không có cache → fetch Firebase trực tiếp
   @override
   Future<List<ThemeModel>> getResources() async {
     final cached = _localData.getCachedThemes();
 
     if (cached.isNotEmpty) {
-      // Có cache → trả về ngay, đồng bộ Firebase nền
-      _syncFromRemote();
       return cached;
     }
 
     // Không có cache → phải fetch từ Firebase
-    final remoteData = await _remoteData.getResources();
-    if (remoteData.isNotEmpty) {
-      await _localData.cacheThemes(remoteData);
-    }
-    return remoteData;
+    return fetchLatestResources();
   }
 
-  /// Đồng bộ dữ liệu từ Firebase về cache (chạy nền, không block UI)
-  Future<void> _syncFromRemote() async {
+  /// Luôn fetch dữ liệu mới nhất từ Firebase và cập nhật cache
+  @override
+  Future<List<ThemeModel>> fetchLatestResources() async {
     try {
       final remoteData = await _remoteData.getResources();
       if (remoteData.isNotEmpty) {
         await _localData.cacheThemes(remoteData);
       }
+      return remoteData;
     } catch (e) {
-      log('Background sync failed', error: e, name: 'RemoteDataRepo');
+      log(
+        'Fetch latest failed, falling back to cache',
+        error: e,
+        name: 'RemoteDataRepo',
+      );
+      final cached = _localData.getCachedThemes();
+      if (cached.isNotEmpty) return cached;
+      rethrow;
     }
   }
 }

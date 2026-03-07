@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:promodoro/configs/di.dart';
@@ -11,6 +14,7 @@ import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_state.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/theme_background.dart';
@@ -28,6 +32,9 @@ class _NoisesPageState extends State<NoisesPage> {
   /// Đường dẫn bg tính sync để tránh nháy frame đầu tiên.
   String? _initialBgPath;
 
+  /// true = có mạng, false = offline, null = đang kiểm tra.
+  bool? _isOnline;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +51,15 @@ class _NoisesPageState extends State<NoisesPage> {
         _noisesBloc.add(InitPreview(themeId: themeId));
       }
     }
-    if (_noisesBloc.state.status == NoiseStatus.initial) {
+    _checkConnectivityAndLoad();
+  }
+
+  Future<void> _checkConnectivityAndLoad() async {
+    final result = await Connectivity().checkConnectivity();
+    final online = result.any((r) => r != ConnectivityResult.none);
+    if (mounted) setState(() => _isOnline = online);
+
+    if (online && _noisesBloc.state.status == NoiseStatus.initial) {
       _noisesBloc.add(LoadNoises());
     }
   }
@@ -58,9 +73,10 @@ class _NoisesPageState extends State<NoisesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CommonAppBar(title: "Âm nền"),
+      appBar: CommonAppBar(title: l10n.backgroundSound),
       body: BlocListener<NoisesBloc, NoisesState>(
         listenWhen: (prev, curr) => prev.downloadStatus != curr.downloadStatus,
         listener: (context, state) {
@@ -107,6 +123,45 @@ class _NoisesPageState extends State<NoisesPage> {
 
             BlocBuilder<NoisesBloc, NoisesState>(
               builder: (BuildContext context, state) {
+                // Offline → hiển thị thông báo
+                if (_isOnline == false && state.status != NoiseStatus.success) {
+                  return SafeArea(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.wifi_off_rounded,
+                              color: AppColors.textSecondary,
+                              size: 48,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Không có kết nối mạng.\nVui lòng kiểm tra lại kết nối.',
+                              style: AppFonts.regular_white_16,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            TextButton.icon(
+                              onPressed: _checkConnectivityAndLoad,
+                              icon: const Icon(
+                                Icons.refresh,
+                                color: Colors.white,
+                              ),
+                              label: Text(
+                                'Thử lại',
+                                style: AppFonts.regular_white_16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
                 if (state.status == NoiseStatus.loading) {
                   return SafeArea(child: _buildShimmerGrid());
                 } else if (state.status == NoiseStatus.success) {
@@ -149,10 +204,96 @@ class _NoisesPageState extends State<NoisesPage> {
                           isDownloaded: isDownloaded,
                           isPreviewing: isPreviewing,
                           isAudioPlaying: isPreviewing && state.isAudioPlaying,
-                          onTap: () {
-                            context.read<NoisesBloc>().add(
-                              SelectTheme(theme: theme),
-                            );
+                          onTap: () async {
+                            // Nếu theme chưa tải → kiểm tra mạng trước
+                            if (!isDownloaded && !isActive) {
+                              final result = await Connectivity()
+                                  .checkConnectivity();
+                              final online = result.any(
+                                (r) => r != ConnectivityResult.none,
+                              );
+                              if (!online && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    // 1. Phải để màu nền là trong suốt
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 50,
+                                      vertical: 20,
+                                    ),
+
+                                    // Tạo hình viên thuốc
+                                    content: ClipRRect(
+                                      borderRadius: BorderRadius.circular(30),
+                                      // Bo tròn viên thuốc
+                                      child: BackdropFilter(
+                                        // 2. Độ mờ của lớp kính (sigma càng cao càng mờ)
+                                        filter: ImageFilter.blur(
+                                          sigmaX: 10.0,
+                                          sigmaY: 10.0,
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12,
+                                            horizontal: 16,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            // 3. Màu nền trắng mờ (Opacity thấp)
+                                            color: Colors.white.withOpacity(
+                                              0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ),
+                                            // 4. Viền trắng mỏng để làm nổi bật hiệu ứng kính
+                                            border: Border.all(
+                                              color: Colors.white.withOpacity(
+                                                0.2,
+                                              ),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.wifi_off,
+                                                color: Colors.white,
+                                                size: 20,
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Text(
+                                                  'Không có kết nối mạng. Thử lại sau.',
+                                                  style:
+                                                      AppFonts.regular_white_14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                                return;
+                              }
+                            }
+                            if (context.mounted) {
+                              context.read<NoisesBloc>().add(
+                                SelectTheme(
+                                  theme: theme,
+                                  languageCode: Localizations.localeOf(
+                                    context,
+                                  ).languageCode,
+                                ),
+                              );
+                            }
                           },
                         );
                       },
@@ -195,11 +336,11 @@ class _NoisesPageState extends State<NoisesPage> {
   Widget _buildShimmerGrid() {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: 6,
+      itemCount: 8,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
         childAspectRatio: 1.0,
       ),
       itemBuilder: (context, index) {
@@ -322,7 +463,9 @@ class _NoiseGridItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    theme.name,
+                    theme.getLocalizedName(
+                      Localizations.localeOf(context).languageCode,
+                    ),
                     style: AppFonts.regular_white_16,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

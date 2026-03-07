@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:promodoro/data/repositories/remote_data_repo.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
@@ -21,7 +21,7 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
   }) : _remoteDataRepo = remoteDataRepo,
        _themeStorageService = themeStorageService,
        super(const NoisesState()) {
-    _previewPlayer.setReleaseMode(ReleaseMode.loop);
+    _previewPlayer.setLoopMode(LoopMode.one);
 
     on<LoadNoises>(_onLoadNoises);
     on<RefreshNoises>(_onRefreshNoises);
@@ -66,8 +66,8 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
     Emitter<NoisesState> emit,
   ) async {
     final themeId = event.theme.id;
-    final themeName = event.theme.name;
-    log('[NoisesBloc] User selected theme: ${event.theme.name} ($themeId)');
+    final themeName = event.theme.getLocalizedName(event.languageCode);
+    log('[NoisesBloc] User selected theme: $themeName ($themeId)');
 
     // Nếu đang preview cùng theme → chỉ toggle audio
     if (state.previewThemeId == themeId) {
@@ -134,9 +134,7 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
       );
 
       if (success) {
-        log(
-          '[NoisesBloc] Theme "${event.theme.name}" downloaded successfully.',
-        );
+        log('[NoisesBloc] Theme "$themeName" downloaded successfully.');
         final updatedIds = {...state.downloadedThemeIds, themeId};
         emit(
           state.copyWith(
@@ -243,9 +241,11 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
       // Phát audio từ asset
       await _previewPlayer.stop();
       await _previewPlayer.setVolume(0.5);
-      await _previewPlayer.play(
-        AssetSource(ThemeStorageService.defaultAudioAsset),
+      await _previewPlayer.setAsset(
+        'assets/${ThemeStorageService.defaultAudioAsset}',
       );
+      await _previewPlayer.seek(Duration.zero);
+      await _previewPlayer.play();
       emit(state.copyWith(isAudioPlaying: false));
       log('[NoisesBloc] Default preview audio playing from asset.');
     } catch (e) {
@@ -266,7 +266,9 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
       if (hasAudio) {
         await _previewPlayer.stop();
         await _previewPlayer.setVolume(0.5);
-        await _previewPlayer.play(DeviceFileSource(audioPath));
+        await _previewPlayer.setFilePath(audioPath);
+        await _previewPlayer.seek(Duration.zero);
+        await _previewPlayer.play();
         emit(state.copyWith(isAudioPlaying: true));
         log('[NoisesBloc] Preview audio playing: $audioPath');
       }
@@ -289,9 +291,11 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
           await _previewPlayer.setVolume(0.5);
 
           if (ThemeStorageService.isDefaultTheme(state.previewThemeId!)) {
-            await _previewPlayer.play(
-              AssetSource(ThemeStorageService.defaultAudioAsset),
+            await _previewPlayer.setAsset(
+              'assets/${ThemeStorageService.defaultAudioAsset}',
             );
+            await _previewPlayer.seek(Duration.zero);
+            await _previewPlayer.play();
             emit(state.copyWith(isAudioPlaying: true));
             log('[NoisesBloc] Default preview audio playing.');
           } else {
@@ -302,7 +306,9 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
               state.previewThemeId!,
             );
             if (hasAudio) {
-              await _previewPlayer.play(DeviceFileSource(audioPath));
+              await _previewPlayer.setFilePath(audioPath);
+              await _previewPlayer.seek(Duration.zero);
+              await _previewPlayer.play();
               emit(state.copyWith(isAudioPlaying: true));
               log('[NoisesBloc] Preview audio playing: $audioPath');
             }
@@ -324,7 +330,7 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
   Future<void> _fetchWithRetry(Emitter<NoisesState> emit) async {
     for (int attempt = 0; attempt <= _maxRetries; attempt++) {
       try {
-        final dataNoises = await _remoteDataRepo.getResources();
+        final dataNoises = await _remoteDataRepo.fetchLatestResources();
         if (dataNoises.isEmpty) {
           emit(
             state.copyWith(

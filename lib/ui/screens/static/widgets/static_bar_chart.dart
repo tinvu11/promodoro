@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:promodoro/data/models/daily_stat.dart';
-import 'package:promodoro/utils/time_formatting.dart';
+
+import '../../../../l10n/generated/app_localizations.dart';
 
 class StaticBarChart extends StatefulWidget {
   final List<DailyStat> allStats;
@@ -87,18 +88,25 @@ class _StaticBarChartState extends State<StaticBarChart> {
 
     final chartWidth = widget.allStats.length * _barSlotWidth;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.0),
-      child: SingleChildScrollView(
-        controller: _scrollController,
-        scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          width: chartWidth < _visibleBars * _barSlotWidth
-              ? _visibleBars * _barSlotWidth
-              : chartWidth,
-          child: BarChart(mainBarData()),
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: (_barSlotWidth - 22) / 2,
+              ),
+              width: chartWidth < constraints.maxWidth
+                  ? constraints.maxWidth
+                  : chartWidth,
+              child: BarChart(mainBarData()),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -150,8 +158,23 @@ class _StaticBarChartState extends State<StaticBarChart> {
     });
   }
 
+  String _todayFormated(AppLocalizations l10n, int time) {
+    final hours = time ~/ 3600;
+    final minutes = (time % 3600) ~/ 60;
+
+    if (time > 3600) {
+      return l10n.hoursAndMinutes(hours, minutes);
+    } else {
+      final totalMinutes = time ~/ 60;
+      return l10n.minutes(time);
+    }
+  }
+
   BarChartData mainBarData() {
+    final l10n = AppLocalizations.of(context)!;
     return BarChartData(
+      alignment: BarChartAlignment.start,
+      groupsSpace: _barSlotWidth - 22,
       barTouchData: BarTouchData(
         enabled: true,
         touchTooltipData: BarTouchTooltipData(
@@ -159,11 +182,12 @@ class _StaticBarChartState extends State<StaticBarChart> {
           tooltipHorizontalAlignment: FLHorizontalAlignment.right,
           tooltipMargin: 10,
           fitInsideVertically: true,
+          fitInsideHorizontally: true,
           getTooltipItem: (group, groupIndex, rod, rodIndex) {
             if (group.x < 0 || group.x >= widget.allStats.length) return null;
             final stat = widget.allStats[group.x];
             return BarTooltipItem(
-              (stat.minutes * 60).toHour(),
+              _todayFormated(l10n, stat.minutes * 60),
               const TextStyle(
                 color: Colors.white,
                 fontSize: 16,

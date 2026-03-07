@@ -14,8 +14,8 @@ import 'package:promodoro/utils/time_formatting.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/Theme/app_colors.dart';
-import '../../commons/widgets/banner_ad_widget.dart';
 import '../../commons/widgets/common_appbar.dart';
+import '../../commons/widgets/common_dialog.dart';
 import '../../commons/widgets/glass_box.dart';
 import '../../commons/widgets/paywall_dialog.dart';
 import 'bloc/timer_bloc.dart';
@@ -38,15 +38,15 @@ class _TimerPageState extends State<TimerPage> {
     _requestPermissions();
   }
 
-  Future<void> _requestPermissions() async {
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.requestNotificationsPermission();
-  }
+  // Future<void> _requestPermissions() async {
+  //   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //       FlutterLocalNotificationsPlugin();
+  //   await flutterLocalNotificationsPlugin
+  //       .resolvePlatformSpecificImplementation<
+  //         AndroidFlutterLocalNotificationsPlugin
+  //       >()
+  //       ?.requestNotificationsPermission();
+  // }
 
   @override
   void dispose() {
@@ -68,21 +68,17 @@ class _TimerPageState extends State<TimerPage> {
       listenWhen: (prev, curr) =>
           prev.runtimeType != curr.runtimeType || prev.mode != curr.mode,
       listener: (context, state) {
-        // Tự động ẩn/hiện Status bar hệ thống
         if (state is TimerRunInProgress) {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+            if (settings.alwaysOnScreen) WakelockPlus.enable();
+          });
         } else {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+            WakelockPlus.disable();
+          });
         }
-
-        // ── Giữ màn hình sáng (WakelockPlus phải gọi ở UI side) ──
-        if (state is TimerRunInProgress && settings.alwaysOnScreen) {
-          WakelockPlus.enable();
-        } else if (state is! TimerRunInProgress) {
-          WakelockPlus.disable();
-        }
-
-        // ── Quản lý nhạc nền (ambient noises) ──
         _handleNoiseAudio(state, settings);
       },
 
@@ -120,20 +116,20 @@ class _TimerPageState extends State<TimerPage> {
 
                   const SizedBox(height: 100),
 
-                  Positioned(
-                    bottom: 16,
-                    right: 0,
-                    left: 0,
-                    child: AnimatedSlide(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOutCubic,
-                      offset: isRunning ? Offset.zero : const Offset(0, 1.5),
-                      child: const BannerAdWidget(
-                        isPremium: false,
-                        paddingHorizontal: 16,
-                      ),
-                    ),
-                  ),
+                  // Positioned(
+                  //   bottom: 16,
+                  //   right: 0,
+                  //   left: 0,
+                  //   child: AnimatedSlide(
+                  //     duration: const Duration(milliseconds: 300),
+                  //     curve: Curves.easeOutCubic,
+                  //     offset: isRunning ? Offset.zero : const Offset(0, 1.5),
+                  //     child: const BannerAdWidget(
+                  //       isPremium: false,
+                  //       paddingHorizontal: 16,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -141,6 +137,18 @@ class _TimerPageState extends State<TimerPage> {
         },
       ),
     );
+  }
+
+  Future<void> _requestPermissions() async {
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
   }
 
   Widget _buildTimerDisplay(settingsModel) {
@@ -318,12 +326,15 @@ class _TimerPageState extends State<TimerPage> {
           volume: settings.volumeNoise,
           themeId: settings.selectedThemeId,
         );
+        print('\x1B[32m▶ [Timer] Timer đang chạy...\x1B[0m');
       }
     } else if (state is TimerRunPause) {
       // Tạm dừng timer → tạm dừng nhạc nền
+      print('Timer tam dung');
       _noiseAudioService.pause();
     } else {
       // Break mode, Complete, Reset → dừng hoàn toàn
+      print("Timer ket thuc");
       _noiseAudioService.stop();
     }
   }

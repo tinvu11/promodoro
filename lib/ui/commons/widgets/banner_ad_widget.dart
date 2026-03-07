@@ -53,6 +53,10 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
         debugPrint(
           "Consent error: ${consentError.errorCode}: ${consentError.message}",
         );
+      }
+      // Luôn thử load lại ad sau khi consent hoàn tất (cả success lẫn error)
+      // vì lần _loadAd() đầu có thể đã fail do consent chưa sẵn sàng
+      if (mounted && !_isLoaded) {
         _bannerAd?.dispose();
         _loadAd();
       }
@@ -60,30 +64,84 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
     _loadAd();
   }
 
+  // void _loadAd() async {
+  //   setState(() {
+  //     _hasFailed = false;
+  //     _isLoaded = false;
+  //   });
+
+  //   if (!await ConsentManager.canRequestAds()) {
+  //     if (mounted) {
+  //       setState(() => _hasFailed = true);
+  //     }
+  //     return;
+  //   }
+  //   if (!mounted) return;
+
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final adWidth = (screenWidth - widget.paddingHorizontal * 2).truncate();
+
+  //   final size = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+  //     adWidth,
+  //   );
+  //   if (size == null) {
+  //     if (mounted) {
+  //       setState(() => _hasFailed = true);
+  //     }
+  //     return;
+  //   }
+
+  //   _bannerAd = BannerAd(
+  //     adUnitId: _adUnitId,
+  //     size: size,
+  //     request: const AdRequest(),
+  //     listener: BannerAdListener(
+  //       onAdLoaded: (ad) => setState(() {
+  //         debugPrint("Banner ad loaded");
+  //         _bannerAd = ad as BannerAd;
+  //         _isLoaded = true;
+  //         _amplitude.track(BaseEvent("banner_ad_loaded"));
+  //       }),
+  //       onAdFailedToLoad: (ad, err) {
+  //         _amplitude.track(BaseEvent("banner_ad_error"));
+  //         FirebaseAnalytics.instance.logEvent(
+  //           name: "banner_ad_error",
+  //           parameters: {"error": err.toString()},
+  //         );
+  //         ad.dispose();
+  //         if (mounted) {
+  //           setState(() {
+  //             _hasFailed = true;
+  //           });
+  //         }
+  //       },
+  //     ),
+  //   )..load();
+  // }
   void _loadAd() async {
+    if (!mounted) return;
+
+    // Reset trạng thái để hiện Shimmer
     setState(() {
       _hasFailed = false;
       _isLoaded = false;
     });
 
+    // Kiểm tra quyền Consent (Cái này quan trọng hơn kiểm tra mạng)
     if (!await ConsentManager.canRequestAds()) {
-      if (mounted) {
-        setState(() => _hasFailed = true);
-      }
+      if (mounted) setState(() => _hasFailed = true);
       return;
     }
-    if (!mounted) return;
 
+    // Tính toán kích thước (Nên để trong try-catch nếu cần)
     final screenWidth = MediaQuery.of(context).size.width;
     final adWidth = (screenWidth - widget.paddingHorizontal * 2).truncate();
-
     final size = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
       adWidth,
     );
+
     if (size == null) {
-      if (mounted) {
-        setState(() => _hasFailed = true);
-      }
+      if (mounted) setState(() => _hasFailed = true);
       return;
     }
 
@@ -92,24 +150,31 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
       size: size,
       request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: (ad) => setState(() {
-          debugPrint("Banner ad loaded");
-          _bannerAd = ad as BannerAd;
-          _isLoaded = true;
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _isLoaded = true;
+          });
           _amplitude.track(BaseEvent("banner_ad_loaded"));
-        }),
+        },
         onAdFailedToLoad: (ad, err) {
-          _amplitude.track(BaseEvent("banner_ad_error"));
-          FirebaseAnalytics.instance.logEvent(
-            name: "banner_ad_error",
-            parameters: {"error": err.toString()},
-          );
           ad.dispose();
           if (mounted) {
             setState(() {
-              _hasFailed = true;
+              _hasFailed =
+                  true; // Dù lỗi mạng hay lỗi server thì đều coi là failed
             });
           }
+          // Log lỗi để bạn theo dõi trên Firebase
+          FirebaseAnalytics.instance.logEvent(
+            name: "banner_ad_error",
+            parameters: {
+              "error": err.message,
+            }, // err.message rõ nghĩa hơn err.toString()
+          );
         },
       ),
     )..load();
@@ -217,12 +282,12 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
         horizontal: widget.paddingHorizontal,
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.white.withOpacity(0.1),
-        highlightColor: Colors.white.withOpacity(0.2),
+        baseColor: Colors.white.withOpacity(0.25),
+        highlightColor: Colors.white.withOpacity(0.35),
         child: Container(
           // Bạn nên ước lượng chiều cao trung bình của banner (thường là 50-60dp)
           // Hoặc nếu đã tính được adHeight từ bước _loadAd thì dùng luôn
-          height: 80,
+          height: 0,
           decoration: BoxDecoration(
             color: Colors.black, // Màu nền của shimmer
             borderRadius: BorderRadius.circular(12),

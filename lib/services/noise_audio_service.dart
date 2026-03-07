@@ -1,94 +1,90 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 
 import 'theme_storage_service.dart';
 
-/// Service phát nhạc nền (ambient noises) khi timer đang chạy ở chế độ Work.
-///
-/// Chiến lược Offline-first:
-///   - Nếu file `active_audio.mp3` tồn tại local → dùng `DeviceFileSource`
-///   - Nếu không → dùng asset mặc định (hoặc không phát)
-///
-/// Audio phát loop liên tục, volume điều chỉnh theo `volumeNoise` từ Settings.
 class NoiseAudioService {
   final ThemeStorageService _themeStorageService;
   final AudioPlayer _player = AudioPlayer();
 
-  bool _isPlaying = false;
+  // Dùng trực tiếp getter của thư viện, không dùng biến cờ tự tạo
+  bool get isPlaying => _player.playing;
 
   NoiseAudioService({required ThemeStorageService themeStorageService})
     : _themeStorageService = themeStorageService {
-    // Cấu hình loop vô hạn
-    _player.setReleaseMode(ReleaseMode.loop);
-
-    _player.onPlayerStateChanged.listen((state) {
-      log('[NoiseAudio] Player state: $state');
-    });
-
-    _player.onLog.listen((msg) {
-      log('[NoiseAudio] Player log: $msg');
-    });
+    _player.setLoopMode(LoopMode.one);
   }
 
-  bool get isPlaying => _isPlaying;
+  /// Khởi tạo và nạp file nhạc (Chỉ nên gọi khi đổi Theme hoặc bắt đầu Work)
+  Future<void> initSource({
+    required String themeId,
+    required double volume,
+  }) async {
+    try {
+      final audioPath = await _themeStorageService.audioPathOf(themeId);
+      final file = File(audioPath);
 
-  /// Bắt đầu phát nhạc nền.
-  ///
-  /// [volume] từ 0 → 100 (giá trị từ SettingsModel.volumeNoise)
-  /// [themeId] ID của theme đang active (để lấy đúng file audio).
+      await _player.setVolume(volume / 100.0);
+
+      if (await file.exists()) {
+        await _player.setFilePath(audioPath);
+      } else {
+        await _player.setAsset('assets/noises/bird.ogg');
+      }
+    } catch (e) {
+      log('[NoiseAudio] Init source failed', error: e);
+    }
+  }
+
   Future<void> play({required double volume, required String themeId}) async {
     try {
       final audioPath = await _themeStorageService.audioPathOf(themeId);
       final file = File(audioPath);
 
-      // Set volume (audioplayers dùng 0.0 → 1.0)
+      // Set volume (just_audio dùng 0.0 → 1.0)
       await _player.setVolume(volume / 100.0);
 
       if (await file.exists()) {
         // Có file local → phát từ device
-        await _player.play(DeviceFileSource(audioPath));
+        await _player.setFilePath(audioPath);
         log(
           '[NoiseAudio] Started playing local: $audioPath (volume: ${volume.toStringAsFixed(0)}%)',
         );
       } else {
         // Không có file local → fallback về asset mặc định
         log('[NoiseAudio] No local audio at: $audioPath. Using default asset.');
-        await _player.play(AssetSource('noises/bird.ogg'));
+        await _player.setAsset('assets/noises/bird.ogg');
         log(
           '[NoiseAudio] Started playing default asset (volume: ${volume.toStringAsFixed(0)}%)',
         );
       }
-      _isPlaying = true;
+      await _player.seek(Duration.zero);
+      await _player.play();
     } catch (e, stackTrace) {
       log(
         '[NoiseAudio] Failed to play noises audio',
         error: e,
         stackTrace: stackTrace,
       );
-      _isPlaying = false;
     }
   }
 
-  /// Tạm dừng nhạc nền (giữ vị trí để resume).
+  /// Sửa hàm pause: Bỏ check _isPlaying thủ công
   Future<void> pause() async {
     try {
-      if (_isPlaying) {
-        await _player.pause();
-        _isPlaying = false;
-        log('[NoiseAudio] Paused.');
-      }
+      await _player.pause();
+      log('\x1B[33m[NoiseAudio] Paused.\x1B[0m');
     } catch (e) {
-      log('[NoiseAudio] Failed to pause', error: e);
+      log('[NoiseAudio] Pause failed', error: e);
     }
   }
 
   /// Tiếp tục phát từ vị trí đã tạm dừng.
   Future<void> resume() async {
     try {
-      await _player.resume();
-      _isPlaying = true;
+      await _player.play();
       log('[NoiseAudio] Resumed.');
     } catch (e) {
       log('[NoiseAudio] Failed to resume', error: e);
@@ -99,7 +95,6 @@ class NoiseAudioService {
   Future<void> stop() async {
     try {
       await _player.stop();
-      _isPlaying = false;
       log('[NoiseAudio] Stopped.');
     } catch (e) {
       log('[NoiseAudio] Failed to stop', error: e);
@@ -119,7 +114,6 @@ class NoiseAudioService {
   /// Dispose player khi service bị hủy.
   Future<void> dispose() async {
     await _player.dispose();
-    _isPlaying = false;
     log('[NoiseAudio] Disposed.');
   }
 }

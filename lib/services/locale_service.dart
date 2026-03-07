@@ -11,7 +11,25 @@ class LocaleService {
   static const _key = 'selected_locale';
 
   /// Danh sách ngôn ngữ app hỗ trợ
-  static const supportedLocales = [Locale('en'), Locale('vi')];
+  static const supportedLocales = [
+    Locale('en'),
+    Locale('vi'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('de'),
+    Locale('it'),
+    Locale('ru'),
+    Locale('pt'),
+    Locale('zh'),
+    Locale('hi'),
+    Locale('ar'),
+    Locale('id'),
+    Locale('tr'),
+    Locale('sv'),
+    Locale('nl'),
+  ];
 
   SharedPreferences? _prefs;
 
@@ -66,8 +84,38 @@ class LocaleService {
         return 'Tiếng Việt';
       case 'en':
         return 'English';
+      case 'es':
+        return 'Español';
+      case 'fr':
+        return 'Français';
+      case 'ja':
+        return '日本語';
+      case 'ko':
+        return '한국어';
+      case 'de':
+        return 'Deutsch';
+      case 'it':
+        return 'Italiano';
+      case 'ru':
+        return 'Русский';
+      case 'pt':
+        return 'Português';
+      case 'zh':
+        return '简体中文';
+      case 'hi':
+        return 'हिन्दी';
+      case 'ar':
+        return 'العربية';
+      case 'id':
+        return 'Bahasa Indonesia';
+      case 'tr':
+        return 'Türkçe';
+      case 'sv':
+        return 'Svenska';
+      case 'nl':
+        return 'Nederlands';
       default:
-        return languageCode;
+        return languageCode.toUpperCase();
     }
   }
 }

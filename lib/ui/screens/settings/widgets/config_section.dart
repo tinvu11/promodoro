@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:promodoro/data/models/alarm_model.dart';
 import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
@@ -43,211 +43,211 @@ class ConfigSectionState extends State<ConfigSection> {
     final l10n = AppLocalizations.of(context)!;
     return SectionWrapper(
       children: [
-          BlocBuilder<SettingsBloc, SettingsState>(
-            buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState)
-                return false;
-              return p.settingsModel.workTime != c.settingsModel.workTime ||
-                  p.settingsModel.alarmWork != c.settingsModel.alarmWork ||
-                  p.settingsModel.volumeWorkAlarm !=
-                      c.settingsModel.volumeWorkAlarm;
-            },
+        BlocBuilder<SettingsBloc, SettingsState>(
+          buildWhen: (p, c) {
+            if (p is! SuccessSettingState || c is! SuccessSettingState)
+              return false;
+            return p.settingsModel.workTime != c.settingsModel.workTime ||
+                p.settingsModel.alarmWork != c.settingsModel.alarmWork ||
+                p.settingsModel.volumeWorkAlarm !=
+                    c.settingsModel.volumeWorkAlarm;
+          },
 
-            builder: (context, state) {
-              state as SuccessSettingState;
-              final settingsModel = state.settingsModel;
-              return _buildExpandableTile(
-                title: l10n.workTime,
-                value: AppLocalizations.of(
+          builder: (context, state) {
+            state as SuccessSettingState;
+            final settingsModel = state.settingsModel;
+            return _buildExpandableTile(
+              title: l10n.workTime,
+              value: AppLocalizations.of(
+                context,
+              )!.minutes((settingsModel.workTime / 60).toInt()),
+              isExpanded: _expandedIndex == 0,
+              onTap: () => _toggleExpanded(0),
+              children: [
+                _buildSubTile(
                   context,
-                )!.minutes((settingsModel.workTime / 60).toInt()),
-                isExpanded: _expandedIndex == 0,
-                onTap: () => _toggleExpanded(0),
-                children: [
-                  _buildSubTile(
+                  l10n.duration,
+                  AppLocalizations.of(
                     context,
-                    l10n.duration,
-                    AppLocalizations.of(
-                      context,
-                    )!.minutes((settingsModel.workTime / 60).toInt()),
+                  )!.minutes((settingsModel.workTime / 60).toInt()),
 
-                    () => _showSlider(
-                      context,
-                      settingsModel.workTime ~/ 60,
-                      l10n.focus,
-                      (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(workTime: newValue.toInt() * 60),
-                        );
-                      },
-                      (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(workTime: newValue.toInt() * 60),
-                        );
-                      },
-                      (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(workTime: newValue.toInt() * 60),
-                        );
-                      },
-                    ),
-                  ),
-                  _buildSubTile(
+                  () => _showSlider(
                     context,
-                    l10n.alarm,
-                    settingsModel.alarmWork.name,
-                    () => _showAlarmPicker(
-                      context,
-                      settingsModel,
-                      settingsModel.alarmWork.id,
-                      (alarm) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(alarmWork: alarm),
-                        );
-                      },
-                    ),
+                    settingsModel.workTime ~/ 60,
+                    l10n.focus,
+                    (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(workTime: newValue.toInt() * 60),
+                      );
+                    },
+                    (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(workTime: newValue.toInt() * 60),
+                      );
+                    },
+                    (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(workTime: newValue.toInt() * 60),
+                      );
+                    },
                   ),
-                  _buildSubTile(
-                    context,
-                    l10n.volume,
-                    "${settingsModel.volumeWorkAlarm.toInt()}%",
-                    () => _showSessionSlider(
-                      context: context,
-                      initialValue: settingsModel.volumeWorkAlarm,
-
-                      onChanged: (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(volumeWorkAlarm: newValue),
-                        );
-                      },
-                      maxValue: 100,
-                      minValue: 0,
-                      divisions: 10,
-                      title: l10n.volume,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          BlocBuilder<SettingsBloc, SettingsState>(
-            buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState)
-                return false;
-              return p.settingsModel.breakTime != c.settingsModel.breakTime ||
-                  p.settingsModel.alarmBreak != c.settingsModel.alarmBreak ||
-                  p.settingsModel.volumeBreakAlarm !=
-                      c.settingsModel.volumeBreakAlarm;
-            },
-
-            builder: (context, state) {
-              state as SuccessSettingState;
-              final settingsModel = state.settingsModel;
-              return _buildExpandableTile(
-                title: l10n.breakTime,
-                value: AppLocalizations.of(
-                  context,
-                )!.minutes((settingsModel.breakTime / 60).toInt()),
-
-                isExpanded: _expandedIndex == 1,
-                onTap: () => _toggleExpanded(1),
-                children: [
-                  _buildSubTile(
-                    context,
-                    l10n.duration,
-                    AppLocalizations.of(
-                      context,
-                    )!.minutes((settingsModel.breakTime / 60).toInt()),
-
-                    () => _showSlider(
-                      context,
-                      settingsModel.breakTime ~/ 60,
-                      l10n.rest,
-                      (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(breakTime: newValue.toInt() * 60),
-                        );
-                      },
-                      (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(breakTime: newValue.toInt() * 60),
-                        );
-                      },
-                      (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(breakTime: newValue.toInt() * 60),
-                        );
-                      },
-                    ),
-                  ),
-                  _buildSubTile(
-                    context,
-                    l10n.alarm,
-                    settingsModel.alarmBreak.name,
-                    () => _showAlarmPicker(
-                      context,
-                      settingsModel,
-                      settingsModel.alarmBreak.id,
-                      (alarm) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(alarmBreak: alarm),
-                        );
-                      },
-                    ),
-                  ),
-                  _buildSubTile(
-                    context,
-                    l10n.volume,
-                    "${settingsModel.volumeBreakAlarm.toInt()}%",
-                    () => _showSessionSlider(
-                      context: context,
-                      initialValue: settingsModel.volumeBreakAlarm,
-
-                      onChanged: (newValue) {
-                        context.read<SettingsBloc>().add(
-                          SaveSettingsEvent(volumeBreakAlarm: newValue),
-                        );
-                      },
-                      maxValue: 100,
-                      minValue: 0,
-                      divisions: 10,
-                      title: l10n.volume,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          BlocBuilder<SettingsBloc, SettingsState>(
-            buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState)
-                return false;
-              return p.settingsModel.repeatCount != c.settingsModel.repeatCount;
-            },
-            builder: (context, state) {
-              state as SuccessSettingState;
-              final settingsModel = state.settingsModel;
-              return _buildSimpleTile(
-                l10n.repeatCount,
-                l10n.repeatTimes(settingsModel.repeatCount),
-                onTap: () => _showSessionSlider(
-                  initialValue: settingsModel.repeatCount.toDouble(),
-                  title: l10n.repeat,
-                  onChanged: (newValue) {
-                    context.read<SettingsBloc>().add(
-                      SaveSettingsEvent(repeatCount: newValue.toInt()),
-                    );
-                  },
-                  maxValue: 12,
-                  minValue: 1,
-                  divisions: 11,
-                  context: context,
                 ),
-              );
-            },
-          ),
-          // Các phần khác tương tự...
-        ],
+                _buildSubTile(
+                  context,
+                  l10n.alarm,
+                  settingsModel.alarmWork.name,
+                  () => _showAlarmPicker(
+                    context,
+                    settingsModel,
+                    settingsModel.alarmWork.id,
+                    (alarm) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(alarmWork: alarm),
+                      );
+                    },
+                  ),
+                ),
+                _buildSubTile(
+                  context,
+                  l10n.volume,
+                  "${settingsModel.volumeWorkAlarm.toInt()}%",
+                  () => _showSessionSlider(
+                    context: context,
+                    initialValue: settingsModel.volumeWorkAlarm,
+
+                    onChanged: (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(volumeWorkAlarm: newValue),
+                      );
+                    },
+                    maxValue: 100,
+                    minValue: 0,
+                    divisions: 10,
+                    title: l10n.volume,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        BlocBuilder<SettingsBloc, SettingsState>(
+          buildWhen: (p, c) {
+            if (p is! SuccessSettingState || c is! SuccessSettingState)
+              return false;
+            return p.settingsModel.breakTime != c.settingsModel.breakTime ||
+                p.settingsModel.alarmBreak != c.settingsModel.alarmBreak ||
+                p.settingsModel.volumeBreakAlarm !=
+                    c.settingsModel.volumeBreakAlarm;
+          },
+
+          builder: (context, state) {
+            state as SuccessSettingState;
+            final settingsModel = state.settingsModel;
+            return _buildExpandableTile(
+              title: l10n.breakTime,
+              value: AppLocalizations.of(
+                context,
+              )!.minutes((settingsModel.breakTime / 60).toInt()),
+
+              isExpanded: _expandedIndex == 1,
+              onTap: () => _toggleExpanded(1),
+              children: [
+                _buildSubTile(
+                  context,
+                  l10n.duration,
+                  AppLocalizations.of(
+                    context,
+                  )!.minutes((settingsModel.breakTime / 60).toInt()),
+
+                  () => _showSlider(
+                    context,
+                    settingsModel.breakTime ~/ 60,
+                    l10n.rest,
+                    (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(breakTime: newValue.toInt() * 60),
+                      );
+                    },
+                    (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(breakTime: newValue.toInt() * 60),
+                      );
+                    },
+                    (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(breakTime: newValue.toInt() * 60),
+                      );
+                    },
+                  ),
+                ),
+                _buildSubTile(
+                  context,
+                  l10n.alarm,
+                  settingsModel.alarmBreak.name,
+                  () => _showAlarmPicker(
+                    context,
+                    settingsModel,
+                    settingsModel.alarmBreak.id,
+                    (alarm) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(alarmBreak: alarm),
+                      );
+                    },
+                  ),
+                ),
+                _buildSubTile(
+                  context,
+                  l10n.volume,
+                  "${settingsModel.volumeBreakAlarm.toInt()}%",
+                  () => _showSessionSlider(
+                    context: context,
+                    initialValue: settingsModel.volumeBreakAlarm,
+
+                    onChanged: (newValue) {
+                      context.read<SettingsBloc>().add(
+                        SaveSettingsEvent(volumeBreakAlarm: newValue),
+                      );
+                    },
+                    maxValue: 100,
+                    minValue: 0,
+                    divisions: 10,
+                    title: l10n.volume,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        BlocBuilder<SettingsBloc, SettingsState>(
+          buildWhen: (p, c) {
+            if (p is! SuccessSettingState || c is! SuccessSettingState)
+              return false;
+            return p.settingsModel.repeatCount != c.settingsModel.repeatCount;
+          },
+          builder: (context, state) {
+            state as SuccessSettingState;
+            final settingsModel = state.settingsModel;
+            return _buildSimpleTile(
+              l10n.repeatCount,
+              l10n.repeatTimes(settingsModel.repeatCount),
+              onTap: () => _showSessionSlider(
+                initialValue: settingsModel.repeatCount.toDouble(),
+                title: l10n.repeat,
+                onChanged: (newValue) {
+                  context.read<SettingsBloc>().add(
+                    SaveSettingsEvent(repeatCount: newValue.toInt()),
+                  );
+                },
+                maxValue: 12,
+                minValue: 1,
+                divisions: 11,
+                context: context,
+              ),
+            );
+          },
+        ),
+        // Các phần khác tương tự...
+      ],
     );
   }
 
@@ -391,6 +391,7 @@ class ConfigSectionState extends State<ConfigSection> {
           );
         },
       );
+      // StopDialog_2.show(context, childWidget: _showDialogStopTimer());
       return;
     }
 
@@ -400,42 +401,6 @@ class ConfigSectionState extends State<ConfigSection> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => GlassBottomSheet(child: child, title: title),
-    );
-  }
-
-  void _showStopTimerDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xff1E1E1E),
-        // AppColors.darkBackground or similar
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          "Yêu cầu dừng Timer",
-          // style: AppFonts.semibold_white_24.copyWith(fontSize: 20),
-        ),
-        content: Text(
-          "Vui lòng dừng Timer hiện tại trước khi thay đổi thông số cấu hình!",
-          style: AppFonts.regular_grey_18,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Đóng", style: AppFonts.regular_grey_18),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<TimerBloc>().add(const TimerReset());
-              Navigator.pop(context);
-            },
-            child: Text(
-              "Dừng Timer",
-              style: AppFonts.medium_white_20.copyWith(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -459,9 +424,11 @@ class ConfigSectionState extends State<ConfigSection> {
                 Navigator.pop(context);
                 onSelect(alarm);
                 await _audioPlayer.stop();
-                await _audioPlayer.play(
-                  AssetSource(alarm.path.replaceFirst('assets/', '')),
-                );
+                final path = alarm.path.startsWith('assets/')
+                    ? alarm.path
+                    : 'assets/${alarm.path}';
+                await _audioPlayer.setAsset(path);
+                await _audioPlayer.play();
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

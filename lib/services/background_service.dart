@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:just_audio/just_audio.dart';
 
 Timer? _timer;
 List<StreamSubscription>? _subscriptions;
@@ -64,7 +64,7 @@ Future<void> initializeService() async {
       isForegroundMode: true,
       notificationChannelId: 'timer_channel',
       initialNotificationTitle: 'Pomodoro',
-      initialNotificationContent: 'Sẵn sàng...',
+      initialNotificationContent: 'Tạm dừng...',
       foregroundServiceNotificationId: _notificationId,
       foregroundServiceTypes: [AndroidForegroundType.specialUse],
     ),
@@ -91,6 +91,11 @@ void onStart(ServiceInstance service) async {
   _isRunning = false;
   _remainingOnPause = 0;
   _isUIForeground = true;
+
+  // App đang foreground khi service mới start -> ẩn notification ngay lập tức
+  if (service is AndroidServiceInstance) {
+    service.setAsBackgroundService();
+  }
   // _broadcastUpdate(service); // DO NOT BROADCAST YET!
 
   _subscriptions!.add(
@@ -140,7 +145,7 @@ void onStart(ServiceInstance service) async {
       _isRunning = false;
 
       _timer?.cancel();
-      await _updateNotification("Đã tạm dừng", remaining, _initialDuration);
+      // await _updateNotification("Tạm dừng...", remaining, _initialDuration);
       _broadcastUpdate(service);
     }),
   );
@@ -180,8 +185,25 @@ void onStart(ServiceInstance service) async {
     service.on('ui_state').listen((event) async {
       if (event != null && event['is_foreground'] != null) {
         _isUIForeground = event['is_foreground'] as bool;
-        if (_isUIForeground) {
-          await _notificationsPlugin.cancel(id: _notificationId);
+        if (service is AndroidServiceInstance) {
+          if (_isUIForeground) {
+            // App ở foreground -> chuyển sang background service để ẩn notification
+            service.setAsBackgroundService();
+          } else {
+            // App chạy ngầm -> chuyển sang foreground service để hiện notification
+            service.setAsForegroundService();
+            // Cập nhật nội dung notification với trạng thái hiện tại
+            if (_isRunning) {
+              final remaining = _remainingSeconds;
+              final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
+              final seconds = (remaining % 60).toString().padLeft(2, '0');
+              await _updateNotification(
+                "$minutes:$seconds",
+                remaining,
+                _initialDuration,
+              );
+            }
+          }
         }
       }
     }),
@@ -336,12 +358,13 @@ Future<void> _playAlarm(String assetPath, double volumePercent) async {
   if (assetPath.isEmpty) return;
 
   final cleanPath = assetPath.startsWith('assets/')
-      ? assetPath.replaceFirst('assets/', '')
-      : assetPath;
+      ? assetPath
+      : 'assets/$assetPath';
   try {
     await _audioPlayer.stop();
     await _audioPlayer.setVolume(volumePercent / 100.0);
-    await _audioPlayer.play(AssetSource(cleanPath));
+    await _audioPlayer.setAsset(cleanPath);
+    await _audioPlayer.play();
   } catch (e) {
     print("Error playing alarm in background: $e");
   }
@@ -359,8 +382,10 @@ Future<void> _playAlarmAndWait(String assetPath, double volumePercent) async {
     if (!completer.isCompleted) completer.complete();
   });
 
-  sub = _audioPlayer.onPlayerComplete.listen((_) {
-    if (!completer.isCompleted) completer.complete();
+  sub = _audioPlayer.playerStateStream.listen((state) {
+    if (state.processingState == ProcessingState.completed) {
+      if (!completer.isCompleted) completer.complete();
+    }
   });
 
   await _playAlarm(assetPath, volumePercent);

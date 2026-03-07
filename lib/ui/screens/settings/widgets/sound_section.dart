@@ -19,74 +19,72 @@ class SoundSection extends StatelessWidget {
     return SectionWrapper(
       children: [
         // Các phần khác tương tự...
-          BlocBuilder<SettingsBloc, SettingsState>(
-            buildWhen: (p, c) {
-              if (p is! SuccessSettingState || c is! SuccessSettingState)
-                return false;
-              return p.settingsModel.isSoundEnabled !=
-                      c.settingsModel.isSoundEnabled ||
-                  p.settingsModel.selectedThemeId !=
-                      c.settingsModel.selectedThemeId ||
-                  p.settingsModel.volumeNoise != c.settingsModel.volumeNoise;
-            },
-            builder: (context, state) {
-              state as SuccessSettingState;
-              final settingsModel = state.settingsModel;
-              final l10n = AppLocalizations.of(context)!;
-              return Column(
-                children: [
-                  _buildSwitchTile(l10n.sound, settingsModel.isSoundEnabled, (
-                    val,
-                  ) {
-                    context.read<SettingsBloc>().add(
-                      SaveSettingsEvent(isSoundEnabled: val),
-                    );
-                  }),
-                  const Divider(
-                    color: AppColors.glassSecondary,
-                    height: 1,
-                    indent: 16,
-                    endIndent: 16,
-                  ),
-                  _buildSimpleTile(
-                    context,
-                    l10n.backgroundSound,
-                    settingsModel.themeName,
-                    onTap: () {
-                      final timerState = context.read<TimerBloc>().state;
-                      if (timerState is TimerRunInProgress ||
-                          timerState is TimerRunPause) {
-                        StopDialog.show(
-                          context,
-                          onConfirm: () {
-                            context.push(RoutePaths.noises);
-                          },
-                        );
-                        return;
-                      }
-                      context.push(RoutePaths.noises);
-                    },
-                  ),
-                  const Divider(
-                    color: AppColors.glassSecondary,
-                    height: 1,
-                    indent: 16,
-                    endIndent: 16,
-                  ),
-                  _buildVolumeSliderTile(
-                    l10n.volume,
-                    settingsModel.volumeNoise,
-                    (val) {
-                      context.read<SettingsBloc>().add(
-                        SaveSettingsEvent(volumeNoise: val),
+        BlocBuilder<SettingsBloc, SettingsState>(
+          buildWhen: (p, c) {
+            if (p is! SuccessSettingState || c is! SuccessSettingState)
+              return false;
+            return p.settingsModel.isSoundEnabled !=
+                    c.settingsModel.isSoundEnabled ||
+                p.settingsModel.selectedThemeId !=
+                    c.settingsModel.selectedThemeId ||
+                p.settingsModel.volumeNoise != c.settingsModel.volumeNoise;
+          },
+          builder: (context, state) {
+            state as SuccessSettingState;
+            final settingsModel = state.settingsModel;
+            final l10n = AppLocalizations.of(context)!;
+            return Column(
+              children: [
+                _buildSwitchTile(l10n.sound, settingsModel.isSoundEnabled, (
+                  val,
+                ) {
+                  context.read<SettingsBloc>().add(
+                    SaveSettingsEvent(isSoundEnabled: val),
+                  );
+                }),
+                const Divider(
+                  color: AppColors.glassSecondary,
+                  height: 1,
+                  indent: 16,
+                  endIndent: 16,
+                ),
+                _buildSimpleTile(
+                  context,
+                  l10n.backgroundSound,
+                  settingsModel.themeName,
+                  onTap: () {
+                    final timerState = context.read<TimerBloc>().state;
+                    if (timerState is TimerRunInProgress ||
+                        timerState is TimerRunPause) {
+                      StopDialog.show(
+                        context,
+                        onConfirm: () {
+                          context.push(RoutePaths.noises);
+                        },
                       );
-                    },
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+                      return;
+                    }
+                    context.push(RoutePaths.noises);
+                  },
+                ),
+                const Divider(
+                  color: AppColors.glassSecondary,
+                  height: 1,
+                  indent: 16,
+                  endIndent: 16,
+                ),
+                _buildVolumeSliderTile(l10n.volume, settingsModel.volumeNoise, (
+                  val,
+                ) {
+                  context.read<SettingsBloc>().add(
+                    SaveSettingsEvent(volumeNoise: val),
+                  );
+                }),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 

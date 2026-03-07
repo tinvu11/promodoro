@@ -21,7 +21,6 @@ void main() async {
   // DI phải init SAU Firebase vì một số dependency cần Firebase
   await DI.init();
 
-  await MobileAds.instance.initialize();
   Bloc.observer = SimpleBlocObserver();
   runApp(
     MultiBlocProvider(
@@ -34,4 +33,8 @@ void main() async {
       child: const App(),
     ),
   );
+
+  // Khởi tạo MobileAds SAU runApp – không cần cho frame đầu tiên,
+  // tiết kiệm ~1-2 giây trước khi UI hiện ra.
+  MobileAds.instance.initialize();
 }

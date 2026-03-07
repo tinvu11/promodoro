@@ -19,7 +19,7 @@ class RemoteDataImpl implements RemoteData {
     try {
       final querySnapshot = await _firestore
           .collection('resources')
-          .get()
+          .get(const GetOptions(source: Source.server))
           .timeout(const Duration(seconds: 10));
       return querySnapshot.docs.map((doc) {
         final data = doc.data();

@@ -9,7 +9,6 @@ import 'package:promodoro/data/repositories/remote_data_repo.dart';
 import 'package:promodoro/data/repositories/settings_repository.dart';
 import 'package:promodoro/data/repositories/stat_repository.dart';
 import 'package:promodoro/services/locale_service.dart';
-import 'package:promodoro/services/locale_service.dart';
 import 'package:promodoro/services/noise_audio_service.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
@@ -21,21 +20,28 @@ import 'package:promodoro/ui/screens/timer/ticker.dart';
 
 import '../data/data_sources/local_data.dart';
 import '../ui/bloc/iap/iap_bloc.dart';
-import '../ui/bloc/locale/locale_cubit.dart';
 import 'hive/app_hive.dart';
 
 class DI {
   static final sl = GetIt.instance;
 
   static Future<void> init() async {
+    // ── Chạy song song các tác vụ I/O độc lập ──────────────────────
     final appHive = AppHive();
-    await appHive.init();
+    final localeService = LocaleService();
+    final themeStorageService = ThemeStorageService(dio: AppDio.instance);
+
+    await Future.wait([
+      appHive.init(), // Hive init + mở 3 box
+      localeService.init(), // SharedPreferences
+      themeStorageService.init(), // getApplicationDocumentsDirectory
+    ]);
+
+    // ── Đăng ký tất cả (từ đây hoàn toàn sync) ──────────────────────
     sl.registerLazySingleton<AppHive>(() => appHive);
     sl.registerLazySingleton<LocalData>(() => HiveDatabase(appHive: sl()));
 
     // Locale service
-    final localeService = LocaleService();
-    await localeService.init();
     sl.registerLazySingleton<LocaleService>(() => localeService);
     sl.registerLazySingleton<LocaleCubit>(
       () => LocaleCubit(localeService: sl()),
@@ -63,8 +69,6 @@ class DI {
     sl.registerLazySingleton<IapRepository>(() => IapRepositoryImpl());
 
     // Services
-    final themeStorageService = ThemeStorageService(dio: AppDio.instance);
-    await themeStorageService.init();
     sl.registerLazySingleton<ThemeStorageService>(() => themeStorageService);
     sl.registerLazySingleton<NoiseAudioService>(
       () => NoiseAudioService(themeStorageService: sl()),

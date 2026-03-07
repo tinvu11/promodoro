@@ -20,7 +20,7 @@ class StopDialog extends StatefulWidget {
       context: context,
       barrierLabel: 'Stop timer',
       barrierDismissible: true,
-      barrierColor: Colors.black.withAlpha(430),
+      barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 350),
       transitionBuilder: (context, anim1, anim2, child) {
         final curve = CurvedAnimation(parent: anim1, curve: Curves.easeOutBack);

@@ -10,7 +10,7 @@ class ThemeModel extends HiveObject {
   final String id;
 
   @HiveField(1)
-  final String name;
+  final Map<String, String> titleMap;
 
   @HiveField(2)
   final String imageUrl;
@@ -23,16 +23,31 @@ class ThemeModel extends HiveObject {
 
   ThemeModel({
     required this.id,
-    required this.name,
+    required this.titleMap,
     required this.imageUrl,
     required this.audioUrl,
     required this.isPremium,
   });
 
+  /// Lấy tên theme theo ngôn ngữ hiện tại, fallback về 'en' hoặc giá trị đầu tiên.
+  String getLocalizedName(String languageCode) {
+    return titleMap[languageCode] ??
+        titleMap['en'] ??
+        titleMap.values.firstOrNull ??
+        '';
+  }
+
   factory ThemeModel.formFirebase(Map<String, dynamic> data, String id) {
+    final rawTitle = data['title'];
+    final Map<String, String> titleMap;
+    if (rawTitle is Map) {
+      titleMap = rawTitle.map((k, v) => MapEntry(k.toString(), v.toString()));
+    } else {
+      titleMap = {'en': rawTitle?.toString() ?? ''};
+    }
     return ThemeModel(
       id: id,
-      name: data['title'],
+      titleMap: titleMap,
       imageUrl: data['imageUrl'],
       audioUrl: data['audioUrl'],
       isPremium: data['isPremium'],

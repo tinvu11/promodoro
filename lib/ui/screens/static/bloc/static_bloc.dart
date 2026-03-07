@@ -74,7 +74,7 @@ class StaticBloc extends Bloc<StaticEvent, StaticState> {
     final now = DateTime.now();
 
     // Xác định mốc thời gian bắt đầu là 60 ngày trước
-    final startDate = now.subtract(const Duration(days: 60));
+    final startDate = now.subtract(const Duration(days: 15));
 
     List<Future> saveOperations = [];
 

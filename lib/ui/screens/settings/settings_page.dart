@@ -28,15 +28,14 @@ class SettingsPage extends StatelessWidget {
           child: SingleChildScrollView(
             physics: const ClampingScrollPhysics(),
             child: Column(
-            children: [
-              BannerAdWidget(isPremium: isPremium, paddingHorizontal: 16),
-             const SizedBox(height: 8),
-              const ConfigSection(),
-              const SoundSection(),
-              const SystemSection(),
-             const SizedBox(height: 20),
-            ],
-          ),
+              children: [
+                BannerAdWidget(isPremium: isPremium, paddingHorizontal: 16),
+                const SizedBox(height: 8),
+                const ConfigSection(),
+                const SoundSection(),
+                const SystemSection(),
+              ],
+            ),
           ),
         ),
       ),

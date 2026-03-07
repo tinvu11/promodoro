@@ -1,0 +1,41 @@
+{
+  "G7GDaHv9v6A21I4v2NQU": {
+    "vi": "Tiếng Chim", "en": "Bird Sounds", "es": "Canto de Aves", "fr": "Chant d'Oiseaux", "ja": "鳥の鳴き声", "ko": "새소리", "de": "Vogelgezwitscher", "it": "Canto d'Uccelli", "ru": "Птицы", "pt": "Pássaros", "zh": "鸟鸣", "hi": "पक्षियों की आवाज़", "ar": "تغريد الطيور", "id": "Suara Burung", "tr": "Kuş Sesi", "sv": "Fågelsång", "nl": "Vogelgezang"
+  },
+  "KbKx7IMiCJwS0KonyAke": {
+    "vi": "Bong Bóng", "en": "Bubbles", "es": "Burbujas", "fr": "Bulles", "ja": "泡", "ko": "거품", "de": "Blasen", "it": "Bolle", "ru": "Пузыри", "pt": "Bolhas", "zh": "气泡", "hi": "बुलबुले", "ar": "فقاعات", "id": "Gelembung", "tr": "Baloncuklar", "sv": "Bubblor", "nl": "Bellen"
+  },
+  "jyLbi6JMy5R1pJi38M0f": {
+    "vi": "Bước Chân", "en": "Footsteps", "es": "Pasos", "fr": "Pas", "ja": "足音", "ko": "발걸음", "de": "Schritte", "it": "Passi", "ru": "Шаги", "pt": "Passos", "zh": "足迹", "hi": "पदचाप", "ar": "خطوات", "id": "Langkah Kaki", "tr": "Adımlar", "sv": "Steg", "nl": "Voetstappen"
+  },
+  "K7cN9NUtrQJj71JmdnjJ": {
+    "vi": "Tiếng Dế", "en": "Crickets", "es": "Grillos", "fr": "Grillons", "ja": "虫の音", "ko": "귀뚜라미", "de": "Grillen", "it": "Grilli", "ru": "Сверчки", "pt": "Grilos", "zh": "虫鸣", "hi": "झींगुर", "ar": "صرصور الليل", "id": "Jangkrik", "tr": "Cırcır Böceği", "sv": "Syrsor", "nl": "Krekel"
+  },
+  "F7GTNFv5Cpkn0KtWS3bE": {
+    "vi": "Gió Lùa", "en": "Wind Draft", "es": "Viento Filtrado", "fr": "Courant d'Air", "ja": "すきま風", "ko": "틈새바람", "de": "Zugluft", "it": "Spiffero", "ru": "Сквозняк", "pt": "Corrente de Ar", "zh": "穿堂风", "hi": "ठंडी हवा", "ar": "تيار هوائي", "id": "Angin Seliweran", "tr": "Cereyan", "sv": "Drag", "nl": "Tocht"
+  },
+  "si03q6FxSnhcG3iQgMdX": {
+    "vi": "Lửa Trại", "en": "Campfire", "es": "Fogata", "fr": "Feu de Camp", "ja": "たき火", "ko": "모닥불", "de": "Lagerfeuer", "it": "Fuoco", "ru": "Костер", "pt": "Fogueira", "zh": "营火", "hi": "अलाव", "ar": "نار المخيم", "id": "Api Unggun", "tr": "Kamp Ateşi", "sv": "Lägereld", "nl": "Kampvuur"
+  },
+  "PNvcK3eIK5XztWaNzCb2": {
+    "vi": "Mưa Phùn", "en": "Drizzle", "es": "Llovizna", "fr": "Bruine", "ja": "霧雨", "ko": "가랑비", "de": "Nieselregen", "it": "Pioggerellina", "ru": "Изморось", "pt": "Chuvisco", "zh": "细雨", "hi": "बूंदाबांदी", "ar": "رذاذ", "id": "Gerimis", "tr": "Çiseleme", "sv": "Duggregn", "nl": "Motregen"
+  },
+  "zTpZt4VcuPx7a3mq59jU": {
+    "vi": "Mưa Rào", "en": "Rain", "es": "Lluvia", "fr": "Pluie", "ja": "雨", "ko": "빗소리", "de": "Regen", "it": "Pioggia", "ru": "Дождь", "pt": "Chuva", "zh": "大雨", "hi": "بارिश", "ar": "مطر", "id": "Hujan", "tr": "Yağmur", "sv": "Regn", "nl": "Regen"
+  },
+  "msswKp6KxJxLmwhyshhm": {
+    "vi": "Sông Sâu", "en": "Deep River", "es": "Río Profundo", "fr": "Rivière Profonde", "ja": "川", "ko": "깊은 강", "de": "Tiefer Fluss", "it": "Fiume", "ru": "Глубокая река", "pt": "Rio Profundo", "zh": "深河", "hi": "गहरी नदी", "ar": "نهر عميق", "id": "Sungai Dalam", "tr": "Derin Nehir", "sv": "Djup flod", "nl": "Diepe rivier"
+  },
+  "ytPSQbHcbqdUEwtYjk1g": {
+    "vi": "Sủi Bọt", "en": "Fizzing", "es": "Burbujeo", "fr": "Pétillement", "ja": "炭酸", "ko": "탄산 소리", "de": "Sprudeln", "it": "Frizzante", "ru": "Шипение", "pt": "Efervescência", "zh": "苏打气泡", "hi": "फ़िज़", "ar": "فوران", "id": "Desis", "tr": "Fışırdayan", "sv": "Bubbel", "nl": "Bruisen"
+  },
+  "q6uxBiqEJzy9kihujo0Y": {
+    "vi": "Suối Nhỏ", "en": "Small Stream", "es": "Arroyuelo", "fr": "Ruisseau", "ja": "小川", "ko": "시냇물", "de": "Kleiner Bach", "it": "Ruscello", "ru": "Маленький ручей", "pt": "Riacho", "zh": "小溪", "hi": "झरना", "ar": "جدول صغير", "id": "Aliran Kecil", "tr": "Dere", "sv": "Bäck", "nl": "Beekje"
+  },
+  "AUCQ2WR0c8WyL2jeC7ri": {
+    "vi": "Sóng Biển", "en": "Ocean Waves", "es": "Olas", "fr": "Vagues", "ja": "波", "ko": "파도", "de": "Wellen", "it": "Onde", "ru": "Волны", "pt": "Ondas", "zh": "海浪", "hi": "लहरें", "ar": "أمواج البحر", "id": "Ombak Laut", "tr": "Dalgalar", "sv": "Havsvågor", "nl": "Zeegolven"
+  },
+  "k15W8mQw9NIdPUYtpTEE": {
+    "vi": "Gió Thổi", "en": "Wind", "es": "Viento", "fr": "Vent", "ja": "風", "ko": "바람", "de": "Wind", "it": "Vento", "ru": "Ветер", "pt": "Vento", "zh": "风声", "hi": "हवा", "ar": "هبوب الرياح", "id": "Angin", "tr": "Rüzgar", "sv": "Vind", "nl": "Wind"
+  }
+}

@@ -18,7 +18,9 @@ class ThemeModelAdapter extends TypeAdapter<ThemeModel> {
     };
     return ThemeModel(
       id: fields[0] as String,
-      name: fields[1] as String,
+      titleMap: (fields[1] as Map).map(
+        (k, v) => MapEntry(k.toString(), v.toString()),
+      ),
       imageUrl: fields[2] as String,
       audioUrl: fields[3] as String,
       isPremium: fields[4] as bool,
@@ -32,7 +34,7 @@ class ThemeModelAdapter extends TypeAdapter<ThemeModel> {
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.titleMap)
       ..writeByte(2)
       ..write(obj.imageUrl)
       ..writeByte(3)

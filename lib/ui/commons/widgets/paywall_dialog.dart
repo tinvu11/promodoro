@@ -5,8 +5,8 @@ import 'package:amplitude_flutter/events/base_event.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../configs/di.dart';
@@ -44,7 +44,6 @@ class _PaywallDialogState extends State<PaywallDialog> {
   static const primaryId = String.fromEnvironment("PRIMARY_PRODUCT_ID");
   static const secondaryId = String.fromEnvironment("SECONDARY_PRODUCT_ID");
   final _amplitude = DI.sl<Amplitude>();
-  late final ScrollController _scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -112,13 +111,15 @@ class _PaywallDialogState extends State<PaywallDialog> {
                           ),
                           SizedBox(height: 12),
                           _buildFeatureRow(
-                            Icons.flash_on,
+                            Icons.support,
+
                             AppLocalizations.of(context)!.prioritySupport,
                           ),
                           SizedBox(height: 12),
 
                           _buildFeatureRow(
-                            Icons.support,
+                            Icons.flash_on,
+
                             AppLocalizations.of(context)!.optimizePerformance,
                           ),
                         ],
@@ -209,7 +210,6 @@ class _PaywallDialogState extends State<PaywallDialog> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _amplitude.track(BaseEvent('paywall_dialog_close'));
     super.dispose();
   }
