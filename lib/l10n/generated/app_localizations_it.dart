@@ -109,12 +109,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hours h';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins m';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get noAds => 'Nessuna pubblicità';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Supporto prioritario del team';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Ottimizza le prestazioni';
 
   @override
   String get lifetime => 'A vita';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Acquista una volta, usa per sempre';
 
   @override
   String get yearly => 'Annuale';
@@ -150,13 +150,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get save40 => 'Risparmia il 40%';
 
   @override
-  String get terms => 'Termini';
+  String get terms => 'Termini di utilizzo';
 
   @override
   String get restore => 'Ripristina';
 
   @override
-  String get policy => 'Policy';
+  String get policy => 'Informativa sulla privacy';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,44 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get languageSelection => 'Lingua';
+
+  @override
+  String get noData => 'Nessun dato trovato';
+
+  @override
+  String get noInternet => 'Nessuna connessione Internet.';
+
+  @override
+  String get tryAgainConnect => 'Prova a connetterti di nuovo.';
+
+  @override
+  String get tryAgain => 'Riprova';
+
+  @override
+  String get sponsored => 'Sponsorizzato';
+
+  @override
+  String get stop_timer_title => 'Ferma il timer';
+
+  @override
+  String get stop_timer_content =>
+      'Si prega di fermare il timer prima di modificare le impostazioni.';
+
+  @override
+  String get btn_stop => 'Ferma';
+
+  @override
+  String get btn_cancel => 'Annulla';
+
+  @override
+  String get version => 'Versione';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get share => 'Condividi';
+
+  @override
+  String get rate => 'Valuta';
 }

@@ -1,12 +1,9 @@
 {
   "@@locale": "en",
-
   "appTitle": "Pomodoro",
-
   "timerTab": "Timer",
   "statisticsTab": "Statistics",
   "settingsTab": "Settings",
-
   "settings": "Settings",
   "workTime": "Focus",
   "breakTime": "Rest",
@@ -19,30 +16,30 @@
   "repeatTimes": "{count} ses",
   "@repeatTimes": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "repeat": "Repeat",
   "minutes": "{count} min",
   "@minutes": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "sound": "Sound",
   "backgroundSound": "Background sound",
-
   "language": "Language",
   "alwaysOnScreen": "Always on screen",
   "information": "Information",
-
   "work": "Work",
   "breakLabel": "Break",
   "start": "Start",
   "continueLabel": "Continue",
   "pause": "Pause",
-
   "statistics": "Statistics",
   "total": "Total",
   "today": "Today",
@@ -50,29 +47,38 @@
   "hoursAndMinutes": "{hours}h {mins}m",
   "@hoursAndMinutes": {
     "placeholders": {
-      "hours": { "type": "int" },
-      "mins": { "type": "int" }
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
     }
   },
   "hoursOnly": "{hours}h",
   "@hoursOnly": {
     "placeholders": {
-      "hours": { "type": "int" }
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "minutesOnly": "{mins}m",
   "@minutesOnly": {
     "placeholders": {
-      "mins": { "type": "int" }
+      "mins": {
+        "type": "int"
+      }
     }
   },
   "totalLabel": "Total: {value}",
   "@totalLabel": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
-
   "premiumFeatures": "Premium Features",
   "unlockAllFeatures": "Unlock all features",
   "noAds": "No ads at all",
@@ -86,8 +92,22 @@
   "restore": "Restore",
   "policy": "Policy",
   "hot": "HOT",
-
   "vietnamese": "Vietnamese",
   "english": "English",
-  "languageSelection": "Language"
+  "languageSelection": "Language",
+  "noData": "No data found",
+  "noInternet": "No internet connection.",
+  "tryAgainConnect": "Please try connecting again.",
+  "tryAgain": "Try again",
+  "sponsored": "Sponsored",
+  "stop_timer_title": "Stop the timer",
+  "stop_timer_content": "Please stop the timer before changing the settings.",
+  "btn_stop": "Stop",
+  "btn_cancel": "Cancel",
+  "version": "Version",
+  "email": "Email",
+  "policy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "share": "Share",
+      "rate": "Rate"
 }

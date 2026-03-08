@@ -42,7 +42,6 @@
   "restore": "復元",
   "policy": "ポリシー",
   "hot": "人気",
-
   "vietnamese": "ベトナム語",
   "english": "英語",
   "french": "フランス語",
@@ -53,5 +52,70 @@
   "italian": "イタリア語",
   "russian": "ロシア語",
   "portuguese": "ポルトガル語",
-  "languageSelection": "言語選択"
+  "languageSelection": "言語選択",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}時間",
+  "minutesOnly": "{mins}分",
+  "prioritySupport": "優先チームサポート",
+  "optimizePerformance": "パフォーマンスを最適化する",
+  "buyOnce": "一度購入すれば永久に使用可能",
+  "noData": "データが見つかりませんでした",
+  "noInternet": "インターネット接続がありません。",
+  "tryAgainConnect": "もう一度接続してみてください。",
+  "tryAgain": "もう一度やり直してください",
+  "sponsored": "スポンサー",
+  "stop_timer_title": "タイマーを停止",
+"stop_timer_content": "設定を変更する前にタイマーを停止してください。",
+"btn_stop": "停止",
+"btn_cancel": "キャンセル",
+"version": "バージョン",
+"email": "メール",
+"policy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "share": "共有",
+    "rate": "評価"
 }

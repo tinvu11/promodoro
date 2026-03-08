@@ -109,12 +109,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hours ح';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins م';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noAds => 'بدون إعلانات';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'دعم الفريق ذو الأولوية';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'تحسين الأداء';
 
   @override
   String get lifetime => 'مدى الحياة';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'شراء مرة واحدة، واستخدام إلى الأبد';
 
   @override
   String get yearly => 'سنوي';
@@ -150,13 +150,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get save40 => 'توفير 40%';
 
   @override
-  String get terms => 'الشروط';
+  String get terms => 'شروط الاستخدام';
 
   @override
   String get restore => 'استعادة';
 
   @override
-  String get policy => 'السياسة';
+  String get policy => 'سياسة الخصوصية';
 
   @override
   String get hot => 'نشط';
@@ -169,4 +169,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get languageSelection => 'اختر اللغة';
+
+  @override
+  String get noData => 'لم يتم العثور على بيانات';
+
+  @override
+  String get noInternet => 'لا يوجد اتصال بالإنترنت.';
+
+  @override
+  String get tryAgainConnect => 'الرجاء محاولة الاتصال مرة أخرى.';
+
+  @override
+  String get tryAgain => 'حاول ثانية';
+
+  @override
+  String get sponsored => 'برعاية';
+
+  @override
+  String get stop_timer_title => 'إيقاف المؤقت';
+
+  @override
+  String get stop_timer_content => 'يرجى إيقاف المؤقت قبل تغيير الإعدادات.';
+
+  @override
+  String get btn_stop => 'إيقاف';
+
+  @override
+  String get btn_cancel => 'إلغاء';
+
+  @override
+  String get version => 'الإصدار';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get share => 'مشاركة';
+
+  @override
+  String get rate => 'تقييم';
 }

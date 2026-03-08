@@ -5,9 +5,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:promodoro/configs/di.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
+import 'package:promodoro/data/data_sources/local_data.dart';
 import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/navigation/app_router.dart';
 import 'package:promodoro/services/noise_audio_service.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:promodoro/ui/screens/timer/widgets/GlassTimerPage.dart';
 import 'package:promodoro/utils/time_formatting.dart';
@@ -15,7 +17,6 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/common_appbar.dart';
-import '../../commons/widgets/common_dialog.dart';
 import '../../commons/widgets/glass_box.dart';
 import '../../commons/widgets/paywall_dialog.dart';
 import 'bloc/timer_bloc.dart';
@@ -37,16 +38,6 @@ class _TimerPageState extends State<TimerPage> {
     _noiseAudioService = DI.sl<NoiseAudioService>();
     _requestPermissions();
   }
-
-  // Future<void> _requestPermissions() async {
-  //   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //       FlutterLocalNotificationsPlugin();
-  //   await flutterLocalNotificationsPlugin
-  //       .resolvePlatformSpecificImplementation<
-  //         AndroidFlutterLocalNotificationsPlugin
-  //       >()
-  //       ?.requestNotificationsPermission();
-  // }
 
   @override
   void dispose() {
@@ -98,7 +89,7 @@ class _TimerPageState extends State<TimerPage> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 offset: isRunning ? const Offset(0, -1) : Offset.zero,
-                child: _buildAppBar(context, settings.themeName),
+                child: _buildAppBar(context, settings),
               ),
             ),
             body: Center(
@@ -140,7 +131,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> _requestPermissions() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
@@ -219,66 +210,6 @@ class _TimerPageState extends State<TimerPage> {
     );
   }
 
-  Widget _buildControlButtons(BuildContext context, settings) {
-    return BlocBuilder<TimerBloc, TimerState>(
-      builder: (context, state) {
-        String textButton = AppLocalizations.of(context)!.start;
-        if (state is TimerRunPause) {
-          textButton = AppLocalizations.of(context)!.continueLabel;
-        } else if (state is TimerRunInProgress) {
-          textButton = AppLocalizations.of(context)!.pause;
-        }
-
-        final isRunning = state is TimerRunInProgress;
-        final isInitial = state is TimerInitial;
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Nút Start/Pause
-            GestureDetector(
-              onTap: () => _onToggleTimer(context, state, settings),
-              child: GlassBox(
-                borderRadius: 216,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        isRunning ? Icons.pause : Icons.play_arrow,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      // const SizedBox(width: 8),
-                      // Text(isRunning ? "Tạm dừng" : "Bắt đầu", style: AppFonts.medium_white_20),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Nút Reset (Chỉ hiện khi không ở trạng thái Initial)
-            // if (!isInitial) ...[
-            //   const SizedBox(width: 20),
-            //   GestureDetector(
-            //     onTap: () => context.read<TimerBloc>().add(const TimerReset()),
-            //     child: const GlassBox(
-            //       borderRadius: 26,
-            //       child: Padding(
-            //         padding: EdgeInsets.all(12.0),
-            //         child: Icon(Icons.refresh, color: Colors.white),
-            //       ),
-            //     ),
-            //   ),
-            // ]
-          ],
-        );
-      },
-    );
-  }
-
   // Gom nhóm logic xử lý sự kiện
   void _onToggleTimer(BuildContext context, TimerState state, settings) {
     final bloc = context.read<TimerBloc>();
@@ -339,7 +270,16 @@ class _TimerPageState extends State<TimerPage> {
     }
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, String themeId) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, dynamic settings) {
+    final langCode = Localizations.localeOf(context).languageCode;
+    final cachedThemes = DI.sl<LocalData>().getCachedThemes();
+    final theme = cachedThemes
+        .where((t) => t.id == settings.selectedThemeId)
+        .firstOrNull;
+    final displayName =
+        theme?.getLocalizedName(langCode) ??
+        ThemeStorageService.getDefaultThemeName(langCode);
+
     return CommonAppBar(
       showLeading: false,
 
@@ -351,10 +291,14 @@ class _TimerPageState extends State<TimerPage> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  const Icon(Icons.palette, color: Colors.white, size: 18),
+                  const Icon(
+                    Icons.music_note_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                   const SizedBox(width: 5),
                   Text(
-                    themeId,
+                    displayName,
                     style: AppFonts.regular_grey_14.copyWith(
                       color: Colors.white,
                     ),

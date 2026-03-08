@@ -132,16 +132,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get noAds => 'Sem anúncios';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Suporte prioritário da equipe';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Otimize o desempenho';
 
   @override
   String get lifetime => 'Vitalício';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Compre uma vez, use para sempre';
 
   @override
   String get yearly => 'Anual';
@@ -150,13 +150,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get save40 => 'Economize 40%';
 
   @override
-  String get terms => 'Termos';
+  String get terms => 'Termos de Uso';
 
   @override
   String get restore => 'Restaurar';
 
   @override
-  String get policy => 'Política';
+  String get policy => 'Política de Privacidade';
 
   @override
   String get hot => 'QUENTE';
@@ -169,4 +169,44 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get languageSelection => 'Idioma';
+
+  @override
+  String get noData => 'Nenhum dado encontrado';
+
+  @override
+  String get noInternet => 'Sem conexão com a internet.';
+
+  @override
+  String get tryAgainConnect => 'Tente conectar novamente.';
+
+  @override
+  String get tryAgain => 'Tente novamente';
+
+  @override
+  String get sponsored => 'Patrocinado';
+
+  @override
+  String get stop_timer_title => 'Parar o temporizador';
+
+  @override
+  String get stop_timer_content =>
+      'Por favor, pare o temporizador antes de alterar as configurações.';
+
+  @override
+  String get btn_stop => 'Parar';
+
+  @override
+  String get btn_cancel => 'Cancelar';
+
+  @override
+  String get version => 'Versão';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get share => 'Compartilhar';
+
+  @override
+  String get rate => 'Avaliar';
 }

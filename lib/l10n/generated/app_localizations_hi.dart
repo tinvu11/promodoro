@@ -109,12 +109,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hoursएच';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$minsमि';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noAds => 'कोई विज्ञापन नहीं';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'प्राथमिकता टीम का समर्थन';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'प्रदर्शन का अनुकूलन करें';
 
   @override
   String get lifetime => 'जीवनभर';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'एक बार खरीदें, हमेशा के लिए उपयोग करें';
 
   @override
   String get yearly => 'वार्षिक';
@@ -150,13 +150,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get save40 => '40% बचाएं';
 
   @override
-  String get terms => 'शर्तें';
+  String get terms => 'उपयोग की शर्तें';
 
   @override
   String get restore => 'पुनर्स्थापित करें';
 
   @override
-  String get policy => 'नीति';
+  String get policy => 'गोपनीयता नीति';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,43 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get languageSelection => 'भाषा चुनें';
+
+  @override
+  String get noData => 'डाटा प्राप्त नहीं हुआ';
+
+  @override
+  String get noInternet => 'कोई इंटरनेट कनेक्शन नहीं।';
+
+  @override
+  String get tryAgainConnect => 'कृपया पुनः कनेक्ट करने का प्रयास करें.';
+
+  @override
+  String get tryAgain => 'पुनः प्रयास करें';
+
+  @override
+  String get sponsored => 'प्रायोजित';
+
+  @override
+  String get stop_timer_title => 'टाइमर रोकें';
+
+  @override
+  String get stop_timer_content => 'सेटिंग बदलने से पहले कृपया टाइमर रोकें।';
+
+  @override
+  String get btn_stop => 'रोकें';
+
+  @override
+  String get btn_cancel => 'रद्द करें';
+
+  @override
+  String get version => 'संस्करण';
+
+  @override
+  String get email => 'ईमेल';
+
+  @override
+  String get share => 'साझा करें';
+
+  @override
+  String get rate => 'रेट करें';
 }

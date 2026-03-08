@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:promodoro/configs/di.dart';
+import 'package:promodoro/data/data_sources/local_data.dart';
 import 'package:promodoro/l10n/generated/app_localizations.dart';
+import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 
 import '../../../../core/Theme/app_colors.dart';
@@ -51,7 +54,17 @@ class SoundSection extends StatelessWidget {
                 _buildSimpleTile(
                   context,
                   l10n.backgroundSound,
-                  settingsModel.themeName,
+                  () {
+                    final langCode = Localizations.localeOf(
+                      context,
+                    ).languageCode;
+                    final cachedThemes = DI.sl<LocalData>().getCachedThemes();
+                    final theme = cachedThemes
+                        .where((t) => t.id == settingsModel.selectedThemeId)
+                        .firstOrNull;
+                    return theme?.getLocalizedName(langCode) ??
+                        ThemeStorageService.getDefaultThemeName(langCode);
+                  }(),
                   onTap: () {
                     final timerState = context.read<TimerBloc>().state;
                     if (timerState is TimerRunInProgress ||

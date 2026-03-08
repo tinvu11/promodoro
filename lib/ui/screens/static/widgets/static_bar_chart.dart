@@ -1,8 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:promodoro/data/models/daily_stat.dart';
-
-import '../../../../l10n/generated/app_localizations.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 
 class StaticBarChart extends StatefulWidget {
   final List<DailyStat> allStats;
@@ -77,10 +76,11 @@ class _StaticBarChartState extends State<StaticBarChart> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (widget.allStats.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'Chưa có dữ liệu',
+          l10n.noData,
           style: TextStyle(color: Colors.white54, fontSize: 14),
         ),
       );
@@ -166,7 +166,7 @@ class _StaticBarChartState extends State<StaticBarChart> {
       return l10n.hoursAndMinutes(hours, minutes);
     } else {
       final totalMinutes = time ~/ 60;
-      return l10n.minutes(time);
+      return l10n.minutes(totalMinutes);
     }
   }
 

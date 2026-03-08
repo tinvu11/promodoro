@@ -22,10 +22,33 @@ class ThemeStorageService {
   static const String _audioFile = 'audio.mp3';
 
   /// ID theme mặc định (dùng asset thay vì file tải về).
-  static const String defaultThemeId = 'G7GDaHv9v6A21I4v2NQU';
-  static const String defaultBgAsset = 'assets/images/tree.jpg';
-  static const String defaultAudioAsset = 'noises/bird.ogg';
-  static const String defaultThemeName = 'Chim';
+  static const String defaultThemeId = 'AUCQ2WR0c8WyL2jeC7ri';
+  static const String defaultBgAsset = 'assets/images/wave_default_bg.webp';
+  static const String defaultAudioAsset =
+      'assets/noises/wave_default_audio.ogg';
+  // static const String defaultThemeName = 'Bird';
+  static const Map<String, String> defaultThemeNames = {
+    "vi": "Sóng Biển",
+    "en": "Ocean Waves",
+    "es": "Olas",
+    "fr": "Vagues",
+    "ja": "波",
+    "ko": "파도",
+    "de": "Wellen",
+    "it": "Onde",
+    "ru": "Волны",
+    "pt": "Ondas",
+    "zh": "海浪",
+    "hi": "लहरें",
+    "ar": "أمواج البحر",
+    "id": "Ombak Laut",
+    "tr": "Dalgalar",
+    "sv": "Havsvågor",
+    "nl": "Zeegolven",
+  };
+  static String getDefaultThemeName(String languageCode) {
+    return defaultThemeNames[languageCode] ?? defaultThemeNames['en']!;
+  }
 
   /// Kiểm tra có phải theme mặc định (dùng asset) hay không.
   static bool isDefaultTheme(String themeId) => themeId == defaultThemeId;

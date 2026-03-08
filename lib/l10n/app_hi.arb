@@ -42,7 +42,6 @@
   "restore": "पुनर्स्थापित करें",
   "policy": "नीति",
   "hot": "HOT",
-
   "vietnamese": "वियतनामी",
   "english": "अंग्रेज़ी",
   "french": "फ्रेंच",
@@ -60,5 +59,70 @@
   "turkish": "तुर्की",
   "swedish": "स्वीडिश",
   "dutch": "डच",
-  "languageSelection": "भाषा चुनें"
+  "languageSelection": "भाषा चुनें",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}एच",
+  "minutesOnly": "{mins}मि",
+  "prioritySupport": "प्राथमिकता टीम का समर्थन",
+  "optimizePerformance": "प्रदर्शन का अनुकूलन करें",
+  "buyOnce": "एक बार खरीदें, हमेशा के लिए उपयोग करें",
+  "noData": "डाटा प्राप्त नहीं हुआ",
+  "noInternet": "कोई इंटरनेट कनेक्शन नहीं।",
+  "tryAgainConnect": "कृपया पुनः कनेक्ट करने का प्रयास करें.",
+  "tryAgain": "पुनः प्रयास करें",
+  "sponsored": "प्रायोजित",
+  "stop_timer_title": "टाइमर रोकें",
+  "stop_timer_content": "सेटिंग बदलने से पहले कृपया टाइमर रोकें।",
+  "btn_stop": "रोकें",
+  "btn_cancel": "रद्द करें",
+  "version": "संस्करण",
+  "email": "ईमेल",
+    "policy": "गोपनीयता नीति",
+      "terms": "उपयोग की शर्तें",
+      "share": "साझा करें",
+      "rate": "रेट करें"
 }

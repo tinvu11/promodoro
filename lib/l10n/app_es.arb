@@ -42,7 +42,6 @@
   "restore": "Restaurar",
   "policy": "Política",
   "hot": "HOT",
-
   "vietnamese": "Vietnamita",
   "english": "Inglés",
   "french": "Francés",
@@ -53,5 +52,70 @@
   "italian": "Italiano",
   "russian": "Ruso",
   "portuguese": "Portugués",
-  "languageSelection": "Seleccionar idioma"
+  "languageSelection": "Seleccionar idioma",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}h",
+  "minutesOnly": "{mins}m",
+  "prioritySupport": "Soporte del equipo prioritario",
+  "optimizePerformance": "Optimizar el rendimiento",
+  "buyOnce": "Compra una vez, úsalo para siempre",
+  "noData": "No se encontraron datos",
+  "noInternet": "Sin conexión a Internet.",
+  "tryAgainConnect": "Intente conectarse nuevamente.",
+  "tryAgain": "Intentar otra vez",
+  "sponsored": "Patrocinado",
+  "stop_timer_title": "Detener temporizador",
+  "stop_timer_content": "Por favor, detenga el temporizador antes de cambiar la configuración.",
+  "btn_stop": "Detener",
+  "btn_cancel": "Cancelar",
+  "version": "Versión",
+  "email": "Correo electrónico",
+   "policy": "Política de privacidad",
+      "terms": "Términos de uso",
+      "share": "Compartir",
+      "rate": "Calificar"
 }

@@ -109,12 +109,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '${hours}sa';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins dk';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noAds => 'Reklamsız';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Öncelikli ekip desteği';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Performansı optimize edin';
 
   @override
   String get lifetime => 'Ömür boyu';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Bir kez satın alın, sonsuza kadar kullanın';
 
   @override
   String get yearly => 'Yıllık';
@@ -150,13 +150,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get save40 => '%40 Tasarruf';
 
   @override
-  String get terms => 'Koşullar';
+  String get terms => 'Kullanım Şartları';
 
   @override
   String get restore => 'Geri Yükle';
 
   @override
-  String get policy => 'Politika';
+  String get policy => 'Gizlilik Politikası';
 
   @override
   String get hot => 'SICAK';
@@ -169,4 +169,44 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get languageSelection => 'Dil Seçin';
+
+  @override
+  String get noData => 'Veri bulunamadı';
+
+  @override
+  String get noInternet => 'İnternet bağlantısı yok.';
+
+  @override
+  String get tryAgainConnect => 'Lütfen tekrar bağlanmayı deneyin.';
+
+  @override
+  String get tryAgain => 'Tekrar deneyin';
+
+  @override
+  String get sponsored => 'Sponsorlu';
+
+  @override
+  String get stop_timer_title => 'Zamanlayıcıyı durdur';
+
+  @override
+  String get stop_timer_content =>
+      'Ayarları değiştirmeden önce lütfen zamanlayıcıyı durdurun.';
+
+  @override
+  String get btn_stop => 'Durdur';
+
+  @override
+  String get btn_cancel => 'İptal';
+
+  @override
+  String get version => 'Sürüm';
+
+  @override
+  String get email => 'E-posta';
+
+  @override
+  String get share => 'Paylaş';
+
+  @override
+  String get rate => 'Değerlendir';
 }

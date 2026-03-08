@@ -132,16 +132,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noAds => 'Sin anuncios';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Soporte del equipo prioritario';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Optimizar el rendimiento';
 
   @override
   String get lifetime => 'De por vida';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Compra una vez, úsalo para siempre';
 
   @override
   String get yearly => 'Anual';
@@ -150,13 +150,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get save40 => 'Ahorra 40%';
 
   @override
-  String get terms => 'Términos';
+  String get terms => 'Términos de uso';
 
   @override
   String get restore => 'Restaurar';
 
   @override
-  String get policy => 'Política';
+  String get policy => 'Política de privacidad';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,44 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get languageSelection => 'Seleccionar idioma';
+
+  @override
+  String get noData => 'No se encontraron datos';
+
+  @override
+  String get noInternet => 'Sin conexión a Internet.';
+
+  @override
+  String get tryAgainConnect => 'Intente conectarse nuevamente.';
+
+  @override
+  String get tryAgain => 'Intentar otra vez';
+
+  @override
+  String get sponsored => 'Patrocinado';
+
+  @override
+  String get stop_timer_title => 'Detener temporizador';
+
+  @override
+  String get stop_timer_content =>
+      'Por favor, detenga el temporizador antes de cambiar la configuración.';
+
+  @override
+  String get btn_stop => 'Detener';
+
+  @override
+  String get btn_cancel => 'Cancelar';
+
+  @override
+  String get version => 'Versión';
+
+  @override
+  String get email => 'Correo electrónico';
+
+  @override
+  String get share => 'Compartir';
+
+  @override
+  String get rate => 'Calificar';
 }

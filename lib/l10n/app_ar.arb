@@ -42,7 +42,6 @@
   "restore": "استعادة",
   "policy": "السياسة",
   "hot": "نشط",
-
   "vietnamese": "الفيتنامية",
   "english": "الإنجليزية",
   "french": "الفرنسية",
@@ -60,5 +59,70 @@
   "turkish": "التركية",
   "swedish": "السويدية",
   "dutch": "الهولندية",
-  "languageSelection": "اختر اللغة"
+  "languageSelection": "اختر اللغة",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours} ح",
+  "minutesOnly": "{mins} م",
+  "prioritySupport": "دعم الفريق ذو الأولوية",
+  "optimizePerformance": "تحسين الأداء",
+  "buyOnce": "شراء مرة واحدة، واستخدام إلى الأبد",
+  "noData": "لم يتم العثور على بيانات",
+  "noInternet": "لا يوجد اتصال بالإنترنت.",
+  "tryAgainConnect": "الرجاء محاولة الاتصال مرة أخرى.",
+  "tryAgain": "حاول ثانية",
+  "sponsored": "برعاية",
+  "stop_timer_title": "إيقاف المؤقت",
+  "stop_timer_content": "يرجى إيقاف المؤقت قبل تغيير الإعدادات.",
+  "btn_stop": "إيقاف",
+  "btn_cancel": "إلغاء",
+  "version": "الإصدار",
+  "email": "البريد الإلكتروني",
+   "policy": "سياسة الخصوصية",
+      "terms": "شروط الاستخدام",
+      "share": "مشاركة",
+      "rate": "تقييم"
 }

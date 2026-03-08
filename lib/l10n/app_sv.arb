@@ -42,7 +42,6 @@
   "restore": "Återställ",
   "policy": "Policy",
   "hot": "HET",
-
   "vietnamese": "Vietnamesiska",
   "english": "Engelska",
   "french": "Franska",
@@ -60,5 +59,70 @@
   "turkish": "Turkiska",
   "swedish": "Svenska",
   "dutch": "Nederländska",
-  "languageSelection": "Välj språk"
+  "languageSelection": "Välj språk",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}t",
+  "minutesOnly": "{mins}m",
+  "prioritySupport": "Prioriterad teamsupport",
+  "optimizePerformance": "Optimera prestanda",
+  "buyOnce": "Köp en gång, använd för alltid",
+  "noData": "Ingen data hittades",
+  "noInternet": "Ingen internetuppkoppling.",
+  "tryAgainConnect": "Försök att ansluta igen.",
+  "tryAgain": "Försök igen",
+  "sponsored": "Sponsrad",
+  "stop_timer_title": "Stoppa timern",
+"stop_timer_content": "Vänligen stoppa timern innan du ändrar inställningarna.",
+"btn_stop": "Stoppa",
+"btn_cancel": "Avbryt",
+"version": "Version",
+"email": "E-post",
+  "policy": "Integritetspolicy",
+    "terms": "Användarvillkor",
+    "share": "Dela",
+    "rate": "Betygsätt"
 }

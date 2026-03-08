@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import '../../../core/Theme/app_colors.dart';
 import '../../../core/Theme/app_fonts.dart';
 import '../../screens/timer/bloc/timer_bloc.dart';
@@ -40,6 +41,7 @@ class StopDialog extends StatefulWidget {
 class _StopDialogState extends State<StopDialog> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<TimerBloc, TimerState>(
       builder: (context, state) {
         return Center(
@@ -77,13 +79,13 @@ class _StopDialogState extends State<StopDialog> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Yêu cầu dừng Timer",
+                          l10n.stop_timer_title,
                           style: AppFonts.medium_grey_22,
                         ),
                         const SizedBox(height: 10),
 
                         Text(
-                          "Vui lòng dừng Timer trước khi thay đổi cấu hình!",
+                          l10n.stop_timer_content,
                           style: AppFonts.regular_grey_16,
                         ),
                         const SizedBox(height: 30),
@@ -96,7 +98,7 @@ class _StopDialogState extends State<StopDialog> {
                             GestureDetector(
                               onTap: () => _cancel(context),
                               child: Text(
-                                "Đóng",
+                                l10n.btn_cancel,
                                 style: AppFonts.medium_grey_14.copyWith(
                                   decorationColor: AppColors.textSecondary,
                                 ),
@@ -107,7 +109,7 @@ class _StopDialogState extends State<StopDialog> {
                                 _stopTimer(onConfirm: widget.onConfirm);
                               },
                               child: Text(
-                                "Dừng",
+                                l10n.btn_stop,
                                 style: AppFonts.medium_grey_14.copyWith(
                                   decorationColor: AppColors.textSecondary,
                                 ),

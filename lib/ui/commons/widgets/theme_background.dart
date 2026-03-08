@@ -4,6 +4,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../../../services/theme_storage_service.dart';
+
 /// Widget hiển thị ảnh nền theo chiến lược Offline-first.
 ///
 /// Nếu [localImagePath] tồn tại trên disk → dùng `Image.file`.
@@ -21,7 +23,7 @@ class ThemeBackground extends StatelessWidget {
   const ThemeBackground({
     super.key,
     this.localImagePath,
-    this.fallbackAsset = 'assets/images/bird.webp',
+    this.fallbackAsset = ThemeStorageService.defaultBgAsset,
     this.sigmaX = 0,
     this.sigmaY = 0,
     this.darkAlpha = 0.35,

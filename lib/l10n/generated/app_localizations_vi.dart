@@ -150,13 +150,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get save40 => 'Tiết kiệm 40%';
 
   @override
-  String get terms => 'Điều khoản';
+  String get terms => 'Điều khoản sử dụng';
 
   @override
   String get restore => 'Khôi phục';
 
   @override
-  String get policy => 'Chính sách';
+  String get policy => 'Chính sách quyền riêng tư';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,44 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get languageSelection => 'Ngôn ngữ';
+
+  @override
+  String get noData => 'Chưa có dữ liệu';
+
+  @override
+  String get noInternet => 'Không có kết nối mạng.';
+
+  @override
+  String get tryAgainConnect => 'Vui lòng thử lại kết nối.';
+
+  @override
+  String get tryAgain => 'Thử lại';
+
+  @override
+  String get sponsored => 'Được tài trợ';
+
+  @override
+  String get stop_timer_title => 'Dừng bộ đếm thời gian';
+
+  @override
+  String get stop_timer_content =>
+      'Vui lòng dừng bộ đếm thời gian trước khi thay đổi cài đặt.';
+
+  @override
+  String get btn_stop => 'Dừng';
+
+  @override
+  String get btn_cancel => 'Hủy';
+
+  @override
+  String get version => 'Phiên bản';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get share => 'Chia sẻ';
+
+  @override
+  String get rate => 'Đánh giá';
 }

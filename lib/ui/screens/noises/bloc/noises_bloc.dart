@@ -241,12 +241,11 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
       // Phát audio từ asset
       await _previewPlayer.stop();
       await _previewPlayer.setVolume(0.5);
-      await _previewPlayer.setAsset(
-        'assets/${ThemeStorageService.defaultAudioAsset}',
-      );
+      await _previewPlayer.setAsset(ThemeStorageService.defaultAudioAsset);
       await _previewPlayer.seek(Duration.zero);
-      await _previewPlayer.play();
-      emit(state.copyWith(isAudioPlaying: false));
+      emit(state.copyWith(isAudioPlaying: true));
+
+      _previewPlayer.play();
       log('[NoisesBloc] Default preview audio playing from asset.');
     } catch (e) {
       log('[NoisesBloc] Failed to start default preview', error: e);
@@ -268,8 +267,9 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
         await _previewPlayer.setVolume(0.5);
         await _previewPlayer.setFilePath(audioPath);
         await _previewPlayer.seek(Duration.zero);
-        await _previewPlayer.play();
         emit(state.copyWith(isAudioPlaying: true));
+        _previewPlayer.play();
+
         log('[NoisesBloc] Preview audio playing: $audioPath');
       }
     } catch (e) {
@@ -292,11 +292,12 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
 
           if (ThemeStorageService.isDefaultTheme(state.previewThemeId!)) {
             await _previewPlayer.setAsset(
-              'assets/${ThemeStorageService.defaultAudioAsset}',
+              ThemeStorageService.defaultAudioAsset,
             );
-            await _previewPlayer.seek(Duration.zero);
-            await _previewPlayer.play();
             emit(state.copyWith(isAudioPlaying: true));
+            await _previewPlayer.seek(Duration.zero);
+            _previewPlayer.play();
+
             log('[NoisesBloc] Default preview audio playing.');
           } else {
             final audioPath = await _themeStorageService.audioPathOf(
@@ -308,8 +309,8 @@ class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
             if (hasAudio) {
               await _previewPlayer.setFilePath(audioPath);
               await _previewPlayer.seek(Duration.zero);
-              await _previewPlayer.play();
               emit(state.copyWith(isAudioPlaying: true));
+              _previewPlayer.play();
               log('[NoisesBloc] Preview audio playing: $audioPath');
             }
           }

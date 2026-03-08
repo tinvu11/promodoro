@@ -48,7 +48,7 @@ class _StaticPageState extends State<StaticPage> {
       return l10n.hoursAndMinutes(hours, minutes);
     } else {
       final totalMinutes = time ~/ 60;
-      return l10n.minutes(time);
+      return l10n.minutes(totalMinutes);
     }
   }
 

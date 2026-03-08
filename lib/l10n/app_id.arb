@@ -42,7 +42,6 @@
   "restore": "Pulihkan",
   "policy": "Kebijakan",
   "hot": "HOT",
-
   "vietnamese": "Bahasa Vietnam",
   "english": "Bahasa Inggris",
   "french": "Bahasa Prancis",
@@ -60,5 +59,70 @@
   "turkish": "Bahasa Turki",
   "swedish": "Bahasa Swedia",
   "dutch": "Bahasa Belanda",
-  "languageSelection": "Pilih Bahasa"
+  "languageSelection": "Pilih Bahasa",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours} jam",
+  "minutesOnly": "{mins}m",
+  "prioritySupport": "Dukungan tim prioritas",
+  "optimizePerformance": "Optimalkan kinerja",
+  "buyOnce": "Beli sekali, gunakan selamanya",
+  "noData": "Tidak ada data yang ditemukan",
+  "noInternet": "Tidak ada koneksi internet.",
+  "tryAgainConnect": "Silakan coba sambungkan lagi.",
+  "tryAgain": "Coba lagi",
+  "sponsored": "Disponsori",
+  "stop_timer_title": "Hentikan timer",
+"stop_timer_content": "Silakan hentikan timer sebelum mengubah pengaturan.",
+"btn_stop": "Hentikan",
+"btn_cancel": "Batal",
+"version": "Versi",
+"email": "Email",
+"policy": "Kebijakan Privasi",
+    "terms": "Ketentuan Penggunaan",
+    "share": "Bagikan",
+    "rate": "Beri Nilai"
 }

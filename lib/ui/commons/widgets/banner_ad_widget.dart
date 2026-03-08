@@ -6,6 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../configs/di.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/ads/consent_manager.dart';
 import 'glass_box.dart';
 
@@ -231,7 +232,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Sponsored',
+                        AppLocalizations.of(context)!.sponsored,
                         style: TextStyle(
                           fontSize: 10,
                           color: Colors.white.withOpacity(0.4),

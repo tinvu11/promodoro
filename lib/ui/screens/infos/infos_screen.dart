@@ -46,6 +46,7 @@ class _InfosPageState extends State<InfosPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CommonAppBar(title: AppLocalizations.of(context)!.information),
@@ -65,6 +66,30 @@ class _InfosPageState extends State<InfosPage> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 children: [
+                  _itemLanguage(
+                    l10n.email,
+                    iconStart: Icons.email_outlined,
+                    icon: Icons.navigate_next,
+                    onTap: _sendEmail,
+                  ),
+                  _itemLanguage(
+                    l10n.share,
+                    iconStart: Icons.share,
+                    icon: Icons.navigate_next,
+                    onTap: () {},
+                  ),
+                  _itemLanguage(
+                    l10n.policy,
+                    iconStart: Icons.note_add,
+                    icon: Icons.navigate_next,
+                    onTap: _openPrivacyPolicy,
+                  ),
+                  _itemLanguage(
+                    l10n.terms,
+                    iconStart: Icons.note_add,
+                    icon: Icons.navigate_next,
+                    onTap: _openTermsOfUse,
+                  ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     minLeadingWidth: 0,
@@ -74,22 +99,17 @@ class _InfosPageState extends State<InfosPage> {
                       color: AppColors.textSecondary,
                       size: 22,
                     ),
-                    title: FutureBuilder<PackageInfo>(
+                    title: Text(l10n.version, style: AppFonts.medium_white_18),
+                    trailing: FutureBuilder<PackageInfo>(
                       future: PackageInfo.fromPlatform(),
                       builder: (context, snapshot) {
                         final version = snapshot.data?.version ?? "1.0.0";
                         return Text(
-                          "Version  $version",
-                          style: AppFonts.medium_white_18,
+                          "$version",
+                          style: AppFonts.regular_grey_16,
                         );
                       },
                     ),
-                  ),
-                  _itemLanguage(
-                    "Email",
-                    iconStart: Icons.email_outlined,
-                    icon: Icons.navigate_next,
-                    onTap: _sendEmail,
                   ),
                 ],
               ),
@@ -110,23 +130,27 @@ Widget _itemLanguage(
   return GestureDetector(
     onTap: onTap,
     behavior: HitTestBehavior.opaque,
-    child: ListTile(
-      contentPadding: EdgeInsets.zero,
-      minLeadingWidth: 0,
-      horizontalTitleGap: 12,
-      leading: Icon(iconStart, color: AppColors.textSecondary, size: 22),
-      title: Text(title, style: AppFonts.medium_white_18),
-      trailing: icon != null
-          ? Icon(icon, color: AppColors.textSecondary, size: 28)
-          : SizedBox.shrink(),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        minLeadingWidth: 0,
+        horizontalTitleGap: 12,
+        leading: Icon(iconStart, color: AppColors.textSecondary, size: 22),
+        title: Text(title, style: AppFonts.medium_white_18),
+        trailing: icon != null
+            ? Icon(icon, color: AppColors.textSecondary, size: 28)
+            : SizedBox.shrink(),
+      ),
     ),
   );
 }
 
 Future<void> _sendEmail() async {
+  final contactEmail = const String.fromEnvironment("CONTACT_EMAIL");
   final Uri emailLaunchUri = Uri(
     scheme: 'mailto',
-    path: 'vutin686@gmail.com', // Thay bằng email của bạn
+    path: contactEmail, // Thay bằng email của bạn
     queryParameters: {'subject': 'FeedBack'},
   );
   if (await canLaunchUrl(emailLaunchUri)) {
@@ -134,4 +158,14 @@ Future<void> _sendEmail() async {
   } else {
     print("Không thể mở ứng dụng Email");
   }
+}
+
+void _openTermsOfUse() async {
+  final termsOfUseUrl = const String.fromEnvironment("TERMS_OF_USE_URL");
+  await launchUrl(Uri.parse(termsOfUseUrl));
+}
+
+void _openPrivacyPolicy() async {
+  final privacyPolicyUrl = const String.fromEnvironment("PRIVACY_POLICY_URL");
+  await launchUrl(Uri.parse(privacyPolicyUrl));
 }

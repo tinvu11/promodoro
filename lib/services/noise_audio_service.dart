@@ -31,7 +31,7 @@ class NoiseAudioService {
       if (await file.exists()) {
         await _player.setFilePath(audioPath);
       } else {
-        await _player.setAsset('assets/noises/bird.ogg');
+        await _player.setAsset(ThemeStorageService.defaultAudioAsset);
       }
     } catch (e) {
       log('[NoiseAudio] Init source failed', error: e);
@@ -55,7 +55,7 @@ class NoiseAudioService {
       } else {
         // Không có file local → fallback về asset mặc định
         log('[NoiseAudio] No local audio at: $audioPath. Using default asset.');
-        await _player.setAsset('assets/noises/bird.ogg');
+        await _player.setAsset(ThemeStorageService.defaultAudioAsset);
         log(
           '[NoiseAudio] Started playing default asset (volume: ${volume.toStringAsFixed(0)}%)',
         );

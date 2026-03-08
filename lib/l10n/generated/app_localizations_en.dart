@@ -150,13 +150,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get save40 => 'Save 40%';
 
   @override
-  String get terms => 'Terms';
+  String get terms => 'Terms of Use';
 
   @override
   String get restore => 'Restore';
 
   @override
-  String get policy => 'Policy';
+  String get policy => 'Privacy Policy';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSelection => 'Language';
+
+  @override
+  String get noData => 'No data found';
+
+  @override
+  String get noInternet => 'No internet connection.';
+
+  @override
+  String get tryAgainConnect => 'Please try connecting again.';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get sponsored => 'Sponsored';
+
+  @override
+  String get stop_timer_title => 'Stop the timer';
+
+  @override
+  String get stop_timer_content =>
+      'Please stop the timer before changing the settings.';
+
+  @override
+  String get btn_stop => 'Stop';
+
+  @override
+  String get btn_cancel => 'Cancel';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get rate => 'Rate';
 }

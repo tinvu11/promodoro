@@ -42,7 +42,6 @@
   "restore": "Herstellen",
   "policy": "Beleid",
   "hot": "HOT",
-
   "vietnamese": "Vietnamees",
   "english": "Engels",
   "french": "Frans",
@@ -60,5 +59,70 @@
   "turkish": "Turks",
   "swedish": "Zweeds",
   "dutch": "Nederlands",
-  "languageSelection": "Kies taal"
+  "languageSelection": "Kies taal",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours} u",
+  "minutesOnly": "{mins} m",
+  "prioritySupport": "Ondersteuning van het prioriteitsteam",
+  "optimizePerformance": "Optimaliseer de prestaties",
+  "buyOnce": "Eén keer kopen, voor altijd gebruiken",
+  "noData": "Geen gegevens gevonden",
+  "noInternet": "Geen internetverbinding.",
+  "tryAgainConnect": "Probeer opnieuw verbinding te maken.",
+  "tryAgain": "Probeer het opnieuw",
+  "sponsored": "Gesponsord",
+  "stop_timer_title": "Timer stoppen",
+"stop_timer_content": "Stop de timer voordat je de instellingen wijzigt.",
+"btn_stop": "Stop",
+"btn_cancel": "Annuleren",
+"version": "Versie",
+"email": "E-mail",
+ "policy": "Privacybeleid",
+    "terms": "Gebruiksvoorwaarden",
+    "share": "Delen",
+    "rate": "Beoordelen"
 }

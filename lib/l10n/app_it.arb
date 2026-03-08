@@ -42,7 +42,6 @@
   "restore": "Ripristina",
   "policy": "Policy",
   "hot": "HOT",
-
   "vietnamese": "Vietnamita",
   "english": "Inglese",
   "french": "Francese",
@@ -53,5 +52,70 @@
   "italian": "Italiano",
   "russian": "Russo",
   "portuguese": "Portoghese",
-  "languageSelection": "Lingua"
+  "languageSelection": "Lingua",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours} h",
+  "minutesOnly": "{mins} m",
+  "prioritySupport": "Supporto prioritario del team",
+  "optimizePerformance": "Ottimizza le prestazioni",
+  "buyOnce": "Acquista una volta, usa per sempre",
+  "noData": "Nessun dato trovato",
+  "noInternet": "Nessuna connessione Internet.",
+  "tryAgainConnect": "Prova a connetterti di nuovo.",
+  "tryAgain": "Riprova",
+  "sponsored": "Sponsorizzato",
+  "stop_timer_title": "Ferma il timer",
+"stop_timer_content": "Si prega di fermare il timer prima di modificare le impostazioni.",
+"btn_stop": "Ferma",
+"btn_cancel": "Annulla",
+"version": "Versione",
+"email": "Email",
+"policy": "Informativa sulla privacy",
+    "terms": "Termini di utilizzo",
+    "share": "Condividi",
+    "rate": "Valuta"
 }

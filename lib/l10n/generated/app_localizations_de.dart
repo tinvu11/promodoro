@@ -114,7 +114,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '${mins}M';
   }
 
   @override
@@ -132,7 +132,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noAds => 'Keine Werbung';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Vorrangige Teamunterstützung';
 
   @override
   String get optimizePerformance => 'Optimize performance';
@@ -141,7 +141,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get lifetime => 'Lebenslang';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Einmal kaufen, für immer nutzen';
 
   @override
   String get yearly => 'Jährlich';
@@ -150,13 +150,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get save40 => '40% sparen';
 
   @override
-  String get terms => 'Bedingungen';
+  String get terms => 'Nutzungsbedingungen';
 
   @override
   String get restore => 'Wiederherstellen';
 
   @override
-  String get policy => 'Richtlinie';
+  String get policy => 'Datenschutzrichtlinie';
 
   @override
   String get hot => 'HEIẞ';
@@ -169,4 +169,45 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageSelection => 'Sprachauswahl';
+
+  @override
+  String get noData => 'Keine Daten gefunden';
+
+  @override
+  String get noInternet => 'Keine Internetverbindung.';
+
+  @override
+  String get tryAgainConnect =>
+      'Bitte versuchen Sie erneut, eine Verbindung herzustellen.';
+
+  @override
+  String get tryAgain => 'Versuchen Sie es erneut';
+
+  @override
+  String get sponsored => 'Gesponsert';
+
+  @override
+  String get stop_timer_title => 'Timer stoppen';
+
+  @override
+  String get stop_timer_content =>
+      'Bitte stoppen Sie den Timer, bevor Sie die Einstellungen ändern.';
+
+  @override
+  String get btn_stop => 'Stoppen';
+
+  @override
+  String get btn_cancel => 'Abbrechen';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get email => 'E-Mail';
+
+  @override
+  String get share => 'Teilen';
+
+  @override
+  String get rate => 'Bewerten';
 }

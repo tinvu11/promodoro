@@ -326,7 +326,9 @@ Widget _buildFeatureRow(IconData icon, String text) {
         child: Icon(icon, color: Colors.white, size: 20),
       ),
       const SizedBox(width: 8),
-      Text(text, style: AppFonts.regular_white_16),
+      Expanded(
+        child: Text(text, style: AppFonts.regular_white_16, softWrap: true),
+      ),
     ],
   );
 }

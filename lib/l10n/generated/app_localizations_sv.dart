@@ -109,7 +109,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '${hours}t';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get noAds => 'Ingen reklam';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Prioriterad teamsupport';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Optimera prestanda';
 
   @override
   String get lifetime => 'Livstid';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Köp en gång, använd för alltid';
 
   @override
   String get yearly => 'Årlig';
@@ -150,13 +150,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get save40 => 'Spara 40%';
 
   @override
-  String get terms => 'Villkor';
+  String get terms => 'Användarvillkor';
 
   @override
   String get restore => 'Återställ';
 
   @override
-  String get policy => 'Policy';
+  String get policy => 'Integritetspolicy';
 
   @override
   String get hot => 'HET';
@@ -169,4 +169,44 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get languageSelection => 'Välj språk';
+
+  @override
+  String get noData => 'Ingen data hittades';
+
+  @override
+  String get noInternet => 'Ingen internetuppkoppling.';
+
+  @override
+  String get tryAgainConnect => 'Försök att ansluta igen.';
+
+  @override
+  String get tryAgain => 'Försök igen';
+
+  @override
+  String get sponsored => 'Sponsrad';
+
+  @override
+  String get stop_timer_title => 'Stoppa timern';
+
+  @override
+  String get stop_timer_content =>
+      'Vänligen stoppa timern innan du ändrar inställningarna.';
+
+  @override
+  String get btn_stop => 'Stoppa';
+
+  @override
+  String get btn_cancel => 'Avbryt';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get email => 'E-post';
+
+  @override
+  String get share => 'Dela';
+
+  @override
+  String get rate => 'Betygsätt';
 }

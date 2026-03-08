@@ -109,12 +109,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hours시간';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins분';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get noAds => '광고 제거';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => '우선 팀 지원';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => '성능 최적화';
 
   @override
   String get lifetime => '평생 소장';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => '한 번 구매하면 영원히 사용 가능';
 
   @override
   String get yearly => '연간 구독';
@@ -150,13 +150,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get save40 => '40% 절약';
 
   @override
-  String get terms => '약관';
+  String get terms => '이용 약관';
 
   @override
   String get restore => '구매 복원';
 
   @override
-  String get policy => '정책';
+  String get policy => '개인정보 처리방침';
 
   @override
   String get hot => '인기';
@@ -169,4 +169,43 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get languageSelection => '언어 선택';
+
+  @override
+  String get noData => '데이터가 없습니다';
+
+  @override
+  String get noInternet => '인터넷에 연결되어 있지 않습니다.';
+
+  @override
+  String get tryAgainConnect => '다시 연결해 보세요.';
+
+  @override
+  String get tryAgain => '다시 시도하세요';
+
+  @override
+  String get sponsored => '스폰서';
+
+  @override
+  String get stop_timer_title => '타이머 중지';
+
+  @override
+  String get stop_timer_content => '설정을 변경하기 전에 타이머를 중지하세요.';
+
+  @override
+  String get btn_stop => '중지';
+
+  @override
+  String get btn_cancel => '취소';
+
+  @override
+  String get version => '버전';
+
+  @override
+  String get email => '이메일';
+
+  @override
+  String get share => '공유';
+
+  @override
+  String get rate => '평가';
 }

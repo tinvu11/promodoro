@@ -109,12 +109,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hoursч';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins м';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noAds => 'Без рекламы';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Приоритетная поддержка команды';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Оптимизация производительности';
 
   @override
   String get lifetime => 'Навсегда';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Купи один раз, используй навсегда';
 
   @override
   String get yearly => 'Ежегодно';
@@ -150,13 +150,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get save40 => 'Скидка 40%';
 
   @override
-  String get terms => 'Условия';
+  String get terms => 'Условия использования';
 
   @override
   String get restore => 'Восстановить';
 
   @override
-  String get policy => 'Политика';
+  String get policy => 'Политика конфиденциальности';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,44 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get languageSelection => 'Выбор языка';
+
+  @override
+  String get noData => 'Данные не найдены';
+
+  @override
+  String get noInternet => 'Нет подключения к Интернету.';
+
+  @override
+  String get tryAgainConnect => 'Пожалуйста, попробуйте подключиться еще раз.';
+
+  @override
+  String get tryAgain => 'Попробуйте еще раз';
+
+  @override
+  String get sponsored => 'Спонсировано';
+
+  @override
+  String get stop_timer_title => 'Остановить таймер';
+
+  @override
+  String get stop_timer_content =>
+      'Пожалуйста, остановите таймер перед изменением настроек.';
+
+  @override
+  String get btn_stop => 'Стоп';
+
+  @override
+  String get btn_cancel => 'Отмена';
+
+  @override
+  String get version => 'Версия';
+
+  @override
+  String get email => 'Электронная почта';
+
+  @override
+  String get share => 'Поделиться';
+
+  @override
+  String get rate => 'Оценить';
 }

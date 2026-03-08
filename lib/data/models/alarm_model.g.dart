@@ -18,7 +18,7 @@ class AlarmModelAdapter extends TypeAdapter<AlarmModel> {
     };
     return AlarmModel(
       id: fields[0] as String,
-      name: fields[1] as String,
+      name: (fields[1] as Map).cast<String, String>(),
       path: fields[2] as String,
     );
   }

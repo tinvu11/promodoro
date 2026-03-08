@@ -42,7 +42,6 @@
   "restore": "Wiederherstellen",
   "policy": "Richtlinie",
   "hot": "HEIẞ",
-
   "vietnamese": "Vietnamesisch",
   "english": "Englisch",
   "french": "Französisch",
@@ -53,5 +52,70 @@
   "italian": "Italienisch",
   "russian": "Russisch",
   "portuguese": "Portugiesisch",
-  "languageSelection": "Sprachauswahl"
+  "languageSelection": "Sprachauswahl",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}h",
+  "minutesOnly": "{mins}M",
+  "prioritySupport": "Vorrangige Teamunterstützung",
+  "optimizePerformance": "Optimize performance",
+  "buyOnce": "Einmal kaufen, für immer nutzen",
+  "noData": "Keine Daten gefunden",
+  "noInternet": "Keine Internetverbindung.",
+  "tryAgainConnect": "Bitte versuchen Sie erneut, eine Verbindung herzustellen.",
+  "tryAgain": "Versuchen Sie es erneut",
+  "sponsored": "Gesponsert",
+"stop_timer_title": "Timer stoppen",
+"stop_timer_content": "Bitte stoppen Sie den Timer, bevor Sie die Einstellungen ändern.",
+"btn_stop": "Stoppen",
+"btn_cancel": "Abbrechen",
+"version": "Version",
+"email": "E-Mail",
+ "policy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen",
+    "share": "Teilen",
+    "rate": "Bewerten"
 }

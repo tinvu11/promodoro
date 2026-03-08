@@ -389,7 +389,7 @@ abstract class AppLocalizations {
   /// No description provided for @terms.
   ///
   /// In en, this message translates to:
-  /// **'Terms'**
+  /// **'Terms of Use'**
   String get terms;
 
   /// No description provided for @restore.
@@ -401,7 +401,7 @@ abstract class AppLocalizations {
   /// No description provided for @policy.
   ///
   /// In en, this message translates to:
-  /// **'Policy'**
+  /// **'Privacy Policy'**
   String get policy;
 
   /// No description provided for @hot.
@@ -427,6 +427,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language'**
   String get languageSelection;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data found'**
+  String get noData;
+
+  /// No description provided for @noInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection.'**
+  String get noInternet;
+
+  /// No description provided for @tryAgainConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try connecting again.'**
+  String get tryAgainConnect;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @sponsored.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsored'**
+  String get sponsored;
+
+  /// No description provided for @stop_timer_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the timer'**
+  String get stop_timer_title;
+
+  /// No description provided for @stop_timer_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Please stop the timer before changing the settings.'**
+  String get stop_timer_content;
+
+  /// No description provided for @btn_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get btn_stop;
+
+  /// No description provided for @btn_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get btn_cancel;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get rate;
 }
 
 class _AppLocalizationsDelegate

@@ -95,7 +95,10 @@ class ConfigSectionState extends State<ConfigSection> {
                 _buildSubTile(
                   context,
                   l10n.alarm,
-                  settingsModel.alarmWork.name,
+                  settingsModel.alarmWork.name[Localizations.localeOf(
+                        context,
+                      ).languageCode] ??
+                      settingsModel.alarmWork.name['en']!,
                   () => _showAlarmPicker(
                     context,
                     settingsModel,
@@ -183,7 +186,10 @@ class ConfigSectionState extends State<ConfigSection> {
                 _buildSubTile(
                   context,
                   l10n.alarm,
-                  settingsModel.alarmBreak.name,
+                  settingsModel.alarmBreak.name[Localizations.localeOf(
+                        context,
+                      ).languageCode] ??
+                      settingsModel.alarmBreak.name['en']!,
                   () => _showAlarmPicker(
                     context,
                     settingsModel,
@@ -436,7 +442,7 @@ class ConfigSectionState extends State<ConfigSection> {
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                     leading: Icon(
-                      Icons.music_note,
+                      Icons.music_note_rounded,
                       color: AppColors.textPrimary,
                       size: 22,
                     ),
@@ -446,7 +452,10 @@ class ConfigSectionState extends State<ConfigSection> {
                       size: 22,
                     ),
                     title: Text(
-                      alarm.name,
+                      alarm.name[Localizations.localeOf(
+                            context,
+                          ).languageCode] ??
+                          alarm.name['en']!,
                       style: isSelected
                           ? AppFonts.medium_white_20
                           : AppFonts.regular_white_20,

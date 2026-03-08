@@ -42,7 +42,6 @@
   "restore": "恢复购买",
   "policy": "政策",
   "hot": "热门",
-
   "vietnamese": "越南语",
   "english": "英语",
   "french": "法语",
@@ -60,5 +59,70 @@
   "turkish": "土耳其语",
   "swedish": "瑞典语",
   "dutch": "荷兰语",
-  "languageSelection": "选择语言"
+  "languageSelection": "选择语言",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}小时",
+  "minutesOnly": "{mins}米",
+  "prioritySupport": "优先团队支持",
+  "optimizePerformance": "优化性能",
+  "buyOnce": "购买一次，永久使用",
+  "noData": "没有找到数据",
+  "noInternet": "没有互联网连接。",
+  "tryAgainConnect": "请尝试重新连接。",
+  "tryAgain": "再试一次",
+  "sponsored": "赞助",
+  "stop_timer_title": "停止计时器",
+"stop_timer_content": "更改设置前请先停止计时器。",
+"btn_stop": "停止",
+"btn_cancel": "取消",
+"version": "版本",
+"email": "电子邮件",
+  "policy": "隐私政策",
+    "terms": "使用条款",
+    "share": "分享",
+    "rate": "评分"
 }

@@ -42,7 +42,6 @@
   "restore": "구매 복원",
   "policy": "정책",
   "hot": "인기",
-
   "vietnamese": "베트남어",
   "english": "영어",
   "french": "프랑스어",
@@ -53,5 +52,70 @@
   "italian": "이탈리아어",
   "russian": "러시아어",
   "portuguese": "포르투갈어",
-  "languageSelection": "언어 선택"
+  "languageSelection": "언어 선택",
+  "@repeatTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAndMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursOnly": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesOnly": {
+    "placeholders": {
+      "mins": {
+        "type": "int"
+      }
+    }
+  },
+  "@totalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursOnly": "{hours}시간",
+  "minutesOnly": "{mins}분",
+  "prioritySupport": "우선 팀 지원",
+  "optimizePerformance": "성능 최적화",
+  "buyOnce": "한 번 구매하면 영원히 사용 가능",
+  "noData": "데이터가 없습니다",
+  "noInternet": "인터넷에 연결되어 있지 않습니다.",
+  "tryAgainConnect": "다시 연결해 보세요.",
+  "tryAgain": "다시 시도하세요",
+  "sponsored": "스폰서",
+  "stop_timer_title": "타이머 중지",
+"stop_timer_content": "설정을 변경하기 전에 타이머를 중지하세요.",
+"btn_stop": "중지",
+"btn_cancel": "취소",
+"version": "버전",
+"email": "이메일",
+ "policy": "개인정보 처리방침",
+    "terms": "이용 약관",
+    "share": "공유",
+    "rate": "평가"
 }

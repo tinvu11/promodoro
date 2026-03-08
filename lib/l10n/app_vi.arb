@@ -89,5 +89,20 @@
 
   "vietnamese": "Tiếng Việt",
   "english": "Tiếng Anh",
-  "languageSelection": "Ngôn ngữ"
+  "languageSelection": "Ngôn ngữ",
+  "noData": "Chưa có dữ liệu",
+  "noInternet": "Không có kết nối mạng.",
+  "tryAgainConnect": "Vui lòng thử lại kết nối.",
+  "tryAgain": "Thử lại",
+  "sponsored": "Được tài trợ",
+  "stop_timer_title": "Dừng bộ đếm thời gian",
+  "stop_timer_content": "Vui lòng dừng bộ đếm thời gian trước khi thay đổi cài đặt.",
+  "btn_stop": "Dừng",
+  "btn_cancel": "Hủy",
+  "version": "Phiên bản",
+  "email": "Email",
+  "policy": "Chính sách quyền riêng tư",
+      "terms": "Điều khoản sử dụng",
+      "share": "Chia sẻ",
+      "rate": "Đánh giá"
 }

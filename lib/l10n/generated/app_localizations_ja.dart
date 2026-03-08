@@ -109,12 +109,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hours時間';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins分';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noAds => '広告なし';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => '優先チームサポート';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'パフォーマンスを最適化する';
 
   @override
   String get lifetime => '買い切り';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => '一度購入すれば永久に使用可能';
 
   @override
   String get yearly => '年額';
@@ -150,13 +150,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get save40 => '40%お得';
 
   @override
-  String get terms => '規約';
+  String get terms => '利用規約';
 
   @override
   String get restore => '復元';
 
   @override
-  String get policy => 'ポリシー';
+  String get policy => 'プライバシーポリシー';
 
   @override
   String get hot => '人気';
@@ -169,4 +169,43 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get languageSelection => '言語選択';
+
+  @override
+  String get noData => 'データが見つかりませんでした';
+
+  @override
+  String get noInternet => 'インターネット接続がありません。';
+
+  @override
+  String get tryAgainConnect => 'もう一度接続してみてください。';
+
+  @override
+  String get tryAgain => 'もう一度やり直してください';
+
+  @override
+  String get sponsored => 'スポンサー';
+
+  @override
+  String get stop_timer_title => 'タイマーを停止';
+
+  @override
+  String get stop_timer_content => '設定を変更する前にタイマーを停止してください。';
+
+  @override
+  String get btn_stop => '停止';
+
+  @override
+  String get btn_cancel => 'キャンセル';
+
+  @override
+  String get version => 'バージョン';
+
+  @override
+  String get email => 'メール';
+
+  @override
+  String get share => '共有';
+
+  @override
+  String get rate => '評価';
 }

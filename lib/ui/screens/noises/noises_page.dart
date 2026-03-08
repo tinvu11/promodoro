@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:promodoro/configs/di.dart';
 import 'package:promodoro/core/Theme/app_fonts.dart';
 import 'package:promodoro/data/models/theme_model.dart';
+import 'package:promodoro/l10n/generated/app_localizations.dart';
 import 'package:promodoro/services/theme_storage_service.dart';
 import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
@@ -14,7 +15,6 @@ import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
 import 'package:promodoro/ui/screens/noises/bloc/noises_state.dart';
 import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/theme_background.dart';
@@ -139,7 +139,7 @@ class _NoisesPageState extends State<NoisesPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Không có kết nối mạng.\nVui lòng kiểm tra lại kết nối.',
+                              '${l10n.noInternet}.\n${l10n.tryAgainConnect}.',
                               style: AppFonts.regular_white_16,
                               textAlign: TextAlign.center,
                             ),
@@ -151,7 +151,7 @@ class _NoisesPageState extends State<NoisesPage> {
                                 color: Colors.white,
                               ),
                               label: Text(
-                                'Thử lại',
+                                l10n.tryAgain,
                                 style: AppFonts.regular_white_16,
                               ),
                             ),
@@ -220,60 +220,59 @@ class _NoisesPageState extends State<NoisesPage> {
                                     elevation: 0,
                                     behavior: SnackBarBehavior.floating,
                                     margin: const EdgeInsets.symmetric(
-                                      horizontal: 50,
-                                      vertical: 20,
+                                      horizontal: 0,
+                                      vertical: 30,
                                     ),
 
                                     // Tạo hình viên thuốc
-                                    content: ClipRRect(
-                                      borderRadius: BorderRadius.circular(30),
-                                      // Bo tròn viên thuốc
-                                      child: BackdropFilter(
-                                        // 2. Độ mờ của lớp kính (sigma càng cao càng mờ)
-                                        filter: ImageFilter.blur(
-                                          sigmaX: 10.0,
-                                          sigmaY: 10.0,
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                            horizontal: 16,
+                                    content: Center(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(30),
+                                        // Bo tròn viên thuốc
+                                        child: BackdropFilter(
+                                          // 2. Độ mờ của lớp kính (sigma càng cao càng mờ)
+                                          filter: ImageFilter.blur(
+                                            sigmaX: 18.0,
+                                            sigmaY: 18.0,
                                           ),
-                                          decoration: BoxDecoration(
-                                            // 3. Màu nền trắng mờ (Opacity thấp)
-                                            color: Colors.white.withOpacity(
-                                              0.1,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                              horizontal: 16,
                                             ),
-                                            borderRadius: BorderRadius.circular(
-                                              30,
-                                            ),
-                                            // 4. Viền trắng mỏng để làm nổi bật hiệu ứng kính
-                                            border: Border.all(
+                                            decoration: BoxDecoration(
+                                              // 3. Màu nền trắng mờ (Opacity thấp)
                                               color: Colors.white.withOpacity(
-                                                0.2,
+                                                0.1,
                                               ),
-                                              width: 1.5,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              // 4. Viền trắng mỏng để làm nổi bật hiệu ứng kính
+                                              border: Border.all(
+                                                color: Colors.white.withOpacity(
+                                                  0.2,
+                                                ),
+                                                width: 1.5,
+                                              ),
                                             ),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const Icon(
-                                                Icons.wifi_off,
-                                                color: Colors.white,
-                                                size: 20,
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Expanded(
-                                                child: Text(
-                                                  'Không có kết nối mạng. Thử lại sau.',
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.wifi_off,
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  l10n.noInternet,
                                                   style:
                                                       AppFonts.regular_white_14,
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

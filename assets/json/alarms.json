@@ -1,17 +1,71 @@
 [
   {
     "id": "1",
-    "name": "Happy",
+    "name": {
+    "vi": "Vui vẻ",
+    "en": "Happy",
+    "es": "Feliz",
+    "fr": "Heureux",
+    "ja": "幸せ",
+    "ko": "행복",
+    "de": "Glücklich",
+    "it": "Felice",
+    "ru": "Счастливый",
+    "pt": "Feliz",
+    "zh": "快乐",
+    "hi": "खुश",
+    "ar": "سعيد",
+    "id": "Senang",
+    "tr": "Mutlu",
+    "sv": "Lycklig",
+    "nl": "Gelukkig"
+  },
     "path": "assets/alarm/alarm1.mp3"
   },
   {
     "id": "2",
-    "name": "Gentle",
+    "name": {
+    "vi": "Nhẹ nhàng",
+    "en": "Gentle",
+    "es": "Suave",
+    "fr": "Doux",
+    "ja": "穏やか",
+    "ko": "부드러움",
+    "de": "Sanft",
+    "it": "Gentile",
+    "ru": "Нежный",
+    "pt": "Gentil",
+    "zh": "温柔",
+    "hi": "कोमल",
+    "ar": "لطيف",
+    "id": "Lembut",
+    "tr": "Nazik",
+    "sv": "Mild",
+    "nl": "Zacht"
+  },
     "path": "assets/alarm/alarm2.mp3"
   },
   {
     "id": "3",
-    "name": "Energetic",
+    "name": {
+    "vi": "Năng lượng",
+    "en": "Energetic",
+    "es": "Enérgico",
+    "fr": "Énergique",
+    "ja": "エネルギッシュ",
+    "ko": "활기찬",
+    "de": "Energetisch",
+    "it": "Energico",
+    "ru": "Энергичный",
+    "pt": "Enérgico",
+    "zh": "有活力",
+    "hi": "ऊर्जावान",
+    "ar": "مفعم بالحيوية",
+    "id": "Enerjik",
+    "tr": "Enerjik",
+    "sv": "Energisk",
+    "nl": "Energieke"
+  },
     "path": "assets/alarm/alarm3.mp3"
   }
 ]

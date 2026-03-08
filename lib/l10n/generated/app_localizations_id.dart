@@ -109,7 +109,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hours jam';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get noAds => 'Tanpa iklan';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => 'Dukungan tim prioritas';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => 'Optimalkan kinerja';
 
   @override
   String get lifetime => 'Selamanya';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => 'Beli sekali, gunakan selamanya';
 
   @override
   String get yearly => 'Tahunan';
@@ -150,13 +150,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get save40 => 'Hemat 40%';
 
   @override
-  String get terms => 'Ketentuan';
+  String get terms => 'Ketentuan Penggunaan';
 
   @override
   String get restore => 'Pulihkan';
 
   @override
-  String get policy => 'Kebijakan';
+  String get policy => 'Kebijakan Privasi';
 
   @override
   String get hot => 'HOT';
@@ -169,4 +169,44 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get languageSelection => 'Pilih Bahasa';
+
+  @override
+  String get noData => 'Tidak ada data yang ditemukan';
+
+  @override
+  String get noInternet => 'Tidak ada koneksi internet.';
+
+  @override
+  String get tryAgainConnect => 'Silakan coba sambungkan lagi.';
+
+  @override
+  String get tryAgain => 'Coba lagi';
+
+  @override
+  String get sponsored => 'Disponsori';
+
+  @override
+  String get stop_timer_title => 'Hentikan timer';
+
+  @override
+  String get stop_timer_content =>
+      'Silakan hentikan timer sebelum mengubah pengaturan.';
+
+  @override
+  String get btn_stop => 'Hentikan';
+
+  @override
+  String get btn_cancel => 'Batal';
+
+  @override
+  String get version => 'Versi';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get share => 'Bagikan';
+
+  @override
+  String get rate => 'Beri Nilai';
 }

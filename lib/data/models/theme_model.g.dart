@@ -18,9 +18,7 @@ class ThemeModelAdapter extends TypeAdapter<ThemeModel> {
     };
     return ThemeModel(
       id: fields[0] as String,
-      titleMap: (fields[1] as Map).map(
-        (k, v) => MapEntry(k.toString(), v.toString()),
-      ),
+      titleMap: (fields[1] as Map).cast<String, String>(),
       imageUrl: fields[2] as String,
       audioUrl: fields[3] as String,
       isPremium: fields[4] as bool,

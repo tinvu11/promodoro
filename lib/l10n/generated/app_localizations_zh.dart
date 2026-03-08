@@ -109,12 +109,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String hoursOnly(int hours) {
-    return '${hours}h';
+    return '$hours小时';
   }
 
   @override
   String minutesOnly(int mins) {
-    return '${mins}m';
+    return '$mins米';
   }
 
   @override
@@ -132,16 +132,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get noAds => '无广告';
 
   @override
-  String get prioritySupport => 'Priority team support';
+  String get prioritySupport => '优先团队支持';
 
   @override
-  String get optimizePerformance => 'Optimize performance';
+  String get optimizePerformance => '优化性能';
 
   @override
   String get lifetime => '永久';
 
   @override
-  String get buyOnce => 'Buy once, use forever';
+  String get buyOnce => '购买一次，永久使用';
 
   @override
   String get yearly => '年度制';
@@ -150,13 +150,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get save40 => '节省 40%';
 
   @override
-  String get terms => '条款';
+  String get terms => '使用条款';
 
   @override
   String get restore => '恢复购买';
 
   @override
-  String get policy => '政策';
+  String get policy => '隐私政策';
 
   @override
   String get hot => '热门';
@@ -169,4 +169,43 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageSelection => '选择语言';
+
+  @override
+  String get noData => '没有找到数据';
+
+  @override
+  String get noInternet => '没有互联网连接。';
+
+  @override
+  String get tryAgainConnect => '请尝试重新连接。';
+
+  @override
+  String get tryAgain => '再试一次';
+
+  @override
+  String get sponsored => '赞助';
+
+  @override
+  String get stop_timer_title => '停止计时器';
+
+  @override
+  String get stop_timer_content => '更改设置前请先停止计时器。';
+
+  @override
+  String get btn_stop => '停止';
+
+  @override
+  String get btn_cancel => '取消';
+
+  @override
+  String get version => '版本';
+
+  @override
+  String get email => '电子邮件';
+
+  @override
+  String get share => '分享';
+
+  @override
+  String get rate => '评分';
 }
