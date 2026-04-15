@@ -209,4 +209,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get rate => 'Beri Nilai';
+
+  @override
+  String get term_pw => 'Ketentuan';
+
+  @override
+  String get policy_pw => 'Kebijakan';
 }

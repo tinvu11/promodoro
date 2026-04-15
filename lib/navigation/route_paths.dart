@@ -1,7 +1,7 @@
 part of 'app_router.dart';
 
 class RoutePaths {
-  const RoutePaths._(); // private constructor dùng để chặn việc tạo object
+  const RoutePaths._(); // Utility class; prevent instantiation.
   static const String timer = '/timer';
   static const String static = '/static';
   static const String settings = '/setting';

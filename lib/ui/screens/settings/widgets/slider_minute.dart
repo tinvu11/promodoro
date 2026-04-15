@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
@@ -52,7 +52,7 @@ class _SliderMinuteState extends State<SliderMinute> {
             _buildActionButton(
               icon: Icons.remove,
               onTap: () {
-                if (_val > 0) {
+                if (_val > 5) {
                   _updateValues(_val - 1);
                   widget.onDecrement?.call(_val);
                 }
@@ -60,7 +60,7 @@ class _SliderMinuteState extends State<SliderMinute> {
             ),
             Text(
               AppLocalizations.of(context)!.minutes(_val.toInt()),
-              style: AppFonts.medium_white_28,
+              style: AppFonts.mediumWhite28,
             ),
             _buildActionButton(
               icon: Icons.add,
@@ -75,8 +75,8 @@ class _SliderMinuteState extends State<SliderMinute> {
         ),
         const SizedBox(height: 25),
         Slider(
-          value: _displayVal.clamp(0, 180),
-          min: 0,
+          value: _displayVal.clamp(1, 180),
+          min: 5,
           max: 180,
           divisions: 36,
           inactiveColor: AppColors.glassPrimary,

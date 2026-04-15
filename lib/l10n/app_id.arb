@@ -124,5 +124,8 @@
 "policy": "Kebijakan Privasi",
     "terms": "Ketentuan Penggunaan",
     "share": "Bagikan",
-    "rate": "Beri Nilai"
+    "rate": "Beri Nilai",
+     "term_pw": "Ketentuan",
+        "restore": "Pulihkan",
+        "policy_pw": "Kebijakan"
 }

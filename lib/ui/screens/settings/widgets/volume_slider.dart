@@ -6,7 +6,12 @@ class VolumeSlider extends StatefulWidget {
   final String title;
   final ValueChanged<double> onSave;
 
-  const VolumeSlider({super.key, required this.initialValue, required this.title, required this.onSave});
+  const VolumeSlider({
+    super.key,
+    required this.initialValue,
+    required this.title,
+    required this.onSave,
+  });
 
   @override
   State<VolumeSlider> createState() => _VolumeSliderState();
@@ -28,7 +33,7 @@ class _VolumeSliderState extends State<VolumeSlider> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.title, style: AppFonts.medium_white_20),
+          Text(widget.title, style: AppFonts.mediumWhite20),
           Row(
             children: [
               const Icon(Icons.volume_up, size: 20, color: Colors.white),
@@ -36,11 +41,14 @@ class _VolumeSliderState extends State<VolumeSlider> {
                 child: Slider(
                   value: _currentValue,
                   max: 100,
-                  onChanged: (v) => setState(() => _currentValue = v), // Update UI local cực nhanh
-                  onChangeEnd: (v) => widget.onSave(v), // Chỉ lưu vào Database khi dừng kéo
+                  onChanged: (v) => setState(
+                    () => _currentValue = v,
+                  ), // Update UI local cực nhanh
+                  onChangeEnd: (v) =>
+                      widget.onSave(v), // Chỉ lưu vào Database khi dừng kéo
                 ),
               ),
-              Text("${_currentValue.toInt()}%", style: AppFonts.regular_grey_18),
+              Text("${_currentValue.toInt()}%", style: AppFonts.regularGrey18),
             ],
           ),
         ],

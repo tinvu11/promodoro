@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:promodoro/data/repositories/stat_repository.dart';
+import 'package:pomodoro/data/repositories/stat_repository.dart';
 
 import '../../../../data/models/daily_stat.dart';
 

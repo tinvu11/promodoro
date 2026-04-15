@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promodoro/core/Theme/app_fonts.dart';
+import 'package:pomodoro/core/Theme/app_fonts.dart';
 
 import '../../../core/Theme/app_colors.dart';
 
@@ -39,7 +39,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         title:
             titleWidget ??
             (title != null
-                ? Text(title!, style: AppFonts.medium_white_28)
+                ? Text(title!, style: AppFonts.mediumWhite28)
                 : null),
         leading: showLeading
             ? (leading ?? _buildDefaultLeading(context))

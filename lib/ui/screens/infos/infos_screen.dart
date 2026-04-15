@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:promodoro/configs/di.dart';
-import 'package:promodoro/core/Theme/app_fonts.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
-import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:pomodoro/configs/di.dart';
+import 'package:pomodoro/core/Theme/app_fonts.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/commons/widgets/common_appbar.dart';
+import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/Theme/app_colors.dart';
@@ -20,14 +20,13 @@ class InfosPage extends StatefulWidget {
 }
 
 class _InfosPageState extends State<InfosPage> {
-  /// Đường dẫn bg tính sync để tránh nháy frame đầu tiên.
+  /// Resolved synchronously to avoid first-frame background flicker.
   String? _initialBgPath;
 
   @override
   void initState() {
     super.initState();
 
-    // Khởi tạo preview cho theme đang active
     final settingsState = context.read<SettingsBloc>().state;
     if (settingsState is SuccessSettingState) {
       final themeId = settingsState.settingsModel.selectedThemeId;
@@ -40,7 +39,6 @@ class _InfosPageState extends State<InfosPage> {
 
   @override
   void dispose() {
-    // Dừng preview audio khi rời trang — dùng reference đã lưu
     super.dispose();
   }
 
@@ -99,15 +97,12 @@ class _InfosPageState extends State<InfosPage> {
                       color: AppColors.textSecondary,
                       size: 22,
                     ),
-                    title: Text(l10n.version, style: AppFonts.medium_white_18),
+                    title: Text(l10n.version, style: AppFonts.mediumWhite18),
                     trailing: FutureBuilder<PackageInfo>(
                       future: PackageInfo.fromPlatform(),
                       builder: (context, snapshot) {
                         final version = snapshot.data?.version ?? "1.0.0";
-                        return Text(
-                          "$version",
-                          style: AppFonts.regular_grey_16,
-                        );
+                        return Text(version, style: AppFonts.regularGrey16);
                       },
                     ),
                   ),
@@ -137,7 +132,7 @@ Widget _itemLanguage(
         minLeadingWidth: 0,
         horizontalTitleGap: 12,
         leading: Icon(iconStart, color: AppColors.textSecondary, size: 22),
-        title: Text(title, style: AppFonts.medium_white_18),
+        title: Text(title, style: AppFonts.mediumWhite18),
         trailing: icon != null
             ? Icon(icon, color: AppColors.textSecondary, size: 28)
             : SizedBox.shrink(),
@@ -150,13 +145,13 @@ Future<void> _sendEmail() async {
   final contactEmail = const String.fromEnvironment("CONTACT_EMAIL");
   final Uri emailLaunchUri = Uri(
     scheme: 'mailto',
-    path: contactEmail, // Thay bằng email của bạn
+    path: contactEmail,
     queryParameters: {'subject': 'FeedBack'},
   );
   if (await canLaunchUrl(emailLaunchUri)) {
     await launchUrl(emailLaunchUri);
   } else {
-    print("Không thể mở ứng dụng Email");
+    debugPrint("Không thể mở ứng dụng Email");
   }
 }
 

@@ -4,16 +4,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/configs/di.dart';
-import 'package:promodoro/core/Theme/app_fonts.dart';
-import 'package:promodoro/data/models/theme_model.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_bloc.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_state.dart';
-import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:pomodoro/configs/di.dart';
+import 'package:pomodoro/core/Theme/app_fonts.dart';
+import 'package:pomodoro/data/models/theme_model.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/commons/widgets/common_appbar.dart';
+import 'package:pomodoro/ui/screens/noises/bloc/noises_bloc.dart';
+import 'package:pomodoro/ui/screens/noises/bloc/noises_event.dart';
+import 'package:pomodoro/ui/screens/noises/bloc/noises_state.dart';
+import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../core/Theme/app_colors.dart';
@@ -140,7 +140,7 @@ class _NoisesPageState extends State<NoisesPage> {
                             const SizedBox(height: 16),
                             Text(
                               '${l10n.noInternet}.\n${l10n.tryAgainConnect}.',
-                              style: AppFonts.regular_white_16,
+                              style: AppFonts.regularWhite16,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 24),
@@ -152,7 +152,7 @@ class _NoisesPageState extends State<NoisesPage> {
                               ),
                               label: Text(
                                 l10n.tryAgain,
-                                style: AppFonts.regular_white_16,
+                                style: AppFonts.regularWhite16,
                               ),
                             ),
                           ],
@@ -242,15 +242,15 @@ class _NoisesPageState extends State<NoisesPage> {
                                             ),
                                             decoration: BoxDecoration(
                                               // 3. Màu nền trắng mờ (Opacity thấp)
-                                              color: Colors.white.withOpacity(
-                                                0.1,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.1,
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               // 4. Viền trắng mỏng để làm nổi bật hiệu ứng kính
                                               border: Border.all(
-                                                color: Colors.white.withOpacity(
-                                                  0.2,
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.2,
                                                 ),
                                                 width: 1.5,
                                               ),
@@ -269,7 +269,7 @@ class _NoisesPageState extends State<NoisesPage> {
                                                 Text(
                                                   l10n.noInternet,
                                                   style:
-                                                      AppFonts.regular_white_14,
+                                                      AppFonts.regularWhite14,
                                                 ),
                                               ],
                                             ),
@@ -313,7 +313,7 @@ class _NoisesPageState extends State<NoisesPage> {
                           const SizedBox(height: 16),
                           Text(
                             state.errorMessage ?? 'Đã xảy ra lỗi',
-                            style: AppFonts.regular_white_16,
+                            style: AppFonts.regularWhite16,
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -465,7 +465,7 @@ class _NoiseGridItem extends StatelessWidget {
                     theme.getLocalizedName(
                       Localizations.localeOf(context).languageCode,
                     ),
-                    style: AppFonts.regular_white_16,
+                    style: AppFonts.regularWhite16,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -504,7 +504,7 @@ class _NoiseGridItem extends StatelessWidget {
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -524,7 +524,7 @@ class _NoiseGridItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isPreviewing
-                        ? Colors.white.withOpacity(0.6)
+                        ? Colors.white.withValues(alpha: 0.6)
                         : AppColors.glassBorder,
                     width: 1.75,
                   ),

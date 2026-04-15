@@ -117,5 +117,8 @@
 "policy": "Informativa sulla privacy",
     "terms": "Termini di utilizzo",
     "share": "Condividi",
-    "rate": "Valuta"
+    "rate": "Valuta",
+      "term_pw": "Termini",
+        "restore": "Ripristina",
+        "policy_pw": "Politica"
 }

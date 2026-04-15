@@ -167,7 +167,7 @@ abstract class AppLocalizations {
   /// No description provided for @breakTime.
   ///
   /// In en, this message translates to:
-  /// **'Rest'**
+  /// **'Break'**
   String get breakTime;
 
   /// No description provided for @duration.
@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @rest.
   ///
   /// In en, this message translates to:
-  /// **'Rest'**
+  /// **'Break'**
   String get rest;
 
   /// No description provided for @alarm.
@@ -257,7 +257,7 @@ abstract class AppLocalizations {
   /// No description provided for @work.
   ///
   /// In en, this message translates to:
-  /// **'Work'**
+  /// **'Focus'**
   String get work;
 
   /// No description provided for @breakLabel.
@@ -505,6 +505,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rate'**
   String get rate;
+
+  /// No description provided for @term_pw.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get term_pw;
+
+  /// No description provided for @policy_pw.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy'**
+  String get policy_pw;
 }
 
 class _AppLocalizationsDelegate

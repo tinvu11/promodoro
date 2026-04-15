@@ -6,10 +6,10 @@
   "settingsTab": "Settings",
   "settings": "Settings",
   "workTime": "Focus",
-  "breakTime": "Rest",
+  "breakTime": "Break",
   "duration": "Duration",
   "focus": "Focus",
-  "rest": "Rest",
+  "rest": "Break",
   "alarm": "Alarm",
   "volume": "Volume",
   "repeatCount": "Session",
@@ -35,7 +35,7 @@
   "language": "Language",
   "alwaysOnScreen": "Always on screen",
   "information": "Information",
-  "work": "Work",
+  "work": "Focus",
   "breakLabel": "Break",
   "start": "Start",
   "continueLabel": "Continue",
@@ -109,5 +109,8 @@
   "policy": "Privacy Policy",
       "terms": "Terms of Use",
       "share": "Share",
-      "rate": "Rate"
+      "rate": "Rate",
+       "term_pw": "Terms",
+          "restore": "Restore",
+          "policy_pw": "Policy"
 }

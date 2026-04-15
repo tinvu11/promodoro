@@ -1,4 +1,3 @@
-// Đảm bảo đúng path tới file Failure của bạn
 part of 'iap_bloc.dart';
 
 class IapState extends Equatable {
@@ -16,7 +15,6 @@ class IapState extends Equatable {
     this.boughtNoAdsTime,
   });
 
-  // Hàm copyWith thay thế cho logic của Freezed
   IapState copyWith({
     Failure? failure,
     bool? isLoading,
@@ -25,7 +23,6 @@ class IapState extends Equatable {
     int? boughtNoAdsTime,
   }) {
     return IapState(
-      // Dùng logic "allow null" cho failure và boughtNoAdsTime
       failure: failure ?? this.failure,
       isLoading: isLoading ?? this.isLoading,
       products: products ?? this.products,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/ui/commons/widgets/banner_ad_widget.dart';
-import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
-import 'package:promodoro/ui/screens/settings/widgets/config_section.dart';
-import 'package:promodoro/ui/screens/settings/widgets/sound_section.dart';
-import 'package:promodoro/ui/screens/settings/widgets/system_section.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/ui/commons/widgets/banner_ad_widget.dart';
+import 'package:pomodoro/ui/commons/widgets/common_appbar.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/config_section.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/sound_section.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/system_section.dart';
 
 import '../../bloc/iap/iap_bloc.dart';
 

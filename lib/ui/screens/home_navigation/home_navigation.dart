@@ -5,10 +5,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promodoro/core/Theme/app_colors.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:pomodoro/core/Theme/app_colors.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
 import '../../../configs/di.dart';
 import '../../commons/widgets/theme_background.dart';
@@ -44,7 +44,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
     final settingsBloc = DI.sl<SettingsBloc>();
     SettingsState settingsState = settingsBloc.state;
 
-    // Nếu settings chưa load xong → chờ stream emit SuccessSettingState
+    // Wait until settings are loaded before reading theme-dependent assets.
     if (settingsState is! SuccessSettingState) {
       log('[HomeNavigation] Settings not ready, waiting for stream...');
       try {
@@ -63,7 +63,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
       await _updateBgForTheme(themeId);
     }
 
-    // Lắng nghe thay đổi theme sau khi đã load xong
+    // Refresh background whenever selected theme changes.
     _settingsSub = settingsBloc.stream.listen((state) {
       if (state is SuccessSettingState) {
         final newThemeId = state.settingsModel.selectedThemeId;
@@ -107,12 +107,9 @@ class _HomeNavigationState extends State<HomeNavigation> {
         buildWhen: (prev, curr) =>
             (prev is TimerRunInProgress) != (curr is TimerRunInProgress),
         builder: (context, state) {
-          // if (state is TimerRunInProgress) return const SizedBox.shrink();
           final bool isRunning = state is TimerRunInProgress;
           return RepaintBoundary(
-            // Tối ưu 1: Tách layer cho thanh Nav
             child: AnimatedSlide(
-              // Tối ưu 2: Dùng Slide thay vì thay đổi Height
               offset: isRunning ? const Offset(0, 1) : const Offset(0, 0),
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
@@ -160,7 +157,6 @@ class _HomeNavigationState extends State<HomeNavigation> {
       ),
       body: Stack(
         children: [
-          // Background động theo theme được chọn
           RepaintBoundary(
             child: ThemeBackground(
               localImagePath: _bgPath,

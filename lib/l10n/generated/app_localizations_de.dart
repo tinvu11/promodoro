@@ -210,4 +210,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rate => 'Bewerten';
+
+  @override
+  String get term_pw => 'Bedingungen';
+
+  @override
+  String get policy_pw => 'Richtlinie';
 }

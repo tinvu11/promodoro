@@ -117,5 +117,8 @@
    "policy": "Política de privacidad",
       "terms": "Términos de uso",
       "share": "Compartir",
-      "rate": "Calificar"
+      "rate": "Calificar",
+       "term_pw": "Términos",
+          "restore": "Restaurar",
+          "policy_pw": "Política"
 }

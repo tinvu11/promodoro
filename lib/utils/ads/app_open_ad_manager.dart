@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../GlobalValues.dart';
+import '../global_values.dart';
 import 'consent_manager.dart';
 
 class AppOpenAdManager {

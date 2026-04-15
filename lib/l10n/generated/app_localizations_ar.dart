@@ -208,4 +208,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rate => 'تقييم';
+
+  @override
+  String get term_pw => 'الشروط';
+
+  @override
+  String get policy_pw => 'السياسة';
 }

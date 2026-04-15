@@ -56,10 +56,10 @@ class TimerFinished extends TimerEvent {
   const TimerFinished();
 }
 
-class _TimerTicked extends TimerEvent {
-  const _TimerTicked({required this.duration});
-  final int duration;
-}
+// class _TimerTicked extends TimerEvent {
+//   const _TimerTicked({required this.duration});
+//   final int duration;
+// }
 
 class _LocalTick extends TimerEvent {
   const _LocalTick();

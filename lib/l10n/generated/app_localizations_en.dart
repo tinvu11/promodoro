@@ -27,7 +27,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workTime => 'Focus';
 
   @override
-  String get breakTime => 'Rest';
+  String get breakTime => 'Break';
 
   @override
   String get duration => 'Duration';
@@ -36,7 +36,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get focus => 'Focus';
 
   @override
-  String get rest => 'Rest';
+  String get rest => 'Break';
 
   @override
   String get alarm => 'Alarm';
@@ -76,7 +76,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get information => 'Information';
 
   @override
-  String get work => 'Work';
+  String get work => 'Focus';
 
   @override
   String get breakLabel => 'Break';
@@ -209,4 +209,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rate => 'Rate';
+
+  @override
+  String get term_pw => 'Terms';
+
+  @override
+  String get policy_pw => 'Policy';
 }

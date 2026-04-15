@@ -124,5 +124,8 @@
   "policy": "Gizlilik Politikası",
     "terms": "Kullanım Şartları",
     "share": "Paylaş",
-    "rate": "Değerlendir"
+    "rate": "Değerlendir",
+      "term_pw": "Şartlar",
+        "restore": "Geri Yükle",
+        "policy_pw": "Politika"
 }

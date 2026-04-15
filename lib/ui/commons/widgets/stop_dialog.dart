@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:promodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
 import '../../../core/Theme/app_colors.dart';
 import '../../../core/Theme/app_fonts.dart';
 import '../../screens/timer/bloc/timer_bloc.dart';
@@ -80,13 +80,13 @@ class _StopDialogState extends State<StopDialog> {
                       children: [
                         Text(
                           l10n.stop_timer_title,
-                          style: AppFonts.medium_grey_22,
+                          style: AppFonts.mediumGrey22,
                         ),
                         const SizedBox(height: 10),
 
                         Text(
                           l10n.stop_timer_content,
-                          style: AppFonts.regular_grey_16,
+                          style: AppFonts.regularGrey16,
                         ),
                         const SizedBox(height: 30),
 
@@ -99,7 +99,7 @@ class _StopDialogState extends State<StopDialog> {
                               onTap: () => _cancel(context),
                               child: Text(
                                 l10n.btn_cancel,
-                                style: AppFonts.medium_grey_14.copyWith(
+                                style: AppFonts.mediumGrey14.copyWith(
                                   decorationColor: AppColors.textSecondary,
                                 ),
                               ),
@@ -110,7 +110,7 @@ class _StopDialogState extends State<StopDialog> {
                               },
                               child: Text(
                                 l10n.btn_stop,
-                                style: AppFonts.medium_grey_14.copyWith(
+                                style: AppFonts.mediumGrey14.copyWith(
                                   decorationColor: AppColors.textSecondary,
                                 ),
                               ),

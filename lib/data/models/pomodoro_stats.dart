@@ -1,7 +1,6 @@
 import 'package:hive_ce/hive.dart';
 
 import '../../configs/hive/hive_types.dart';
-import 'daily_stat.dart';
 
 part 'pomodoro_stats.g.dart';
 

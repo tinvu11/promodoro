@@ -10,6 +10,7 @@ sealed class TimerState extends Equatable {
     required this.totalRounds,
     required this.initialDuration,
   });
+
   final int duration;
   final TimerMode mode;
   final int round;
@@ -28,35 +29,26 @@ sealed class TimerState extends Equatable {
 
 final class TimerInitial extends TimerState {
   const TimerInitial({
-    required int duration,
-    required int round,
-    required int totalRounds,
-  }) : super(
-         duration: duration,
-         mode: TimerMode.work,
-         round: round,
-         totalRounds: totalRounds,
-         initialDuration: duration,
-       );
+    required super.duration,
+    required super.round,
+    required super.totalRounds,
+    super.mode = TimerMode.work, // Thêm default mode để không bị lỗi required
+    super.initialDuration = 0, // Thêm default nếu cần
+  });
 
   @override
   String toString() => 'TimerInitial { duration: $duration }';
 }
 
 final class TimerRunPause extends TimerState {
+  // Dùng super. thẳng trong tham số, bỏ sạch phần : super(...) phía sau
   const TimerRunPause({
-    required int duration,
-    required TimerMode mode,
-    required int round,
-    required int totalRounds,
-    required int initialDuration,
-  }) : super(
-         duration: duration,
-         mode: mode,
-         round: round,
-         totalRounds: totalRounds,
-         initialDuration: initialDuration,
-       );
+    required super.duration,
+    required super.mode,
+    required super.round,
+    required super.totalRounds,
+    required super.initialDuration,
+  });
 
   @override
   String toString() => 'TimerRunPause { duration: $duration }';
@@ -64,18 +56,12 @@ final class TimerRunPause extends TimerState {
 
 final class TimerRunInProgress extends TimerState {
   const TimerRunInProgress({
-    required int duration,
-    required TimerMode mode,
-    required int round,
-    required int totalRounds,
-    required int initialDuration,
-  }) : super(
-         duration: duration,
-         mode: mode,
-         round: round,
-         totalRounds: totalRounds,
-         initialDuration: initialDuration,
-       );
+    required super.duration,
+    required super.mode,
+    required super.round,
+    required super.totalRounds,
+    required super.initialDuration,
+  });
 
   @override
   String toString() => 'TimerRunInProgress { duration: $duration }';
@@ -83,14 +69,8 @@ final class TimerRunInProgress extends TimerState {
 
 final class TimerRunComplete extends TimerState {
   const TimerRunComplete({
-    required int round,
-    required int totalRounds,
-    required int initialDuration,
-  }) : super(
-         duration: 0,
-         mode: TimerMode.work,
-         round: round,
-         totalRounds: totalRounds,
-         initialDuration: initialDuration,
-       );
+    required super.round,
+    required super.totalRounds,
+    required super.initialDuration,
+  }) : super(duration: 0, mode: TimerMode.work);
 }

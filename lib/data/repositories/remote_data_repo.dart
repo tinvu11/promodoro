@@ -20,9 +20,7 @@ class RemoteDataRepoImpl implements RemoteDataRepo {
        _localData = localData;
 
   /// Cache-first strategy:
-  /// 1. Trả về cache ngay nếu có → UI hiển thị tức thì
-  /// 2. Lần sau gọi fetchLatestResources() để lấy dữ liệu mới nhất
-  /// 3. Nếu không có cache → fetch Firebase trực tiếp
+  /// returns local data immediately when available, otherwise fetches remotely.
   @override
   Future<List<ThemeModel>> getResources() async {
     final cached = _localData.getCachedThemes();
@@ -31,11 +29,10 @@ class RemoteDataRepoImpl implements RemoteDataRepo {
       return cached;
     }
 
-    // Không có cache → phải fetch từ Firebase
     return fetchLatestResources();
   }
 
-  /// Luôn fetch dữ liệu mới nhất từ Firebase và cập nhật cache
+  /// Fetches latest resources from remote and refreshes local cache.
   @override
   Future<List<ThemeModel>> fetchLatestResources() async {
     try {

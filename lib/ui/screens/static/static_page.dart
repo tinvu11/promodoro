@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/core/Theme/app_fonts.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/ui/screens/static/bloc/static_bloc.dart';
-import 'package:promodoro/ui/screens/static/widgets/static_bar_chart.dart';
+import 'package:pomodoro/core/Theme/app_fonts.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/ui/screens/static/bloc/static_bloc.dart';
+import 'package:pomodoro/ui/screens/static/widgets/static_bar_chart.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../../data/models/daily_stat.dart';
@@ -112,7 +112,7 @@ class _StaticPageState extends State<StaticPage> {
           }
           if (state is StaticError) {
             return Center(
-              child: Text(state.message, style: AppFonts.regular_grey_16),
+              child: Text(state.message, style: AppFonts.regularGrey16),
             );
           }
           if (state is StaticLoaded) {
@@ -145,7 +145,7 @@ class _StaticPageState extends State<StaticPage> {
                                   ),
                                   title: Text(
                                     _monthLabel,
-                                    style: AppFonts.medium_white_20,
+                                    style: AppFonts.mediumWhite20,
                                   ),
                                   trailing: Text(
                                     l10n.totalLabel(
@@ -154,7 +154,7 @@ class _StaticPageState extends State<StaticPage> {
                                         l10n,
                                       ),
                                     ),
-                                    style: AppFonts.regular_grey_16,
+                                    style: AppFonts.regularGrey16,
                                   ),
                                 ),
                                 Padding(
@@ -203,11 +203,11 @@ class _StaticPageState extends State<StaticPage> {
                                   ),
                                   title: Text(
                                     l10n.today,
-                                    style: AppFonts.medium_white_18,
+                                    style: AppFonts.mediumWhite18,
                                   ),
                                   subtitle: Text(
                                     "${_todayFormated(l10n, state.todayStat.minutes * 60)} - ${state.todayStat.sessions} ${l10n.sessions}",
-                                    style: AppFonts.regular_grey_16,
+                                    style: AppFonts.regularGrey16,
                                   ),
                                 ),
                                 Divider(color: AppColors.glassSecondary),
@@ -219,12 +219,12 @@ class _StaticPageState extends State<StaticPage> {
                                   ),
                                   title: Text(
                                     l10n.total,
-                                    style: AppFonts.medium_white_18,
+                                    style: AppFonts.mediumWhite18,
                                   ),
                                   subtitle: Text(
                                     " ${_todayFormated(l10n, state.totalMinutes * 60)} - ${state.totalSessions} ${l10n.sessions}",
 
-                                    style: AppFonts.regular_grey_16,
+                                    style: AppFonts.regularGrey16,
                                   ),
                                 ),
                               ],

@@ -209,4 +209,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get rate => 'Оценить';
+
+  @override
+  String get term_pw => 'Условия';
+
+  @override
+  String get policy_pw => 'Политика';
 }

@@ -153,7 +153,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get terms => '이용 약관';
 
   @override
-  String get restore => '구매 복원';
+  String get restore => '복원';
 
   @override
   String get policy => '개인정보 처리방침';
@@ -208,4 +208,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get rate => '평가';
+
+  @override
+  String get term_pw => '약관';
+
+  @override
+  String get policy_pw => '정책';
 }

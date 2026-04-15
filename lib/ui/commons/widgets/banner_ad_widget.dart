@@ -4,6 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:io';
 
 import '../../../configs/di.dart';
 import '../../../l10n/generated/app_localizations.dart';
@@ -34,11 +35,11 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
   Orientation? _orientation;
   final _amplitude = DI.sl<Amplitude>();
 
-  // final _adUnitId = Platform.isAndroid
-  //     ? const String.fromEnvironment('ANDROID_BANNER_AD_UNIT_ID')
-  //     : const String.fromEnvironment('IOS_BANNER_AD_UNIT_ID');
-  //
-  final _adUnitId = "ca-app-pub-3940256099942544/6300978111";
+  final _adUnitId = Platform.isAndroid
+      ? const String.fromEnvironment('ANDROID_BANNER_AD_UNIT_ID')
+      : const String.fromEnvironment('IOS_BANNER_AD_UNIT_ID');
+
+  // final _adUnitId = "ca-app-pub-3940256099942544/6300978111";
 
   @override
   void initState() {
@@ -122,6 +123,9 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
   void _loadAd() async {
     if (!mounted) return;
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final adWidth = (screenWidth - widget.paddingHorizontal * 2).truncate();
+
     // Reset trạng thái để hiện Shimmer
     setState(() {
       _hasFailed = false;
@@ -134,9 +138,8 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
       return;
     }
 
-    // Tính toán kích thước (Nên để trong try-catch nếu cần)
-    final screenWidth = MediaQuery.of(context).size.width;
-    final adWidth = (screenWidth - widget.paddingHorizontal * 2).truncate();
+    if (!mounted) return;
+
     final size = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
       adWidth,
     );
@@ -216,7 +219,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(11),
                       topRight: Radius.circular(11),
@@ -228,14 +231,14 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
                       Icon(
                         Icons.info_outline_rounded,
                         size: 12,
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         AppLocalizations.of(context)!.sponsored,
                         style: TextStyle(
                           fontSize: 10,
-                          color: Colors.white.withOpacity(0.4),
+                          color: Colors.white.withValues(alpha: 0.4),
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                         ),
@@ -283,14 +286,14 @@ class _BannerAdWidgetState extends State<BannerAdWidget>
         horizontal: widget.paddingHorizontal,
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.white.withOpacity(0.25),
-        highlightColor: Colors.white.withOpacity(0.35),
+        baseColor: Colors.white.withValues(alpha: 0.25),
+        highlightColor: Colors.white.withValues(alpha: 0.35),
         child: Container(
           // Bạn nên ước lượng chiều cao trung bình của banner (thường là 50-60dp)
           // Hoặc nếu đã tính được adHeight từ bước _loadAd thì dùng luôn
           height: 0,
           decoration: BoxDecoration(
-            color: Colors.black, // Màu nền của shimmer
+            color: Colors.black.withValues(alpha: 0.5), // Màu nền của shimmer
             borderRadius: BorderRadius.circular(12),
           ),
         ),

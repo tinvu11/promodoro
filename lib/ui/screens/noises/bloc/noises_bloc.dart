@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:promodoro/data/repositories/remote_data_repo.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_event.dart';
-import 'package:promodoro/ui/screens/noises/bloc/noises_state.dart';
+import 'package:pomodoro/data/repositories/remote_data_repo.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/screens/noises/bloc/noises_event.dart';
+import 'package:pomodoro/ui/screens/noises/bloc/noises_state.dart';
 
 class NoisesBloc extends Bloc<NoisesEvent, NoisesState> {
   final RemoteDataRepo _remoteDataRepo;

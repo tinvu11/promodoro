@@ -1,9 +1,9 @@
 import 'package:intl/intl.dart';
-import 'package:promodoro/data/models/alarm_model.dart';
-import 'package:promodoro/data/models/daily_stat.dart';
-import 'package:promodoro/data/models/settings_model.dart';
-import 'package:promodoro/data/models/theme_model.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/data/models/alarm_model.dart';
+import 'package:pomodoro/data/models/daily_stat.dart';
+import 'package:pomodoro/data/models/settings_model.dart';
+import 'package:pomodoro/data/models/theme_model.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
 
 import '../../configs/hive/app_hive.dart';
 

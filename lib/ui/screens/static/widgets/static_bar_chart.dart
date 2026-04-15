@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:promodoro/data/models/daily_stat.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/data/models/daily_stat.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
 
 class StaticBarChart extends StatefulWidget {
   final List<DailyStat> allStats;
@@ -23,6 +23,37 @@ class _StaticBarChartState extends State<StaticBarChart> {
   static const double _barSlotWidth = 51.0;
   static const int _visibleBars = 7;
   bool _initialScrollDone = false;
+
+  List<DailyStat> get _displayStats {
+    if (widget.allStats.isEmpty) return const [];
+
+    final normalized = <DateTime, DailyStat>{};
+    for (final stat in widget.allStats) {
+      final day = DateTime(stat.date.year, stat.date.month, stat.date.day);
+      normalized[day] = stat;
+    }
+
+    final firstDay = normalized.keys.reduce((a, b) => a.isBefore(b) ? a : b);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (firstDay.isAfter(today)) {
+      return normalized.values.toList()
+        ..sort((a, b) => a.date.compareTo(b.date));
+    }
+
+    final filled = <DailyStat>[];
+    for (
+      var day = firstDay;
+      !day.isAfter(today);
+      day = day.add(const Duration(days: 1))
+    ) {
+      final stat = normalized[day];
+      filled.add(stat ?? DailyStat(date: day, minutes: 0, sessions: 0));
+    }
+
+    return filled;
+  }
 
   @override
   void initState() {
@@ -63,21 +94,23 @@ class _StaticBarChartState extends State<StaticBarChart> {
   }
 
   void _notifyVisibleMonth() {
-    if (widget.allStats.isEmpty || widget.onMonthChanged == null) return;
+    final stats = _displayStats;
+    if (stats.isEmpty || widget.onMonthChanged == null) return;
     if (!_scrollController.hasClients) return;
 
     final offset = _scrollController.offset;
     final centerIndex =
         ((offset + (_visibleBars * _barSlotWidth / 2)) / _barSlotWidth).floor();
-    final clampedIndex = centerIndex.clamp(0, widget.allStats.length - 1);
-    final stat = widget.allStats[clampedIndex];
+    final clampedIndex = centerIndex.clamp(0, stats.length - 1);
+    final stat = stats[clampedIndex];
     widget.onMonthChanged!(stat.date.year, stat.date.month);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (widget.allStats.isEmpty) {
+    final stats = _displayStats;
+    if (stats.isEmpty) {
       return Center(
         child: Text(
           l10n.noData,
@@ -86,7 +119,7 @@ class _StaticBarChartState extends State<StaticBarChart> {
       );
     }
 
-    final chartWidth = widget.allStats.length * _barSlotWidth;
+    final chartWidth = stats.length * _barSlotWidth;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -111,7 +144,7 @@ class _StaticBarChartState extends State<StaticBarChart> {
   }
 
   double get _maxY {
-    final maxMinutes = widget.allStats
+    final maxMinutes = _displayStats
         .map((s) => s.minutes)
         .fold(0, (a, b) => a > b ? a : b);
     return maxMinutes > 0 ? maxMinutes.toDouble() : 60.0;
@@ -148,8 +181,9 @@ class _StaticBarChartState extends State<StaticBarChart> {
   }
 
   List<BarChartGroupData> showingGroups() {
-    return List.generate(widget.allStats.length, (i) {
-      final stat = widget.allStats[i];
+    final stats = _displayStats;
+    return List.generate(stats.length, (i) {
+      final stat = stats[i];
       return makeGroupData(
         i,
         stat.minutes.toDouble(),
@@ -172,6 +206,7 @@ class _StaticBarChartState extends State<StaticBarChart> {
 
   BarChartData mainBarData() {
     final l10n = AppLocalizations.of(context)!;
+    final stats = _displayStats;
     return BarChartData(
       alignment: BarChartAlignment.start,
       groupsSpace: _barSlotWidth - 22,
@@ -184,8 +219,8 @@ class _StaticBarChartState extends State<StaticBarChart> {
           fitInsideVertically: true,
           fitInsideHorizontally: true,
           getTooltipItem: (group, groupIndex, rod, rodIndex) {
-            if (group.x < 0 || group.x >= widget.allStats.length) return null;
-            final stat = widget.allStats[group.x];
+            if (group.x < 0 || group.x >= stats.length) return null;
+            final stat = stats[group.x];
             return BarTooltipItem(
               _todayFormated(l10n, stat.minutes * 60),
               const TextStyle(
@@ -255,8 +290,9 @@ class _StaticBarChartState extends State<StaticBarChart> {
     );
     final index = value.toInt();
     String text = '';
-    if (index >= 0 && index < widget.allStats.length) {
-      text = widget.allStats[index].dayOfMonth;
+    final stats = _displayStats;
+    if (index >= 0 && index < stats.length) {
+      text = stats[index].dayOfMonth;
     }
     return SideTitleWidget(
       meta: meta,

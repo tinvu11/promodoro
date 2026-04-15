@@ -1,7 +1,7 @@
 import 'package:hive_ce_flutter/adapters.dart';
-import 'package:promodoro/data/models/daily_stat.dart';
-import 'package:promodoro/data/models/theme_model.dart';
-import 'package:promodoro/hive_registrar.g.dart';
+import 'package:pomodoro/data/models/daily_stat.dart';
+import 'package:pomodoro/data/models/theme_model.dart';
+import 'package:pomodoro/hive_registrar.g.dart';
 
 import '../../data/models/settings_model.dart';
 

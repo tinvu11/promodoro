@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 class AppDio {
   static Dio? _instance;
@@ -24,7 +25,7 @@ class AppDio {
         responseBody: false,
         responseHeader: false,
         error: true,
-        logPrint: (obj) => print('[Dio] $obj'),
+        logPrint: (obj) => debugPrint('[Dio] $obj'),
       ),
     );
 

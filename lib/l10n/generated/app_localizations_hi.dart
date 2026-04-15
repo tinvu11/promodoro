@@ -208,4 +208,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get rate => 'रेट करें';
+
+  @override
+  String get term_pw => 'शर्तें';
+
+  @override
+  String get policy_pw => 'नीति';
 }

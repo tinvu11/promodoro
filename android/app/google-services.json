@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:889783600683:android:d1145b86b1121b3a38cc6e",
+        "mobilesdk_app_id": "1:889783600683:android:6fc7ad216b4cbfcc38cc6e",
         "android_client_info": {
-          "package_name": "com.example.promodoro"
+          "package_name": "com.vutin.pomodoro"
         }
       },
       "oauth_client": [],

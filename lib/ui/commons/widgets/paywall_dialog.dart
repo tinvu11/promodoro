@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../configs/di.dart';
@@ -17,6 +17,8 @@ import '../../bloc/iap/iap_bloc.dart';
 class PaywallDialog extends StatefulWidget {
   @override
   State<PaywallDialog> createState() => _PaywallDialogState();
+
+  const PaywallDialog({super.key});
 
   static void show(BuildContext context) {
     showGeneralDialog(
@@ -42,7 +44,7 @@ class PaywallDialog extends StatefulWidget {
 
 class _PaywallDialogState extends State<PaywallDialog> {
   static const primaryId = String.fromEnvironment("PRIMARY_PRODUCT_ID");
-  static const secondaryId = String.fromEnvironment("SECONDARY_PRODUCT_ID");
+  static const yearlyId = String.fromEnvironment("YEARLY_PRODUCT_ID");
   final _amplitude = DI.sl<Amplitude>();
 
   @override
@@ -56,9 +58,33 @@ class _PaywallDialogState extends State<PaywallDialog> {
             '\$4.99';
         final secondaryPrice =
             state.products
-                .firstWhereOrNull((element) => element.id == secondaryId)
+                .firstWhereOrNull((element) => element.id == yearlyId)
                 ?.price ??
             '\$1.99';
+        final lifetimeProduct = state.products.firstWhereOrNull(
+          (e) => e.id == primaryId,
+        );
+        final yearlyProduct = state.products.firstWhereOrNull(
+          (e) => e.id == yearlyId,
+        );
+
+        if (lifetimeProduct == null || yearlyProduct == null) {
+          return const SizedBox.shrink();
+        }
+
+        String cleanTitle(String title) {
+          return title.contains('(') ? title.split('(').first.trim() : title;
+        }
+
+        final String lifetimeTitle = cleanTitle(lifetimeProduct.title);
+        final String yearlyTitle = cleanTitle(yearlyProduct.title);
+
+        final String? lifetimeDescription = lifetimeProduct.description;
+        final String? secondaryDescription = yearlyProduct.description;
+
+        if (lifetimeDescription == null || secondaryDescription == null) {
+          return const SizedBox.shrink();
+        }
         return Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
@@ -91,14 +117,13 @@ class _PaywallDialogState extends State<PaywallDialog> {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.premiumFeatures,
-                        style: AppFonts.semibold_white_20.copyWith(
-                          fontSize: 28,
-                        ),
+
+                        style: AppFonts.semiboldWhite20.copyWith(fontSize: 28),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         AppLocalizations.of(context)!.unlockAllFeatures,
-                        style: AppFonts.regular_grey_14,
+                        style: AppFonts.regularGrey14,
                       ),
                       const SizedBox(height: 20),
 
@@ -129,8 +154,10 @@ class _PaywallDialogState extends State<PaywallDialog> {
                       // ── Plan cards ──
                       _buildPlanCard(
                         // icon: Icons.all_inclusive,
-                        title: AppLocalizations.of(context)!.lifetime,
-                        subtitle: AppLocalizations.of(context)!.buyOnce,
+                        // title: AppLocalizations.of(context)!.lifetime,
+                        title: lifetimeTitle,
+                        // subtitle: AppLocalizations.of(context)!.buyOnce,
+                        subtitle: lifetimeDescription,
                         price: primaryPrice,
                         highlight: true,
                         onTap: () {
@@ -146,15 +173,17 @@ class _PaywallDialogState extends State<PaywallDialog> {
                       const SizedBox(height: 10),
                       _buildPlanCard(
                         // icon: Icons.calendar_today,
-                        title: AppLocalizations.of(context)!.yearly,
-                        subtitle: AppLocalizations.of(context)!.save40,
+                        // title: AppLocalizations.of(context)!.yearly,
+                        title: yearlyTitle,
+                        // subtitle: AppLocalizations.of(context)!.save40,
+                        subtitle: secondaryDescription,
                         price: secondaryPrice,
                         onTap: () {
                           _amplitude.track(
                             BaseEvent('paywall_dialog_purchase_product'),
                           );
                           context.read<IapBloc>().add(
-                            PurchaseProduct(secondaryId),
+                            PurchaseProduct(yearlyId),
                           );
                           context.pop();
                         },
@@ -168,8 +197,8 @@ class _PaywallDialogState extends State<PaywallDialog> {
                           GestureDetector(
                             onTap: _openTermsOfUse,
                             child: Text(
-                              AppLocalizations.of(context)!.terms,
-                              style: AppFonts.medium_grey_14.copyWith(
+                              AppLocalizations.of(context)!.term_pw,
+                              style: AppFonts.mediumGrey14.copyWith(
                                 decorationColor: AppColors.textSecondary,
                               ),
                             ),
@@ -179,7 +208,7 @@ class _PaywallDialogState extends State<PaywallDialog> {
                             onTap: () => _onRestorePurchase(context),
                             child: Text(
                               AppLocalizations.of(context)!.restore,
-                              style: AppFonts.medium_grey_14.copyWith(
+                              style: AppFonts.mediumGrey14.copyWith(
                                 decorationColor: AppColors.textSecondary,
                               ),
                             ),
@@ -187,8 +216,8 @@ class _PaywallDialogState extends State<PaywallDialog> {
                           GestureDetector(
                             onTap: _openPrivacyPolicy,
                             child: Text(
-                              AppLocalizations.of(context)!.policy,
-                              style: AppFonts.medium_grey_14.copyWith(
+                              AppLocalizations.of(context)!.policy_pw,
+                              style: AppFonts.mediumGrey14.copyWith(
                                 decorationColor: AppColors.textSecondary,
                               ),
                             ),
@@ -270,7 +299,7 @@ Widget _buildPlanCard({
               children: [
                 Row(
                   children: [
-                    Text(title, style: AppFonts.medium_white_16),
+                    Text(title, style: AppFonts.mediumWhite16),
                     if (highlight) ...[
                       const SizedBox(width: 8),
                       Container(
@@ -295,13 +324,13 @@ Widget _buildPlanCard({
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(subtitle, style: AppFonts.regular_grey_14),
+                Text(subtitle, style: AppFonts.regularGrey14),
               ],
             ),
           ),
           Text(
             price,
-            style: AppFonts.medium_white_14.copyWith(
+            style: AppFonts.mediumWhite14.copyWith(
               color: highlight
                   ? AppColors.textPrimary
                   : AppColors.textSecondary,
@@ -327,7 +356,7 @@ Widget _buildFeatureRow(IconData icon, String text) {
       ),
       const SizedBox(width: 8),
       Expanded(
-        child: Text(text, style: AppFonts.regular_white_16, softWrap: true),
+        child: Text(text, style: AppFonts.regularWhite16, softWrap: true),
       ),
     ],
   );

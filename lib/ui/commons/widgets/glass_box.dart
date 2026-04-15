@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:promodoro/core/Theme/app_colors.dart';
+import 'package:pomodoro/core/Theme/app_colors.dart';
 
 class GlassBox extends StatelessWidget {
   final double? width;
@@ -31,7 +31,6 @@ class GlassBox extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(color: AppColors.glassBorder, width: 1.0),
               gradient: AppColors.glassGradient,
-              // color: Colors.white.withOpacity(0.1)
             ),
             child: RepaintBoundary(child: child),
           ),

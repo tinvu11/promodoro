@@ -209,4 +209,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get rate => 'Valuta';
+
+  @override
+  String get term_pw => 'Termini';
+
+  @override
+  String get policy_pw => 'Politica';
 }

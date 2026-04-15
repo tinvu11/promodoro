@@ -104,5 +104,8 @@
   "policy": "Chính sách quyền riêng tư",
       "terms": "Điều khoản sử dụng",
       "share": "Chia sẻ",
-      "rate": "Đánh giá"
+      "rate": "Đánh giá",
+       "term_pw": "Điều khoản",
+          "restore": "Khôi phục",
+          "policy_pw": "Chính sách"
 }

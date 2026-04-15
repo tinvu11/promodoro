@@ -124,5 +124,8 @@
  "policy": "Privacybeleid",
     "terms": "Gebruiksvoorwaarden",
     "share": "Delen",
-    "rate": "Beoordelen"
+    "rate": "Beoordelen",
+      "term_pw": "Voorwaarden",
+        "restore": "Herstellen",
+        "policy_pw": "Beleid"
 }

@@ -209,4 +209,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get rate => 'Đánh giá';
+
+  @override
+  String get term_pw => 'Điều khoản';
+
+  @override
+  String get policy_pw => 'Chính sách';
 }

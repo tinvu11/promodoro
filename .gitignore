@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android signing
+android/app/*.jks
+android/app/*.keystore
+android/key.properties
+
+# Google Services (Firebase)
+android/app/google-services.json
+

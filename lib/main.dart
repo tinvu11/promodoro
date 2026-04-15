@@ -2,12 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:promodoro/services/background_service.dart';
-import 'package:promodoro/simple_bloc_observer.dart';
-import 'package:promodoro/ui/bloc/iap/iap_bloc.dart';
-import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
-import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
-import 'package:promodoro/ui/screens/timer/bloc/timer_bloc.dart';
+import 'package:pomodoro/services/background_service.dart';
+import 'package:pomodoro/simple_bloc_observer.dart';
+import 'package:pomodoro/ui/bloc/iap/iap_bloc.dart';
+import 'package:pomodoro/ui/bloc/locale/locale_cubit.dart';
+import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:pomodoro/ui/screens/timer/bloc/timer_bloc.dart';
 
 import 'app.dart';
 import 'configs/di.dart';
@@ -15,10 +15,10 @@ import 'configs/di.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Chạy song song 2 tác vụ độc lập để tăng tốc khởi động
-  await Future.wait([initializeService(), Firebase.initializeApp()]);
+  // Run independent startup tasks concurrently.
+  await Future.wait([Firebase.initializeApp(), initializeService()]);
 
-  // DI phải init SAU Firebase vì một số dependency cần Firebase
+  // Initialize DI after Firebase because some services depend on it.
   await DI.init();
 
   Bloc.observer = SimpleBlocObserver();
@@ -34,7 +34,6 @@ void main() async {
     ),
   );
 
-  // Khởi tạo MobileAds SAU runApp – không cần cho frame đầu tiên,
-  // tiết kiệm ~1-2 giây trước khi UI hiện ra.
+  // Delay ad SDK initialization to avoid blocking first frame.
   MobileAds.instance.initialize();
 }

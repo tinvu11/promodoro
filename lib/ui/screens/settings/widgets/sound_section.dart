@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promodoro/configs/di.dart';
-import 'package:promodoro/data/data_sources/local_data.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
+import 'package:pomodoro/configs/di.dart';
+import 'package:pomodoro/data/data_sources/local_data.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
@@ -24,8 +24,9 @@ class SoundSection extends StatelessWidget {
         // Các phần khác tương tự...
         BlocBuilder<SettingsBloc, SettingsState>(
           buildWhen: (p, c) {
-            if (p is! SuccessSettingState || c is! SuccessSettingState)
+            if (p is! SuccessSettingState || c is! SuccessSettingState) {
               return false;
+            }
             return p.settingsModel.isSoundEnabled !=
                     c.settingsModel.isSoundEnabled ||
                 p.settingsModel.selectedThemeId !=
@@ -115,7 +116,7 @@ class SoundSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: AppFonts.medium_white_20),
+              Text(title, style: AppFonts.mediumWhite20),
               Row(
                 children: [
                   const Icon(Icons.volume_up, size: 20),
@@ -150,7 +151,7 @@ class SoundSection extends StatelessWidget {
     ValueChanged<bool> onChanged,
   ) {
     return ListTile(
-      title: Text(title, style: AppFonts.medium_white_20),
+      title: Text(title, style: AppFonts.mediumWhite20),
       trailing: Switch(
         value: value,
         activeThumbColor: AppColors.textPrimary,
@@ -178,11 +179,11 @@ class SoundSection extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        title: Text(title, style: AppFonts.medium_white_20),
+        title: Text(title, style: AppFonts.mediumWhite20),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(value, style: AppFonts.regular_grey_18),
+            Text(value, style: AppFonts.regularGrey18),
             const SizedBox(width: 4),
             Icon(Icons.navigate_next, color: AppColors.textSecondary),
           ],

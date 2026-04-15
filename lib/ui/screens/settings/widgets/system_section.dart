@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/services/locale_service.dart';
-import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
-import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/services/locale_service.dart';
+import 'package:pomodoro/ui/bloc/locale/locale_cubit.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
@@ -20,8 +20,9 @@ class SystemSection extends StatelessWidget {
       children: [
         BlocBuilder<SettingsBloc, SettingsState>(
           buildWhen: (p, c) {
-            if (p is! SuccessSettingState || c is! SuccessSettingState)
+            if (p is! SuccessSettingState || c is! SuccessSettingState) {
               return false;
+            }
             return p.settingsModel.alwaysOnScreen !=
                 c.settingsModel.alwaysOnScreen;
           },
@@ -81,7 +82,7 @@ class SystemSection extends StatelessWidget {
     ValueChanged<bool> onChanged,
   ) {
     return ListTile(
-      title: Text(title, style: AppFonts.medium_white_20),
+      title: Text(title, style: AppFonts.mediumWhite20),
       trailing: Switch(
         value: value,
         activeThumbColor: AppColors.textPrimary,
@@ -108,11 +109,11 @@ class SystemSection extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        title: Text(title, style: AppFonts.medium_white_20),
+        title: Text(title, style: AppFonts.mediumWhite20),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(value, style: AppFonts.regular_grey_18),
+            Text(value, style: AppFonts.regularGrey18),
             const SizedBox(width: 4),
             Icon(Icons.navigate_next, color: AppColors.textSecondary),
           ],

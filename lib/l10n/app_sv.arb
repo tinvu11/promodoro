@@ -124,5 +124,8 @@
   "policy": "Integritetspolicy",
     "terms": "Användarvillkor",
     "share": "Dela",
-    "rate": "Betygsätt"
+    "rate": "Betygsätt",
+      "term_pw": "Villkor",
+        "restore": "Återställ",
+        "policy_pw": "Policy"
 }

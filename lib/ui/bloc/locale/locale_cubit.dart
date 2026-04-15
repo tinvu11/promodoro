@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/services/locale_service.dart';
+import 'package:pomodoro/services/locale_service.dart';
 
 /// Cubit quản lý trạng thái locale hiện tại của app.
 class LocaleCubit extends Cubit<Locale> {

@@ -153,7 +153,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get terms => '使用条款';
 
   @override
-  String get restore => '恢复购买';
+  String get restore => '恢复';
 
   @override
   String get policy => '隐私政策';
@@ -208,4 +208,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get rate => '评分';
+
+  @override
+  String get term_pw => '条款';
+
+  @override
+  String get policy_pw => '政策';
 }

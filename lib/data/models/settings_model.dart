@@ -7,6 +7,7 @@ import 'alarm_model.dart';
 part 'settings_model.g.dart';
 
 @HiveType(typeId: HiveTypes.settings)
+// ignore: must_be_immutable
 class SettingsModel extends HiveObject with EquatableMixin {
   @HiveField(0)
   final int workTime;
@@ -85,7 +86,7 @@ class SettingsModel extends HiveObject with EquatableMixin {
       volumeBreakAlarm: volumeBreakAlarm ?? this.volumeBreakAlarm,
       volumeNoise: volumeNoise ?? this.volumeNoise,
       alwaysOnScreen: alwaysOnScreen ?? this.alwaysOnScreen,
-      themeName: themeNane ?? this.themeName,
+      themeName: themeNane ?? themeName,
     );
   }
 
@@ -102,5 +103,6 @@ class SettingsModel extends HiveObject with EquatableMixin {
     volumeBreakAlarm,
     volumeNoise,
     alwaysOnScreen,
+    themeName,
   ];
 }

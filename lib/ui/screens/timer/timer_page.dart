@@ -3,16 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
-import 'package:promodoro/configs/di.dart';
-import 'package:promodoro/core/Theme/app_fonts.dart';
-import 'package:promodoro/data/data_sources/local_data.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/navigation/app_router.dart';
-import 'package:promodoro/services/noise_audio_service.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
-import 'package:promodoro/ui/screens/timer/widgets/GlassTimerPage.dart';
-import 'package:promodoro/utils/time_formatting.dart';
+import 'package:pomodoro/configs/di.dart';
+import 'package:pomodoro/core/Theme/app_fonts.dart';
+import 'package:pomodoro/data/data_sources/local_data.dart';
+import 'package:pomodoro/data/models/settings_model.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/navigation/app_router.dart';
+import 'package:pomodoro/services/noise_audio_service.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:pomodoro/ui/screens/timer/widgets/glass_timer_page.dart';
+import 'package:pomodoro/utils/time_formatting.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/Theme/app_colors.dart';
@@ -29,7 +30,6 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  TimerMode? _currentMode;
   late final NoiseAudioService _noiseAudioService;
 
   @override
@@ -41,17 +41,16 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   void dispose() {
-    // Dừng nhạc nền khi rời TimerPage
     _noiseAudioService.stop();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Chỉ watch Settings vì nó ít khi thay đổi
     final settingsState = context.watch<SettingsBloc>().state;
-    if (settingsState is! SuccessSettingState)
+    if (settingsState is! SuccessSettingState) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     final settings = settingsState.settingsModel;
 
@@ -85,42 +84,29 @@ class _TimerPageState extends State<TimerPage> {
             extendBodyBehindAppBar: true,
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: AnimatedSlide(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                offset: isRunning ? const Offset(0, -1) : Offset.zero,
-                child: _buildAppBar(context, settings),
+              child: RepaintBoundary(
+                child: AnimatedSlide(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  offset: isRunning ? const Offset(0, -1) : Offset.zero,
+                  child: _buildAppBar(context, settings),
+                ),
               ),
             ),
             body: Center(
               child: Stack(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 1. Khu vực hiển thị Timer (Đã tối ưu Rebuild)
-                  GestureDetector(
-                    onTap: () {
-                      final currentState = context.read<TimerBloc>().state;
-                      _onToggleTimer(context, currentState, settings);
-                    },
-                    child: _buildTimerDisplay(settings),
+                  RepaintBoundary(
+                    child: GestureDetector(
+                      onTap: () {
+                        final currentState = context.read<TimerBloc>().state;
+                        _onToggleTimer(context, currentState, settings);
+                      },
+                      child: _buildTimerDisplay(settings),
+                    ),
                   ),
 
                   const SizedBox(height: 100),
-
-                  // Positioned(
-                  //   bottom: 16,
-                  //   right: 0,
-                  //   left: 0,
-                  //   child: AnimatedSlide(
-                  //     duration: const Duration(milliseconds: 300),
-                  //     curve: Curves.easeOutCubic,
-                  //     offset: isRunning ? Offset.zero : const Offset(0, 1.5),
-                  //     child: const BannerAdWidget(
-                  //       isPremium: false,
-                  //       paddingHorizontal: 16,
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -142,7 +128,7 @@ class _TimerPageState extends State<TimerPage> {
         ?.requestNotificationsPermission();
   }
 
-  Widget _buildTimerDisplay(settingsModel) {
+  Widget _buildTimerDisplay(SettingsModel settingsModel) {
     return BlocBuilder<TimerBloc, TimerState>(
       buildWhen: (prev, curr) =>
           prev.runtimeType != curr.runtimeType ||
@@ -167,39 +153,42 @@ class _TimerPageState extends State<TimerPage> {
                 state is TimerRunComplete)
             ? AppLocalizations.of(context)!.work
             : AppLocalizations.of(context)!.breakLabel;
-        // String roundText = "${state.round} / ${state.totalRounds}";
         String roundText = "${state.round} / ${settingsModel.repeatCount}";
+        String roundBreakText =
+            "${state.round} / ${settingsModel.repeatCount - 1}";
 
         return Stack(
           alignment: Alignment.center,
           children: [
             GlassTimer(size: 280, progress: progress.clamp(0.0, 1.0)),
 
-            // Text Mode và Round
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Icon(true ? Icons.pause : Icons.play_arrow, color: Colors.white,size: 30,),
                     Text(
                       modeText,
-                      style: AppFonts.medium_white_20.copyWith(
+                      style: AppFonts.mediumWhite20.copyWith(
                         color: Colors.white,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 100),
-                Text(roundText, style: AppFonts.medium_white_20),
+                Text(
+                  state.round > 0 && state.mode == TimerMode.breakMode
+                      ? roundBreakText
+                      : roundText,
+                  style: AppFonts.mediumWhite20,
+                ),
               ],
             ),
 
-            // Số giây chính giữa
             Text(
               currentSeconds.toTimer(),
-              style: AppFonts.semibold_white_40.copyWith(
+              style: AppFonts.semiboldWhite40.copyWith(
                 fontSize: 60,
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
@@ -210,7 +199,7 @@ class _TimerPageState extends State<TimerPage> {
     );
   }
 
-  // Gom nhóm logic xử lý sự kiện
+  // Centralized start/pause/resume control for timer interactions.
   void _onToggleTimer(BuildContext context, TimerState state, settings) {
     final bloc = context.read<TimerBloc>();
     if (state is TimerInitial || state is TimerRunComplete) {
@@ -232,18 +221,7 @@ class _TimerPageState extends State<TimerPage> {
     }
   }
 
-  void _handleModeChange(TimerState state) {
-    if (state is TimerRunInProgress && _currentMode != state.mode) {
-      _currentMode = state.mode;
-      // Có thể thêm rung hoặc âm thanh ngắn ở đây qua FlutterVibrate
-    }
-  }
-
-  /// Quản lý nhạc nền (ambient noises) theo trạng thái timer.
-  ///
-  /// - Work + Running → phát loop
-  /// - Pause → tạm dừng
-  /// - Break / Complete / Reset → dừng hoàn toàn
+  /// Controls ambient noise playback based on timer state.
   void _handleNoiseAudio(TimerState state, settings) {
     if (!settings.isSoundEnabled) {
       _noiseAudioService.stop();
@@ -251,21 +229,18 @@ class _TimerPageState extends State<TimerPage> {
     }
 
     if (state is TimerRunInProgress && state.mode == TimerMode.work) {
-      // Đang work → phát nhạc nền
       if (!_noiseAudioService.isPlaying) {
         _noiseAudioService.play(
           volume: settings.volumeNoise,
           themeId: settings.selectedThemeId,
         );
-        print('\x1B[32m▶ [Timer] Timer đang chạy...\x1B[0m');
+        debugPrint('\x1B[32m▶ [Timer] Timer đang chạy...\x1B[0m');
       }
     } else if (state is TimerRunPause) {
-      // Tạm dừng timer → tạm dừng nhạc nền
-      print('Timer tam dung');
+      debugPrint('Timer tam dung');
       _noiseAudioService.pause();
     } else {
-      // Break mode, Complete, Reset → dừng hoàn toàn
-      print("Timer ket thuc");
+      debugPrint("Timer ket thuc");
       _noiseAudioService.stop();
     }
   }
@@ -299,9 +274,7 @@ class _TimerPageState extends State<TimerPage> {
                   const SizedBox(width: 5),
                   Text(
                     displayName,
-                    style: AppFonts.regular_grey_14.copyWith(
-                      color: Colors.white,
-                    ),
+                    style: AppFonts.regularGrey14.copyWith(color: Colors.white),
                   ),
                 ],
               ),
@@ -310,7 +283,6 @@ class _TimerPageState extends State<TimerPage> {
         ),
         SizedBox(width: 8),
         GestureDetector(
-          // onTap: () => _showPremiumDialog(context),
           onTap: () => PaywallDialog.show(context),
           child: GlassBox(
             child: Padding(

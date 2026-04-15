@@ -117,5 +117,8 @@
  "policy": "개인정보 처리방침",
     "terms": "이용 약관",
     "share": "공유",
-    "rate": "평가"
+    "rate": "평가",
+     "term_pw": "약관",
+        "restore": "복원",
+        "policy_pw": "정책"
 }

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:promodoro/data/repositories/settings_repository.dart';
+import 'package:pomodoro/data/repositories/settings_repository.dart';
 
 import '../../../../data/models/alarm_model.dart';
 import '../../../../data/models/settings_model.dart';

@@ -209,4 +209,10 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get rate => 'Betygsätt';
+
+  @override
+  String get term_pw => 'Villkor';
+
+  @override
+  String get policy_pw => 'Policy';
 }

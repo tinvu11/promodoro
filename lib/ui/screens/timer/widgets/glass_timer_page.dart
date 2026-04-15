@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../core/Theme/app_colors.dart';
 
-// --- Widget Tổng hợp ---
 class GlassTimer extends StatelessWidget {
   final double size;
   final double progress;
@@ -20,9 +19,7 @@ class GlassTimer extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // LỚP 1: Tách riêng phần Glass (Dùng const để tối ưu)
             const _StaticGlassRing(strokeWidth: _strokeWidth),
-            // LỚP 2: Tách riêng phần Progress (Sử dụng RepaintBoundary)
             RepaintBoundary(
               child: TweenAnimationBuilder<double>(
                 tween: Tween<double>(begin: progress, end: progress),
@@ -44,7 +41,6 @@ class GlassTimer extends StatelessWidget {
   }
 }
 
-// --- Widget 1: Vòng tròn Glassmorphism (Tĩnh) ---
 class _StaticGlassRing extends StatelessWidget {
   final double strokeWidth;
   const _StaticGlassRing({required this.strokeWidth});
@@ -58,8 +54,7 @@ class _StaticGlassRing extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors
-                .glassPrimary, // Đảm bảo màu có độ trong suốt (opacity)
+            color: AppColors.glassPrimary,
           ),
         ),
       ),
@@ -67,7 +62,6 @@ class _StaticGlassRing extends StatelessWidget {
   }
 }
 
-// --- Widget 2: Vòng tiến trình (Động) ---
 class _ProgressIndicator extends StatelessWidget {
   final double progress;
   final double strokeWidth;
@@ -88,7 +82,6 @@ class _ProgressIndicator extends StatelessWidget {
   }
 }
 
-// --- Giữ nguyên Clipper và Painter của bạn ---
 class RingClipper extends CustomClipper<Path> {
   final double strokeWidth;
   RingClipper(this.strokeWidth);

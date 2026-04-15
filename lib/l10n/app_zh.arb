@@ -124,5 +124,8 @@
   "policy": "隐私政策",
     "terms": "使用条款",
     "share": "分享",
-    "rate": "评分"
+    "rate": "评分",
+      "term_pw": "条款",
+        "restore": "恢复",
+        "policy_pw": "政策"
 }

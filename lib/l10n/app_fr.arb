@@ -117,5 +117,8 @@
     "policy": "Politique de confidentialité",
       "terms": "Conditions d'utilisation",
       "share": "Partager",
-      "rate": "Évaluer"
+      "rate": "Évaluer",
+       "term_pw": "Conditions",
+          "restore": "Restaurer",
+          "policy_pw": "Politique"
 }

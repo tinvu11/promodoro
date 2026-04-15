@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/configs/di.dart';
-import 'package:promodoro/core/Theme/app_fonts.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/services/locale_service.dart';
-import 'package:promodoro/services/theme_storage_service.dart';
-import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
-import 'package:promodoro/ui/commons/widgets/common_appbar.dart';
-import 'package:promodoro/ui/screens/settings/bloc/settings_bloc.dart';
+import 'package:pomodoro/configs/di.dart';
+import 'package:pomodoro/core/Theme/app_fonts.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/services/locale_service.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
+import 'package:pomodoro/ui/bloc/locale/locale_cubit.dart';
+import 'package:pomodoro/ui/commons/widgets/common_appbar.dart';
+import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/theme_background.dart';
@@ -20,14 +20,13 @@ class LanguagesPage extends StatefulWidget {
 }
 
 class _LanguagesPageState extends State<LanguagesPage> {
-  /// Đường dẫn bg tính sync để tránh nháy frame đầu tiên.
+  /// Resolved synchronously to avoid first-frame background flicker.
   String? _initialBgPath;
 
   @override
   void initState() {
     super.initState();
 
-    // Khởi tạo preview cho theme đang active
     final settingsState = context.read<SettingsBloc>().state;
     if (settingsState is SuccessSettingState) {
       final themeId = settingsState.settingsModel.selectedThemeId;
@@ -100,7 +99,7 @@ Widget _itemLanguage(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: AppFonts.regular_white_18),
+          Text(title, style: AppFonts.regularWhite18),
           if (isSelected)
             const Icon(
               Icons.check_rounded,

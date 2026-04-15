@@ -1,22 +1,13 @@
-/*
- * @ Author: Chung Nguyen Thanh <chunhthanhde.dev@gmail.com>
- * @ Created: 2024-12-17 21:44:04
- * @ Message: 🎯 Happy coding and Have a nice day! 🌤️
- */
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-///
-/// A custom BlocObserver to monitor and log Bloc events, errors, and transitions.
-///
+/// Logs bloc events and errors in debug builds.
 class SimpleBlocObserver extends BlocObserver {
   static const String reset = '\x1B[0m';
   static const String blue = '\x1B[34m';
   static const String red = '\x1B[31m';
   static const String bold = '\x1B[1m';
 
-  /// Called whenever an event is added to any Bloc.
   @override
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
@@ -32,7 +23,6 @@ class SimpleBlocObserver extends BlocObserver {
     }
   }
 
-  /// Called whenever an error occurs in any Bloc.
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     super.onError(bloc, error, stackTrace);
@@ -49,26 +39,5 @@ class SimpleBlocObserver extends BlocObserver {
         '════════════════════════════════════════$reset\n',
       );
     }
-
-    /// Called whenever a state transition occurs in any Bloc.
-    // @override
-    // void onTransition(Bloc bloc, Transition transition) {
-    //   super.onTransition(bloc, transition);
-
-    //   LogHelper.info(
-    //     tag: "onTransition",
-    //     message:
-    //         '\n'
-    //         '════════════════════════════════════════\n'
-    //         '         BLOC STATE TRANSITION          \n'
-    //         '════════════════════════════════════════\n'
-    //         'Bloc: ${bloc.runtimeType}               \n'
-    //         '----------------------------------------\n'
-    //         '▶ FROM: ${transition.currentState}      \n'
-    //         '▶ TO:   ${transition.nextState}         \n'
-    //         '════════════════════════════════════════\n'
-    //         '\n',
-    //   );
-    // }
   }
 }

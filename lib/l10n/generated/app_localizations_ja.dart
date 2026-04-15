@@ -208,4 +208,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get rate => '評価';
+
+  @override
+  String get term_pw => '規約';
+
+  @override
+  String get policy_pw => 'ポリシー';
 }

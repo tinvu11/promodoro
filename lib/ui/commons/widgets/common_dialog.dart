@@ -100,10 +100,10 @@ class _CommonDialogState extends State<CommonDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(widget.title, style: AppFonts.medium_grey_22),
+                        Text(widget.title, style: AppFonts.mediumGrey22),
                         const SizedBox(height: 10),
 
-                        Text(widget.content, style: AppFonts.regular_grey_16),
+                        Text(widget.content, style: AppFonts.regularGrey16),
                         const SizedBox(height: 30),
 
                         Row(
@@ -115,7 +115,7 @@ class _CommonDialogState extends State<CommonDialog> {
                               onTap: () => _cancel(context),
                               child: Text(
                                 widget.leftTextBtn,
-                                style: AppFonts.medium_grey_14.copyWith(
+                                style: AppFonts.mediumGrey14.copyWith(
                                   decorationColor: AppColors.textSecondary,
                                 ),
                               ),
@@ -126,7 +126,7 @@ class _CommonDialogState extends State<CommonDialog> {
                               },
                               child: Text(
                                 widget.rightTextBtn,
-                                style: AppFonts.medium_grey_14.copyWith(
+                                style: AppFonts.mediumGrey14.copyWith(
                                   decorationColor: AppColors.textSecondary,
                                 ),
                               ),

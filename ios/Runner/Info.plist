@@ -2,10 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>audio</string> </array>
+
+	<key>PermissionGroupNotification</key>
+	<string>The app needs to send notifications to display the time when in Pomodoro mode running in the background.</string>
+
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-9234939738643698~4147980831</string> <key>NSUserTrackingUsageDescription</key>
+	<string>The app needs this permission to display ads that are tailored to your interests.</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Promodoro</string>
+	<string>Pomodoro</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +27,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>promodoro</string>
+	<string>Pomodoro</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

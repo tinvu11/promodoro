@@ -209,4 +209,10 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get rate => 'Beoordelen';
+
+  @override
+  String get term_pw => 'Voorwaarden';
+
+  @override
+  String get policy_pw => 'Beleid';
 }

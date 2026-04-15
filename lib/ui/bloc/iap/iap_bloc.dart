@@ -11,7 +11,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../../core/failure.dart';
 import '../../../data/repositories/iap_repository.dart';
-import '../../../utils/GlobalValues.dart';
+import '../../../utils/global_values.dart';
 
 part 'iap_event.dart';
 part 'iap_state.dart';
@@ -29,12 +29,17 @@ class IapBloc extends Bloc<IapEvent, IapState> {
     on<RestorePurchases>(_onRestorePurchases);
     on<PurchaseProduct>(_onPurchaseProduct);
     on<EmitState>(_onEmitState);
+
+    // Start purchase stream listener immediately at bloc creation.
+    add(const ListenForPurchases());
   }
 
-  _onListenForPurchases(
+  Future<void> _onListenForPurchases(
     ListenForPurchases event,
     Emitter<IapState> emit,
   ) async {
+    if (_subscription != null) return;
+
     debugPrint('IapBloc -> _onListenForPurchases');
     int? boughtNoAdsTime = GlobalValues.boughtNoAdsTime;
     if (boughtNoAdsTime != null && boughtNoAdsTime != -1) {
@@ -103,14 +108,16 @@ class IapBloc extends Bloc<IapEvent, IapState> {
             if (purchase.status == PurchaseStatus.purchased) {
               _amplitude.track(BaseEvent('purchase_success'));
               _processPurchase(purchase.productID);
-              final isPrimary =
-                  purchase.productID ==
-                  const String.fromEnvironment('PRIMARY_PRODUCT_ID');
-              if (!isPrimary) {
-                _iapRepository.consumePurchase(purchase);
+              final currentPurchased = [...state.purchases];
+              if (!currentPurchased.any(
+                (element) => element.productID == purchase.productID,
+              )) {
+                currentPurchased.add(purchase);
               }
+              add(EmitState(state.copyWith(purchases: currentPurchased)));
             } else if (purchase.status == PurchaseStatus.restored) {
               _amplitude.track(BaseEvent('purchase_restored'));
+              _processPurchase(purchase.productID);
               final currentPurchased = [...state.purchases];
               if (!currentPurchased.contains(purchase)) {
                 currentPurchased.add(purchase);
@@ -138,27 +145,30 @@ class IapBloc extends Bloc<IapEvent, IapState> {
     _iapRepository.restorePurchases();
   }
 
-  _onRestorePurchases(RestorePurchases event, Emitter<IapState> emit) async {
+  Future<void> _onRestorePurchases(
+    RestorePurchases event,
+    Emitter<IapState> emit,
+  ) async {
     debugPrint('IapBloc -> _onRestorePurchases');
-    final purchased = state.purchases;
-    if (purchased.isEmpty) {
-      emit(state.copyWith(failure: Failure(message: "No purchases found")));
-      emit(state.copyWith(failure: null));
-      return;
-    }
-    for (final purchase in purchased) {
-      await _processPurchase(purchase.productID);
-    }
+    emit(state.copyWith(isLoading: true));
+    final result = await _iapRepository.restorePurchases();
+    result.fold(
+      (failure) {
+        emit(state.copyWith(failure: failure, isLoading: false));
+        emit(state.copyWith(failure: null));
+      },
+      (_) {
+        emit(state.copyWith(isLoading: false));
+      },
+    );
   }
 
-  _onPurchaseProduct(PurchaseProduct event, Emitter<IapState> emit) async {
+  Future<void> _onPurchaseProduct(
+    PurchaseProduct event,
+    Emitter<IapState> emit,
+  ) async {
     debugPrint('IapBloc -> _onPurchaseProduct -> purchasing: ${event.id}');
     emit(state.copyWith(isLoading: true));
-    // if (appFlavor != 'production' || event.isFree) {
-    //   await Future.delayed(const Duration(seconds: 3));
-    //   _processPurchase(event.id);
-    //   return;
-    // }
     final product = state.products.firstWhereOrNull(
       (element) => element.id == event.id,
     );
@@ -188,12 +198,12 @@ class IapBloc extends Bloc<IapEvent, IapState> {
     );
   }
 
-  _onEmitState(EmitState event, Emitter<IapState> emit) {
+  Future<void> _onEmitState(EmitState event, Emitter<IapState> emit) async {
     debugPrint('IapBloc -> _onEmitState');
     emit(event.state);
   }
 
-  _processPurchase(String id) {
+  Future<void> _processPurchase(String id) async {
     const String lifetimeId = String.fromEnvironment('PRIMARY_PRODUCT_ID');
     const String yearlyId = String.fromEnvironment('YEARLY_PRODUCT_ID');
 
@@ -206,10 +216,9 @@ class IapBloc extends Bloc<IapEvent, IapState> {
 
       DateTime newTime;
       if (currentDeadline == null || currentDeadline == -1) {
-        // Nếu chưa có hạn hoặc đang là vĩnh viễn (nhưng lại mua gói năm)
         newTime = now.add(const Duration(days: 365));
       } else {
-        // Nếu đang có hạn (ví dụ còn 10 ngày), cộng dồn thêm 365 ngày
+        // Extend existing paid period instead of resetting from now.
         newTime = DateTime.fromMillisecondsSinceEpoch(
           currentDeadline,
         ).add(const Duration(days: 365));
@@ -225,5 +234,11 @@ class IapBloc extends Bloc<IapEvent, IapState> {
         ),
       );
     }
+  }
+
+  @override
+  Future<void> close() async {
+    await _subscription?.cancel();
+    return super.close();
   }
 }

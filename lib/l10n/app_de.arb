@@ -117,5 +117,8 @@
  "policy": "Datenschutzrichtlinie",
     "terms": "Nutzungsbedingungen",
     "share": "Teilen",
-    "rate": "Bewerten"
+    "rate": "Bewerten",
+     "term_pw": "Bedingungen",
+        "restore": "Wiederherstellen",
+        "policy_pw": "Richtlinie"
 }

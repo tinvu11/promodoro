@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:promodoro/data/models/alarm_model.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/ui/screens/settings/widgets/sectionwrapper.dart';
-import 'package:promodoro/ui/screens/settings/widgets/slider_minute.dart';
-import 'package:promodoro/ui/screens/settings/widgets/slider_sessions.dart';
+import 'package:pomodoro/data/models/alarm_model.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/sectionwrapper.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/slider_minute.dart';
+import 'package:pomodoro/ui/screens/settings/widgets/slider_sessions.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
@@ -45,8 +45,9 @@ class ConfigSectionState extends State<ConfigSection> {
       children: [
         BlocBuilder<SettingsBloc, SettingsState>(
           buildWhen: (p, c) {
-            if (p is! SuccessSettingState || c is! SuccessSettingState)
+            if (p is! SuccessSettingState || c is! SuccessSettingState) {
               return false;
+            }
             return p.settingsModel.workTime != c.settingsModel.workTime ||
                 p.settingsModel.alarmWork != c.settingsModel.alarmWork ||
                 p.settingsModel.volumeWorkAlarm !=
@@ -135,8 +136,9 @@ class ConfigSectionState extends State<ConfigSection> {
         ),
         BlocBuilder<SettingsBloc, SettingsState>(
           buildWhen: (p, c) {
-            if (p is! SuccessSettingState || c is! SuccessSettingState)
+            if (p is! SuccessSettingState || c is! SuccessSettingState) {
               return false;
+            }
             return p.settingsModel.breakTime != c.settingsModel.breakTime ||
                 p.settingsModel.alarmBreak != c.settingsModel.alarmBreak ||
                 p.settingsModel.volumeBreakAlarm !=
@@ -226,8 +228,9 @@ class ConfigSectionState extends State<ConfigSection> {
         ),
         BlocBuilder<SettingsBloc, SettingsState>(
           buildWhen: (p, c) {
-            if (p is! SuccessSettingState || c is! SuccessSettingState)
+            if (p is! SuccessSettingState || c is! SuccessSettingState) {
               return false;
+            }
             return p.settingsModel.repeatCount != c.settingsModel.repeatCount;
           },
           builder: (context, state) {
@@ -292,8 +295,8 @@ class ConfigSectionState extends State<ConfigSection> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: AppFonts.regular_grey_18),
-            Text(value, style: AppFonts.regular_grey_18),
+            Text(title, style: AppFonts.regularGrey18),
+            Text(value, style: AppFonts.regularGrey18),
           ],
         ),
       ),
@@ -309,11 +312,11 @@ class ConfigSectionState extends State<ConfigSection> {
       ),
       child: ListTile(
         onTap: onTap,
-        title: Text(title, style: AppFonts.medium_white_20),
+        title: Text(title, style: AppFonts.mediumWhite20),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(value, style: AppFonts.regular_grey_18),
+            Text(value, style: AppFonts.regularGrey18),
             const SizedBox(width: 4),
             const Icon(Icons.navigate_next, color: AppColors.textSecondary),
           ],
@@ -393,7 +396,7 @@ class ConfigSectionState extends State<ConfigSection> {
             useRootNavigator: true,
             backgroundColor: Colors.transparent,
             isScrollControlled: true,
-            builder: (_) => GlassBottomSheet(child: child, title: title),
+            builder: (_) => GlassBottomSheet(title: title, child: child),
           );
         },
       );
@@ -406,7 +409,7 @@ class ConfigSectionState extends State<ConfigSection> {
       useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => GlassBottomSheet(child: child, title: title),
+      builder: (_) => GlassBottomSheet(title: title, child: child),
     );
   }
 
@@ -438,7 +441,7 @@ class ConfigSectionState extends State<ConfigSection> {
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Container(
+                child: SizedBox(
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                     leading: Icon(
@@ -457,8 +460,8 @@ class ConfigSectionState extends State<ConfigSection> {
                           ).languageCode] ??
                           alarm.name['en']!,
                       style: isSelected
-                          ? AppFonts.medium_white_20
-                          : AppFonts.regular_white_20,
+                          ? AppFonts.mediumWhite20
+                          : AppFonts.regularWhite20,
                     ),
                   ),
                 ),

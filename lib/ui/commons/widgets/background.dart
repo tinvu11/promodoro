@@ -23,7 +23,9 @@ class Background extends StatelessWidget {
           child: ClipRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
-              child: Container(color: Colors.black.withOpacity(darkAlpha)),
+              child: Container(
+                color: Colors.black.withValues(alpha: darkAlpha),
+              ),
             ),
           ),
         ),

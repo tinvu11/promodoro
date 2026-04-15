@@ -209,4 +209,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get rate => 'Avaliar';
+
+  @override
+  String get term_pw => 'Termos';
+
+  @override
+  String get policy_pw => 'Política';
 }

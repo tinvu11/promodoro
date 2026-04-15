@@ -117,5 +117,8 @@
 "policy": "プライバシーポリシー",
     "terms": "利用規約",
     "share": "共有",
-    "rate": "評価"
+    "rate": "評価",
+     "term_pw": "規約",
+        "restore": "復元",
+        "policy_pw": "ポリシー"
 }

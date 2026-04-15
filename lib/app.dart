@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:promodoro/l10n/generated/app_localizations.dart';
-import 'package:promodoro/navigation/app_router.dart';
-import 'package:promodoro/services/locale_service.dart';
-import 'package:promodoro/ui/bloc/locale/locale_cubit.dart';
+import 'package:pomodoro/l10n/generated/app_localizations.dart';
+import 'package:pomodoro/navigation/app_router.dart';
+import 'package:pomodoro/services/locale_service.dart';
+import 'package:pomodoro/ui/bloc/locale/locale_cubit.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -14,12 +14,19 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> with WidgetsBindingObserver {
+  void _safeInvokeService(String method, [Map<String, dynamic>? args]) {
+    try {
+      FlutterBackgroundService().invoke(method, args);
+    } catch (_) {
+      // Ignore platforms where background service is unavailable.
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Mặc định khi init là đang ở foreground
-    FlutterBackgroundService().invoke('ui_state', {'is_foreground': true});
+    _safeInvokeService('ui_state', {'is_foreground': true});
   }
 
   @override
@@ -30,13 +37,12 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final service = FlutterBackgroundService();
     if (state == AppLifecycleState.resumed) {
-      service.invoke('ui_state', {'is_foreground': true});
+      _safeInvokeService('ui_state', {'is_foreground': true});
     } else if (state == AppLifecycleState.paused) {
-      service.invoke('ui_state', {'is_foreground': false});
+      _safeInvokeService('ui_state', {'is_foreground': false});
     } else if (state == AppLifecycleState.detached) {
-      service.invoke('stopService');
+      _safeInvokeService('ui_detached');
     }
   }
 
@@ -45,7 +51,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     return BlocBuilder<LocaleCubit, Locale>(
       builder: (context, locale) {
         return MaterialApp.router(
-          // showPerformanceOverlay: true,
           routerConfig: AppRouter.router,
           theme: ThemeData.dark(),
           locale: locale,

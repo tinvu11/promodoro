@@ -18,36 +18,36 @@ class AppFonts {
     color: AppColors.textPrimary,
   );
 
-  static final regular_white_14 = regular.copyWith(fontSize: 14);
-  static final regular_white_16 = regular.copyWith(fontSize: 16);
-  static final regular_white_18 = regular.copyWith(fontSize: 18);
-  static final regular_white_20 = regular.copyWith(fontSize: 20);
+  static final regularWhite14 = regular.copyWith(fontSize: 14);
+  static final regularWhite16 = regular.copyWith(fontSize: 16);
+  static final regularWhite18 = regular.copyWith(fontSize: 18);
+  static final regularWhite20 = regular.copyWith(fontSize: 20);
 
-  static final regular_grey = regular.copyWith(color: AppColors.textSecondary);
-  static final regular_grey_14 = regular_grey.copyWith(fontSize: 14);
-  static final regular_grey_16 = regular_grey.copyWith(fontSize: 16);
-  static final regular_grey_18 = regular_grey.copyWith(fontSize: 18);
-  static final regular_grey_20 = regular_grey.copyWith(fontSize: 20);
-  static final regular_grey_22 = regular_grey.copyWith(fontSize: 22);
+  static final regularGrey = regular.copyWith(color: AppColors.textSecondary);
+  static final regularGrey14 = regularGrey.copyWith(fontSize: 14);
+  static final regularGrey16 = regularGrey.copyWith(fontSize: 16);
+  static final regularGrey18 = regularGrey.copyWith(fontSize: 18);
+  static final regularGrey20 = regularGrey.copyWith(fontSize: 20);
+  static final regularGrey22 = regularGrey.copyWith(fontSize: 22);
 
-  static final medium_white_14 = medium.copyWith(fontSize: 14);
-  static final medium_white_16 = medium.copyWith(fontSize: 16);
-  static final medium_white_18 = medium.copyWith(fontSize: 18);
-  static final medium_white_20 = medium.copyWith(fontSize: 20);
-  static final medium_white_22 = medium.copyWith(fontSize: 22);
-  static final medium_white_26 = medium.copyWith(fontSize: 26);
-  static final medium_white_28 = medium.copyWith(fontSize: 28);
+  static final mediumWhite14 = medium.copyWith(fontSize: 14);
+  static final mediumWhite16 = medium.copyWith(fontSize: 16);
+  static final mediumWhite18 = medium.copyWith(fontSize: 18);
+  static final mediumWhite20 = medium.copyWith(fontSize: 20);
+  static final mediumWhite22 = medium.copyWith(fontSize: 22);
+  static final mediumWhite26 = medium.copyWith(fontSize: 26);
+  static final mediumWhite28 = medium.copyWith(fontSize: 28);
 
-  static final medium_grey = medium.copyWith(color: AppColors.textSecondary);
-  static final medium_grey_14 = medium_grey.copyWith(fontSize: 14);
-  static final medium_greye_16 = medium_grey.copyWith(fontSize: 16);
-  static final medium_grey_18 = medium_grey.copyWith(fontSize: 18);
-  static final medium_grey_20 = medium_grey.copyWith(fontSize: 20);
-  static final medium_grey_22 = medium_grey.copyWith(fontSize: 22);
+  static final mediumGrey = medium.copyWith(color: AppColors.textSecondary);
+  static final mediumGrey14 = mediumGrey.copyWith(fontSize: 14);
+  static final mediumGrey16 = mediumGrey.copyWith(fontSize: 16);
+  static final mediumGrey18 = mediumGrey.copyWith(fontSize: 18);
+  static final mediumGrey20 = mediumGrey.copyWith(fontSize: 20);
+  static final mediumGrey22 = mediumGrey.copyWith(fontSize: 22);
 
-  static final semibold_white_14 = semibold.copyWith(fontSize: 14);
-  static final msemibold_white_16 = semibold.copyWith(fontSize: 16);
-  static final semibold_white_18 = semibold.copyWith(fontSize: 18);
-  static final semibold_white_20 = semibold.copyWith(fontSize: 20);
-  static final semibold_white_40 = semibold.copyWith(fontSize: 40);
+  static final semiboldWhite14 = semibold.copyWith(fontSize: 14);
+  static final semiboldWhite16 = semibold.copyWith(fontSize: 16);
+  static final semiboldWhite18 = semibold.copyWith(fontSize: 18);
+  static final semiboldWhite20 = semibold.copyWith(fontSize: 20);
+  static final semiboldWhite40 = semibold.copyWith(fontSize: 40);
 }

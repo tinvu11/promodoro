@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:promodoro/data/repositories/stat_repository.dart';
+import 'package:pomodoro/data/repositories/stat_repository.dart';
 
 part 'timer_event.dart';
 part 'timer_state.dart';
@@ -145,7 +145,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       await Future.delayed(const Duration(milliseconds: 300));
     }
 
-    // ✅ GỬI FULL CONFIG
     service.invoke('startTimer', {
       'duration': event.workDuration,
       'initialDuration': event.workDuration,
@@ -182,7 +181,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onResumed(TimerResumed event, Emitter<TimerState> emit) {
     if (state is TimerRunPause) {
-      // ✅ RESUME bằng event riêng
       FlutterBackgroundService().invoke('resumeTimer');
       emit(
         TimerRunInProgress(
@@ -237,7 +235,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     await _statRepository.saveDailyStat(updated);
   }
 
-  /// Local tick chỉ kích hoạt khi service chưa sync trong >1.2s (backup khi IPC bị delay)
   void _onLocalTick(_LocalTick event, Emitter<TimerState> emit) {
     final now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastSyncMs < 1200) return;

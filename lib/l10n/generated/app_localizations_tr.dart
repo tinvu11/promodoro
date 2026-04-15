@@ -209,4 +209,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get rate => 'Değerlendir';
+
+  @override
+  String get term_pw => 'Şartlar';
+
+  @override
+  String get policy_pw => 'Politika';
 }

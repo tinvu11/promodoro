@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:promodoro/data/models/theme_model.dart';
+import 'package:pomodoro/data/models/theme_model.dart';
 
 abstract interface class RemoteData {
   Future<List<ThemeModel>> getResources();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:promodoro/core/Theme/app_colors.dart';
+import 'package:pomodoro/core/Theme/app_colors.dart';
 
 import '../../../commons/widgets/glass_box.dart';
 
@@ -18,7 +18,12 @@ class SectionWrapper extends StatelessWidget {
               children: [
                 e.value,
                 if (e.key != children.length - 1)
-                  const Divider(color: AppColors.glassSecondary, height: 1, indent: 16, endIndent: 16),
+                  const Divider(
+                    color: AppColors.glassSecondary,
+                    height: 1,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
               ],
             );
           }).toList(),
