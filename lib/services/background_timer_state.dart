@@ -13,6 +13,9 @@ class BackgroundTimerState {
   String alarmBreakPath = '';
   double volumeWorkAlarm = 100.0;
   double volumeBreakAlarm = 100.0;
+  bool isSoundEnabled = false;
+  String noiseAudioPath = '';
+  double volumeNoise = 50.0;
   String pauseLabel = 'Pause';
 
   String get currentLabel => mode == 'break' ? 'Break' : 'Focus';

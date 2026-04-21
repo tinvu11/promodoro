@@ -29,14 +29,15 @@ class BackgroundTimerController {
     state.remainingOnPause = 0;
     state.isUIForeground = true;
 
-    // Start hidden when app is in foreground.
     if (service is AndroidServiceInstance) {
-      (service as AndroidServiceInstance).setAsBackgroundService();
+      (service as AndroidServiceInstance).setAsForegroundService();
+      notifyManager.refreshIfNeeded(state);
     }
 
     _subscriptions.add(
       service.on('startTimer').listen((event) async {
         if (event == null) return;
+        notifyManager.refreshIfNeeded(state);
 
         final duration = (event['duration'] as int);
         final initialDuration = (event['initialDuration'] as int);
@@ -53,16 +54,24 @@ class BackgroundTimerController {
             (event['volumeWorkAlarm'] as num?)?.toDouble() ?? 100.0;
         state.volumeBreakAlarm =
             (event['volumeBreakAlarm'] as num?)?.toDouble() ?? 100.0;
+        state.isSoundEnabled = (event['isSoundEnabled'] as bool?) ?? false;
+        state.noiseAudioPath = (event['noiseAudioPath'] as String?) ?? '';
+        state.volumeNoise = (event['volumeNoise'] as num?)?.toDouble() ?? 50.0;
         state.initialDuration = initialDuration;
 
         final nowMs = DateTime.now().millisecondsSinceEpoch;
         state.endAtMs = nowMs + duration * 1000;
         state.isRunning = true;
 
+        if (state.isSoundEnabled && state.mode == 'work') {
+          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+        } else {
+          await audioManager.stopNoise();
+        }
+
         _timer?.cancel();
         _startTick();
         _broadcastUpdate();
-        notifyManager.refreshIfNeeded(state);
       }),
     );
 
@@ -73,6 +82,8 @@ class BackgroundTimerController {
         final remaining = state.remainingSeconds;
         state.remainingOnPause = remaining;
         state.isRunning = false;
+
+        await audioManager.pauseNoise();
 
         _timer?.cancel();
         _broadcastUpdate();
@@ -91,6 +102,10 @@ class BackgroundTimerController {
         state.endAtMs = nowMs + remaining * 1000;
         state.isRunning = true;
         state.remainingOnPause = 0;
+
+        if (state.isSoundEnabled && state.mode == 'work') {
+          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+        }
 
         _timer?.cancel();
         _startTick();
@@ -127,14 +142,22 @@ class BackgroundTimerController {
       service.on('ui_state').listen((event) async {
         if (event != null && event['is_foreground'] != null) {
           state.isUIForeground = event['is_foreground'] as bool;
-          if (service is AndroidServiceInstance) {
-            if (state.isUIForeground) {
-              (service as AndroidServiceInstance).setAsBackgroundService();
-            } else {
-              (service as AndroidServiceInstance).setAsForegroundService();
-              notifyManager.refreshIfNeeded(state);
-            }
-          }
+          notifyManager.refreshIfNeeded(state);
+        }
+      }),
+    );
+
+    _subscriptions.add(
+      service.on('updateNoiseSettings').listen((event) async {
+        if (event == null) return;
+        state.isSoundEnabled = (event['isSoundEnabled'] as bool?) ?? false;
+        state.noiseAudioPath = (event['noiseAudioPath'] as String?) ?? '';
+        state.volumeNoise = (event['volumeNoise'] as num?)?.toDouble() ?? 50.0;
+
+        if (state.isRunning && state.mode == 'work' && state.isSoundEnabled) {
+          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+        } else {
+          await audioManager.pauseNoise();
         }
       }),
     );
@@ -169,11 +192,9 @@ class BackgroundTimerController {
           "timeMode": state.currentTimeMode,
         });
 
-        if (!state.isUIForeground) {
-          final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
-          final seconds = (remaining % 60).toString().padLeft(2, '0');
-          notifyManager.updateNotification("$minutes:$seconds");
-        }
+        final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
+        final seconds = (remaining % 60).toString().padLeft(2, '0');
+        notifyManager.updateNotification("$minutes:$seconds");
 
         if (remaining <= 0) {
           await _handleSessionFinished();
@@ -197,11 +218,9 @@ class BackgroundTimerController {
           'work_duration_seconds': state.workDuration,
         });
 
+        await audioManager.stopNoise(); // Stop noise when work session is done
         if (state.round < state.totalRounds) {
-          await audioManager.playAlarmAndWait(
-            state.alarmWorkPath,
-            state.volumeWorkAlarm,
-          );
+          audioManager.playAlarm(state.alarmWorkPath, state.volumeWorkAlarm);
           final nextDuration = state.breakDuration;
           final nowMs = DateTime.now().millisecondsSinceEpoch;
 
@@ -228,10 +247,7 @@ class BackgroundTimerController {
         }
       } else {
         log('Break xong -> sang Work, tăng round');
-        await audioManager.playAlarmAndWait(
-          state.alarmBreakPath,
-          state.volumeBreakAlarm,
-        );
+        audioManager.playAlarm(state.alarmBreakPath, state.volumeBreakAlarm);
         final nextRound = state.round + 1;
         final nextDuration = state.workDuration;
         final nowMs = DateTime.now().millisecondsSinceEpoch;
@@ -241,6 +257,10 @@ class BackgroundTimerController {
         state.round = nextRound;
         state.mode = 'work';
         state.isRunning = true;
+
+        if (state.isSoundEnabled) {
+          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+        }
 
         _broadcastUpdate();
         _startTick();

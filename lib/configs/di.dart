@@ -72,7 +72,7 @@ class DI {
       () => SettingsBloc(settingsRepository: sl())..add(GetSettingsEvent()),
     );
     sl.registerLazySingleton(() => Ticker());
-    sl.registerLazySingleton(() => TimerBloc(statRepository: sl()));
+    sl.registerLazySingleton(() => TimerBloc(statRepository: sl(), themeStorageService: sl()));
     sl.registerLazySingleton(
       () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
     );

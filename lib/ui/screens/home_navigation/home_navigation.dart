@@ -109,9 +109,10 @@ class _HomeNavigationState extends State<HomeNavigation> {
         builder: (context, state) {
           final bool isRunning = state is TimerRunInProgress;
           return RepaintBoundary(
-            child: AnimatedSlide(
-              offset: isRunning ? const Offset(0, 1) : const Offset(0, 0),
-              duration: const Duration(milliseconds: 300),
+            child: AnimatedOpacity(
+              // Nếu đang chạy (isRunning) thì mờ đi (0.0), nếu không thì hiện rõ (1.0)
+              opacity: isRunning ? 0.0 : 1.0,
+              duration: const Duration(milliseconds: 500), // Thời gian mờ dần
               curve: Curves.easeInOut,
               child: NavigationBar(
                 height: 56,

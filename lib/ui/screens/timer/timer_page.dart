@@ -9,7 +9,6 @@ import 'package:pomodoro/data/data_sources/local_data.dart';
 import 'package:pomodoro/data/models/settings_model.dart';
 import 'package:pomodoro/l10n/generated/app_localizations.dart';
 import 'package:pomodoro/navigation/app_router.dart';
-import 'package:pomodoro/services/noise_audio_service.dart';
 import 'package:pomodoro/services/theme_storage_service.dart';
 import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:pomodoro/ui/screens/timer/widgets/glass_timer_page.dart';
@@ -30,19 +29,10 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  late final NoiseAudioService _noiseAudioService;
-
   @override
   void initState() {
     super.initState();
-    _noiseAudioService = DI.sl<NoiseAudioService>();
-    _requestPermissions();
-  }
-
-  @override
-  void dispose() {
-    _noiseAudioService.stop();
-    super.dispose();
+    // _requestPermissions();
   }
 
   @override
@@ -54,59 +44,140 @@ class _TimerPageState extends State<TimerPage> {
 
     final settings = settingsState.settingsModel;
 
-    return BlocListener<TimerBloc, TimerState>(
-      listenWhen: (prev, curr) =>
-          prev.runtimeType != curr.runtimeType || prev.mode != curr.mode,
-      listener: (context, state) {
-        if (state is TimerRunInProgress) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-            if (settings.alwaysOnScreen) WakelockPlus.enable();
-          });
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-            WakelockPlus.disable();
-          });
-        }
-        _handleNoiseAudio(state, settings);
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TimerBloc, TimerState>(
+          listenWhen: (prev, curr) =>
+              prev.runtimeType != curr.runtimeType || prev.mode != curr.mode,
+          listener: (context, state) {
+            if (state is TimerRunInProgress) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.immersiveSticky,
+                );
+                if (settings.alwaysOnScreen) WakelockPlus.enable();
+              });
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                WakelockPlus.disable();
+              });
+            }
+          },
+        ),
+        BlocListener<SettingsBloc, SettingsState>(
+          listenWhen: (prev, curr) {
+            if (prev is! SuccessSettingState || curr is! SuccessSettingState) {
+              return false;
+            }
+            final prevSettings = prev.settingsModel;
+            final currSettings = curr.settingsModel;
+            return prevSettings.selectedThemeId !=
+                    currSettings.selectedThemeId ||
+                prevSettings.volumeNoise != currSettings.volumeNoise ||
+                prevSettings.isSoundEnabled != currSettings.isSoundEnabled;
+          },
+          listener: (context, state) {
+            if (state is! SuccessSettingState) return;
 
+            final timerState = context.read<TimerBloc>().state;
+            final isTimerActive =
+                timerState is TimerRunInProgress || timerState is TimerRunPause;
+            if (!isTimerActive) return;
+
+            final updatedSettings = state.settingsModel;
+            context.read<TimerBloc>().add(
+              TimerNoiseSettingsUpdated(
+                selectedThemeId: updatedSettings.selectedThemeId,
+                volumeNoise: updatedSettings.volumeNoise,
+                isSoundEnabled: updatedSettings.isSoundEnabled,
+              ),
+            );
+          },
+        ),
+      ],
       child: BlocBuilder<TimerBloc, TimerState>(
         buildWhen: (prev, curr) =>
             prev.runtimeType != curr.runtimeType ||
             (prev is TimerRunInProgress) != (curr is TimerRunInProgress),
         builder: (context, state) {
           final bool isRunning = state is TimerRunInProgress;
-
           return Scaffold(
             backgroundColor: Colors.transparent,
             extendBodyBehindAppBar: true,
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
               child: RepaintBoundary(
-                child: AnimatedSlide(
-                  duration: const Duration(milliseconds: 300),
+                child: AnimatedOpacity(
+                  opacity: isRunning ? 0.0 : 1.0,
+                  duration: const Duration(
+                    milliseconds: 300,
+                  ), // Thời gian mờ dần
                   curve: Curves.easeInOut,
-                  offset: isRunning ? const Offset(0, -1) : Offset.zero,
                   child: _buildAppBar(context, settings),
                 ),
               ),
             ),
             body: Center(
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  RepaintBoundary(
-                    child: GestureDetector(
-                      onTap: () {
-                        final currentState = context.read<TimerBloc>().state;
-                        _onToggleTimer(context, currentState, settings);
-                      },
-                      child: _buildTimerDisplay(settings),
+                  Stack(
+                    children: [
+                      RepaintBoundary(
+                        child: GestureDetector(
+                          onTap: () {
+                            final currentState = context
+                                .read<TimerBloc>()
+                                .state;
+                            _onToggleTimer(context, currentState, settings);
+                          },
+                          child: _buildTimerDisplay(settings),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                  SizedBox(height: 50),
+                  AnimatedOpacity(
+                    opacity: state is TimerRunPause ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Opacity(
+                          opacity: 0.0,
+                          child: Icon(Icons.stop_outlined),
+                        ),
+                        const SizedBox(width: 30),
+                        GestureDetector(
+                          onTap: () {
+                            if (state is TimerRunPause) {
+                              context.read<TimerBloc>().add(const TimerReset());
+                            }
+                          },
+                          child: const Icon(Icons.stop_outlined),
+                        ),
+                        const SizedBox(width: 30),
+
+                        GestureDetector(
+                          onTap: () {
+                            if (state is TimerRunPause &&
+                                state.round < state.totalRounds) {
+                              context.read<TimerBloc>().add(const TimerNext());
+                            }
+                          },
+                          child: Opacity(
+                            opacity: state.round >= state.totalRounds
+                                ? 0.5
+                                : 1.0,
+                            child: const Icon(Icons.skip_next_outlined),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-
-                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -117,7 +188,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> _requestPermissions() async {
-    await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
@@ -200,9 +271,11 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   // Centralized start/pause/resume control for timer interactions.
-  void _onToggleTimer(BuildContext context, TimerState state, settings) {
+  void _onToggleTimer(BuildContext context, TimerState state, settings) async {
     final bloc = context.read<TimerBloc>();
     if (state is TimerInitial || state is TimerRunComplete) {
+      debugPrint("init timer");
+      await _requestPermissions();
       bloc.add(
         TimerStarted(
           workDuration: settings.workTime,
@@ -212,36 +285,15 @@ class _TimerPageState extends State<TimerPage> {
           alarmBreakPath: settings.alarmBreak.path,
           volumeWorkAlarm: settings.volumeWorkAlarm,
           volumeBreakAlarm: settings.volumeBreakAlarm,
+          isSoundEnabled: settings.isSoundEnabled,
+          selectedThemeId: settings.selectedThemeId,
+          volumeNoise: settings.volumeNoise,
         ),
       );
     } else if (state is TimerRunInProgress) {
       bloc.add(const TimerPaused());
     } else {
       bloc.add(const TimerResumed());
-    }
-  }
-
-  /// Controls ambient noise playback based on timer state.
-  void _handleNoiseAudio(TimerState state, settings) {
-    if (!settings.isSoundEnabled) {
-      _noiseAudioService.stop();
-      return;
-    }
-
-    if (state is TimerRunInProgress && state.mode == TimerMode.work) {
-      if (!_noiseAudioService.isPlaying) {
-        _noiseAudioService.play(
-          volume: settings.volumeNoise,
-          themeId: settings.selectedThemeId,
-        );
-        debugPrint('\x1B[32m▶ [Timer] Timer đang chạy...\x1B[0m');
-      }
-    } else if (state is TimerRunPause) {
-      debugPrint('Timer tam dung');
-      _noiseAudioService.pause();
-    } else {
-      debugPrint("Timer ket thuc");
-      _noiseAudioService.stop();
     }
   }
 

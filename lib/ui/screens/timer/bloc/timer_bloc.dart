@@ -4,25 +4,30 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:pomodoro/data/repositories/stat_repository.dart';
+import 'package:pomodoro/services/theme_storage_service.dart';
 
 part 'timer_event.dart';
 part 'timer_state.dart';
 
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
   final StatRepository _statRepository;
+  final ThemeStorageService _themeStorageService;
   Timer? _localTimer;
   int _lastSyncMs = 0;
   final List<StreamSubscription> _subscriptions = [];
 
-  TimerBloc({required StatRepository statRepository})
-    : _statRepository = statRepository,
-      super(
-        const TimerInitial(
-          duration: _defaultDuration,
-          round: 1,
-          totalRounds: 1,
-        ),
-      ) {
+  TimerBloc({
+    required StatRepository statRepository,
+    required ThemeStorageService themeStorageService,
+  })  : _statRepository = statRepository,
+        _themeStorageService = themeStorageService,
+        super(
+          const TimerInitial(
+            duration: _defaultDuration,
+            round: 1,
+            totalRounds: 1,
+          ),
+        ) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
@@ -31,6 +36,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     on<TimerSynced>(_onSynced);
     on<TimerFinished>(_onFinished);
     on<_WorkSessionDone>(_onWorkSessionDone);
+    on<TimerNoiseSettingsUpdated>(_onNoiseSettingsUpdated);
 
     _subscriptions.add(
       FlutterBackgroundService().on('work_session_done').listen((event) {
@@ -145,6 +151,9 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       await Future.delayed(const Duration(milliseconds: 300));
     }
 
+    final isDefault = ThemeStorageService.isDefaultTheme(event.selectedThemeId);
+    String noisePath = isDefault ? ThemeStorageService.defaultAudioAsset : await _themeStorageService.audioPathOf(event.selectedThemeId);
+
     service.invoke('startTimer', {
       'duration': event.workDuration,
       'initialDuration': event.workDuration,
@@ -157,10 +166,27 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       'alarmBreakPath': event.alarmBreakPath,
       'volumeWorkAlarm': event.volumeWorkAlarm,
       'volumeBreakAlarm': event.volumeBreakAlarm,
+      'isSoundEnabled': event.isSoundEnabled,
+      'noiseAudioPath': noisePath,
+      'volumeNoise': event.volumeNoise,
     });
 
     _lastSyncMs = DateTime.now().millisecondsSinceEpoch;
     _startLocalTimer();
+  }
+
+  Future<void> _onNoiseSettingsUpdated(
+    TimerNoiseSettingsUpdated event,
+    Emitter<TimerState> emit,
+  ) async {
+    final isDefault = ThemeStorageService.isDefaultTheme(event.selectedThemeId);
+    String noisePath = isDefault ? ThemeStorageService.defaultAudioAsset : await _themeStorageService.audioPathOf(event.selectedThemeId);
+    
+    FlutterBackgroundService().invoke('updateNoiseSettings', {
+      'isSoundEnabled': event.isSoundEnabled,
+      'noiseAudioPath': noisePath,
+      'volumeNoise': event.volumeNoise,
+    });
   }
 
   void _onPaused(TimerPaused event, Emitter<TimerState> emit) {

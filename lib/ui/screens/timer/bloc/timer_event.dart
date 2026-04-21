@@ -13,6 +13,9 @@ final class TimerStarted extends TimerEvent {
     required this.alarmBreakPath,
     required this.volumeWorkAlarm,
     required this.volumeBreakAlarm,
+    required this.isSoundEnabled,
+    required this.selectedThemeId,
+    required this.volumeNoise,
   });
   final int workDuration;
   final int breakDuration;
@@ -21,6 +24,9 @@ final class TimerStarted extends TimerEvent {
   final String alarmBreakPath;
   final double volumeWorkAlarm;
   final double volumeBreakAlarm;
+  final bool isSoundEnabled;
+  final String selectedThemeId;
+  final double volumeNoise;
 }
 
 final class TimerPaused extends TimerEvent {
@@ -31,8 +37,24 @@ final class TimerResumed extends TimerEvent {
   const TimerResumed();
 }
 
+final class TimerNoiseSettingsUpdated extends TimerEvent {
+  const TimerNoiseSettingsUpdated({
+    required this.selectedThemeId,
+    required this.volumeNoise,
+    required this.isSoundEnabled,
+  });
+
+  final String selectedThemeId;
+  final double volumeNoise;
+  final bool isSoundEnabled;
+}
+
 class TimerReset extends TimerEvent {
   const TimerReset();
+}
+
+class TimerNext extends TimerEvent {
+  const TimerNext();
 }
 
 class TimerSynced extends TimerEvent {

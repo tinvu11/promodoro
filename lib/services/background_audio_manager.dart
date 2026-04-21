@@ -8,6 +8,41 @@ import 'package:path_provider/path_provider.dart';
 
 class BackgroundAudioManager {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _noisePlayer = AudioPlayer();
+
+  BackgroundAudioManager() {
+    _noisePlayer.setLoopMode(LoopMode.one);
+  }
+
+  Future<void> playNoise(String path, double volumePercent) async {
+    if (path.isEmpty) return;
+    try {
+      await _noisePlayer.setVolume(volumePercent / 100.0);
+      if (path.startsWith('assets/')) {
+        await _noisePlayer.setAsset(path);
+      } else {
+        final file = File(path);
+        if (await file.exists()) {
+          await _noisePlayer.setFilePath(path);
+        } else {
+          debugPrint("Noise audio file does not exist: $path");
+          return;
+        }
+      }
+      await _noisePlayer.seek(Duration.zero);
+      await _noisePlayer.play();
+    } catch (e) {
+      debugPrint("Error playing noise: $e");
+    }
+  }
+
+  Future<void> pauseNoise() async {
+    await _noisePlayer.pause();
+  }
+
+  Future<void> stopNoise() async {
+    await _noisePlayer.stop();
+  }
 
   Future<void> playAlarm(String assetPath, double volumePercent) async {
     if (assetPath.isEmpty) return;
@@ -65,5 +100,6 @@ class BackgroundAudioManager {
 
   Future<void> dispose() async {
     await _audioPlayer.dispose();
+    await _noisePlayer.dispose();
   }
 }
