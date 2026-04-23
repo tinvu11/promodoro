@@ -1,93 +1,47 @@
 part of 'timer_bloc.dart';
 
-sealed class TimerEvent {
+abstract class TimerEvent extends Equatable {
   const TimerEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
-final class TimerStarted extends TimerEvent {
-  const TimerStarted({
-    required this.workDuration,
-    required this.breakDuration,
-    required this.totalRounds,
-    required this.alarmWorkPath,
-    required this.alarmBreakPath,
-    required this.volumeWorkAlarm,
-    required this.volumeBreakAlarm,
-    required this.isSoundEnabled,
-    required this.selectedThemeId,
-    required this.volumeNoise,
-  });
-  final int workDuration;
-  final int breakDuration;
-  final int totalRounds;
-  final String alarmWorkPath;
-  final String alarmBreakPath;
-  final double volumeWorkAlarm;
-  final double volumeBreakAlarm;
-  final bool isSoundEnabled;
-  final String selectedThemeId;
-  final double volumeNoise;
+class PomodoroTimerStarted extends TimerEvent {
+  final Map<String, dynamic> settings;
+  const PomodoroTimerStarted(this.settings);
+  @override
+  List<Object?> get props => [settings];
 }
 
-final class TimerPaused extends TimerEvent {
-  const TimerPaused();
+class PomodoroTimerPaused extends TimerEvent {}
+
+class PomodoroTimerResumed extends TimerEvent {}
+
+class PomodoroTimerReset extends TimerEvent {}
+
+class PomodoroTimerNext extends TimerEvent {}
+
+class PomodoroTimerSettingsUpdated extends TimerEvent {
+  final Map<String, dynamic> settings;
+  const PomodoroTimerSettingsUpdated(this.settings);
+  @override
+  List<Object?> get props => [settings];
 }
 
-final class TimerResumed extends TimerEvent {
-  const TimerResumed();
-}
+class PomodoroTimerTick extends TimerEvent {
+  final int status;
+  final int session;
+  final int remainingSeconds;
+  final int cycle;
 
-final class TimerNoiseSettingsUpdated extends TimerEvent {
-  const TimerNoiseSettingsUpdated({
-    required this.selectedThemeId,
-    required this.volumeNoise,
-    required this.isSoundEnabled,
-  });
+  const PomodoroTimerTick(
+    this.status,
+    this.session,
+    this.remainingSeconds,
+    this.cycle,
+  );
 
-  final String selectedThemeId;
-  final double volumeNoise;
-  final bool isSoundEnabled;
-}
-
-class TimerReset extends TimerEvent {
-  const TimerReset();
-}
-
-class TimerNext extends TimerEvent {
-  const TimerNext();
-}
-
-class TimerSynced extends TimerEvent {
-  const TimerSynced({
-    required this.duration,
-    required this.initialDuration,
-    required this.round,
-    required this.totalRounds,
-    required this.isRunning,
-    required this.mode,
-  });
-  final int duration;
-  final int initialDuration;
-  final int round;
-  final int totalRounds;
-  final bool isRunning;
-  final TimerMode mode;
-}
-
-class TimerFinished extends TimerEvent {
-  const TimerFinished();
-}
-
-// class _TimerTicked extends TimerEvent {
-//   const _TimerTicked({required this.duration});
-//   final int duration;
-// }
-
-class _LocalTick extends TimerEvent {
-  const _LocalTick();
-}
-
-class _WorkSessionDone extends TimerEvent {
-  const _WorkSessionDone({required this.workDurationSeconds});
-  final int workDurationSeconds;
+  @override
+  List<Object?> get props => [status, session, remainingSeconds, cycle];
 }

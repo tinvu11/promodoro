@@ -1,20 +1,20 @@
-part of 'timer_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-class TimerState extends Equatable {
+class PomodoroTimerState extends Equatable {
   final int status; // 0: initial, 1: running, 2: paused, 3: finished
   final int session; // 0: work, 1: shortBreak, 2: longBreak
   final int remainingSeconds;
   final int cycle;
 
-  const TimerState({
+  const PomodoroTimerState({
     required this.status,
     required this.session,
     required this.remainingSeconds,
     required this.cycle,
   });
 
-  factory TimerState.initial() {
-    return const TimerState(
+  factory PomodoroTimerState.initial() {
+    return const PomodoroTimerState(
       status: 0,
       session: 0,
       remainingSeconds: 25 * 60,
@@ -22,13 +22,13 @@ class TimerState extends Equatable {
     );
   }
 
-  TimerState copyWith({
+  PomodoroTimerState copyWith({
     int? status,
     int? session,
     int? remainingSeconds,
     int? cycle,
   }) {
-    return TimerState(
+    return PomodoroTimerState(
       status: status ?? this.status,
       session: session ?? this.session,
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,

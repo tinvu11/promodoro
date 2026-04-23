@@ -104,10 +104,9 @@ class _HomeNavigationState extends State<HomeNavigation> {
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: BlocBuilder<TimerBloc, TimerState>(
-        buildWhen: (prev, curr) =>
-            (prev is TimerRunInProgress) != (curr is TimerRunInProgress),
+        buildWhen: (prev, curr) => (prev.status == 1) != (curr.status == 1),
         builder: (context, state) {
-          final bool isRunning = state is TimerRunInProgress;
+          final bool isRunning = state.status == 1;
           return RepaintBoundary(
             child: AnimatedOpacity(
               // Nếu đang chạy (isRunning) thì mờ đi (0.0), nếu không thì hiện rõ (1.0)

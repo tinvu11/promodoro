@@ -135,7 +135,7 @@ class _StopDialogState extends State<StopDialog> {
   }
 
   void _stopTimer({required VoidCallback onConfirm}) async {
-    context.read<TimerBloc>().add(const TimerReset());
+    context.read<TimerBloc>().add(PomodoroTimerReset());
     Navigator.pop(context);
     onConfirm();
   }

@@ -386,7 +386,7 @@ class ConfigSectionState extends State<ConfigSection> {
 
   void _showGlassBottomSheet(BuildContext context, Widget child, String title) {
     final timerState = context.read<TimerBloc>().state;
-    if (timerState is TimerRunInProgress || timerState is TimerRunPause) {
+    if (timerState.status == 1 || timerState.status == 2) {
       // _showStopTimerDialog(context);
       StopDialog.show(
         context,

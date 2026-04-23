@@ -9,7 +9,6 @@ import 'package:pomodoro/data/repositories/remote_data_repo.dart';
 import 'package:pomodoro/data/repositories/settings_repository.dart';
 import 'package:pomodoro/data/repositories/stat_repository.dart';
 import 'package:pomodoro/services/locale_service.dart';
-import 'package:pomodoro/services/noise_audio_service.dart';
 import 'package:pomodoro/services/theme_storage_service.dart';
 import 'package:pomodoro/ui/bloc/locale/locale_cubit.dart';
 import 'package:pomodoro/ui/screens/noises/bloc/noises_bloc.dart';
@@ -64,20 +63,17 @@ class DI {
     sl.registerLazySingleton<IapRepository>(() => IapRepositoryImpl());
 
     sl.registerLazySingleton<ThemeStorageService>(() => themeStorageService);
-    sl.registerLazySingleton<NoiseAudioService>(
-      () => NoiseAudioService(themeStorageService: sl()),
-    );
 
-    sl.registerLazySingleton(
+    sl.registerLazySingleton<SettingsBloc>(
       () => SettingsBloc(settingsRepository: sl())..add(GetSettingsEvent()),
     );
-    sl.registerLazySingleton(() => Ticker());
-    sl.registerLazySingleton(() => TimerBloc(statRepository: sl(), themeStorageService: sl()));
-    sl.registerLazySingleton(
+    sl.registerLazySingleton<Ticker>(() => Ticker());
+    sl.registerLazySingleton<TimerBloc>(() => TimerBloc());
+    sl.registerLazySingleton<StaticBloc>(
       () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
     );
     // Delay noise loading until the Noises page is opened.
-    sl.registerLazySingleton(
+    sl.registerLazySingleton<NoisesBloc>(
       () => NoisesBloc(remoteDataRepo: sl(), themeStorageService: sl()),
     );
 

@@ -1,0 +1,4 @@
+﻿Analyzing timer_page.dart...                                    
+
+  error - Undefined name 'RoutePaths' - lib\ui\screens\timer\timer_page.dart:268:37 - undefined_identifier
+

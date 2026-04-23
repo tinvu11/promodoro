@@ -1,0 +1,8 @@
+Analyzing pomodoro...                                           
+
+   info - Don't invoke 'print' in production code - lib\services\timer_audio_service.dart:83:9 - avoid_print
+  error - 1 positional argument expected by 'resume', but 0 found - lib\ui\bloc\pomodoro_timer\pomodoro_timer_bloc.dart:44:21 - not_enough_positional_arguments
+   info - Type could be non-nullable - lib\ui\commons\widgets\paywall_dialog.dart:82:23 - unnecessary_nullable_for_final_variable_declarations
+   info - Type could be non-nullable - lib\ui\commons\widgets\paywall_dialog.dart:83:23 - unnecessary_nullable_for_final_variable_declarations
+  error - 1 positional argument expected by 'resume', but 0 found - lib\ui\screens\timer\bloc\timer_bloc.dart:49:21 - not_enough_positional_arguments
+

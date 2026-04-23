@@ -68,8 +68,7 @@ class SoundSection extends StatelessWidget {
                   }(),
                   onTap: () {
                     final timerState = context.read<TimerBloc>().state;
-                    if (timerState is TimerRunInProgress ||
-                        timerState is TimerRunPause) {
+                    if (timerState.status == 1 || timerState.status == 2) {
                       StopDialog.show(
                         context,
                         onConfirm: () {
