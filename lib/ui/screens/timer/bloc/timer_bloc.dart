@@ -19,15 +19,15 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   TimerBloc({
     required StatRepository statRepository,
     required ThemeStorageService themeStorageService,
-  })  : _statRepository = statRepository,
-        _themeStorageService = themeStorageService,
-        super(
-          const TimerInitial(
-            duration: _defaultDuration,
-            round: 1,
-            totalRounds: 1,
-          ),
-        ) {
+  }) : _statRepository = statRepository,
+       _themeStorageService = themeStorageService,
+       super(
+         const TimerInitial(
+           duration: _defaultDuration,
+           round: 1,
+           totalRounds: 1,
+         ),
+       ) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
@@ -152,7 +152,9 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     }
 
     final isDefault = ThemeStorageService.isDefaultTheme(event.selectedThemeId);
-    String noisePath = isDefault ? ThemeStorageService.defaultAudioAsset : await _themeStorageService.audioPathOf(event.selectedThemeId);
+    String noisePath = isDefault
+        ? ThemeStorageService.defaultAudioAsset
+        : await _themeStorageService.audioPathOf(event.selectedThemeId);
 
     service.invoke('startTimer', {
       'duration': event.workDuration,
@@ -180,8 +182,10 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     Emitter<TimerState> emit,
   ) async {
     final isDefault = ThemeStorageService.isDefaultTheme(event.selectedThemeId);
-    String noisePath = isDefault ? ThemeStorageService.defaultAudioAsset : await _themeStorageService.audioPathOf(event.selectedThemeId);
-    
+    String noisePath = isDefault
+        ? ThemeStorageService.defaultAudioAsset
+        : await _themeStorageService.audioPathOf(event.selectedThemeId);
+
     FlutterBackgroundService().invoke('updateNoiseSettings', {
       'isSoundEnabled': event.isSoundEnabled,
       'noiseAudioPath': noisePath,

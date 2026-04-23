@@ -13,18 +13,20 @@ class BackgroundNotificationManager {
   });
 
   void refreshIfNeeded(BackgroundTimerState state) {
-    if (!state.isUIForeground) {
-      if (state.isRunning) {
-        final remaining = state.remainingSeconds;
-        final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
-        final seconds = (remaining % 60).toString().padLeft(2, '0');
-        updateNotification("$minutes:$seconds");
-      } else {
-        final remaining = state.remainingOnPause;
-        final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
-        final seconds = (remaining % 60).toString().padLeft(2, '0');
-        updateNotification("$minutes:$seconds");
-      }
+    if (!state.isRunning && state.remainingOnPause <= 0) {
+      return;
+    }
+
+    if (state.isRunning) {
+      final remaining = state.remainingSeconds;
+      final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
+      final seconds = (remaining % 60).toString().padLeft(2, '0');
+      updateNotification("$minutes:$seconds");
+    } else {
+      final remaining = state.remainingOnPause;
+      final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
+      final seconds = (remaining % 60).toString().padLeft(2, '0');
+      updateNotification("$minutes:$seconds");
     }
   }
 
@@ -39,6 +41,7 @@ class BackgroundNotificationManager {
         importance: Importance.low,
         priority: Priority.low,
         visibility: NotificationVisibility.public,
+        showWhen: false,
         styleInformation: DefaultStyleInformation(true, true),
       );
 

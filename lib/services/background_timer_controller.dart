@@ -35,13 +35,10 @@ class BackgroundTimerController {
     }
 
     _subscriptions.add(
-      service.on('startTimer').listen((event) async {
+      service.on('startTimer').listen((event) {
         if (event == null) return;
-        notifyManager.refreshIfNeeded(state);
-
         final duration = (event['duration'] as int);
         final initialDuration = (event['initialDuration'] as int);
-
         state.workDuration = (event['workDuration'] as int?) ?? initialDuration;
         state.breakDuration = (event['breakDuration'] as int?) ?? 0;
         state.round = (event['round'] as int?) ?? 1;
@@ -64,39 +61,34 @@ class BackgroundTimerController {
         state.isRunning = true;
 
         if (state.isSoundEnabled && state.mode == 'work') {
-          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+          audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
         } else {
-          await audioManager.stopNoise();
+          audioManager.stopNoise();
         }
-
-        _timer?.cancel();
         _startTick();
-        _broadcastUpdate();
       }),
     );
 
     _subscriptions.add(
-      service.on('pauseTimer').listen((event) async {
+      service.on('pauseTimer').listen((event) {
         if (!state.isRunning) return;
-
         final remaining = state.remainingSeconds;
         state.remainingOnPause = remaining;
         state.isRunning = false;
 
-        await audioManager.pauseNoise();
+        audioManager.pauseNoise();
 
         _timer?.cancel();
-        _broadcastUpdate();
-        notifyManager.refreshIfNeeded(state);
+        _pushStateAndNotification();
       }),
     );
 
     _subscriptions.add(
-      service.on('resumeTimer').listen((event) async {
+      service.on('resumeTimer').listen((event) {
         if (state.isRunning) return;
 
         final remaining =
-            state.remainingSeconds; // Actually gets paused remaining
+            state.remainingOnPause; // Actually gets paused remaining
         final nowMs = DateTime.now().millisecondsSinceEpoch;
 
         state.endAtMs = nowMs + remaining * 1000;
@@ -104,13 +96,10 @@ class BackgroundTimerController {
         state.remainingOnPause = 0;
 
         if (state.isSoundEnabled && state.mode == 'work') {
-          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+          audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
         }
 
-        _timer?.cancel();
         _startTick();
-        _broadcastUpdate();
-        notifyManager.refreshIfNeeded(state);
       }),
     );
 
@@ -171,38 +160,80 @@ class BackgroundTimerController {
     audioManager.dispose();
   }
 
+  // void _startTick() {
+  //   _timer?.cancel();
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (t) async {
+  //     try {
+  //       if (!state.isRunning) {
+  //         t.cancel();
+  //         return;
+  //       }
+
+  //       final remaining = state.remainingSeconds;
+
+  //       service.invoke('update', {
+  //         "current_duration": remaining,
+  //         "initial_duration": state.initialDuration,
+  //         "is_running": true,
+  //         "round": state.round,
+  //         "total_rounds": state.totalRounds,
+  //         "mode": state.mode,
+  //         "timeMode": state.currentTimeMode,
+  //       });
+
+  //       final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
+  //       final seconds = (remaining % 60).toString().padLeft(2, '0');
+  //       notifyManager.updateNotification("$minutes:$seconds");
+
+  //       if (remaining <= 0) {
+  //         await _handleSessionFinished();
+  //         return;
+  //       }
+  //     } catch (e) {
+  //       debugPrint('Error in timer tick: $e');
+  //     }
+  //   });
+  // }
+
+  void _pushStateAndNotification() {
+    final remaining = state.isRunning
+        ? state.remainingSeconds
+        : state.remainingOnPause;
+
+    service.invoke('update', {
+      "current_duration": remaining,
+      "initial_duration": state.initialDuration,
+      "is_running": state.isRunning,
+      "round": state.round,
+      "total_rounds": state.totalRounds,
+      "mode": state.mode,
+      "timeMode": state.currentTimeMode,
+    });
+
+    final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
+    final seconds = (remaining % 60).toString().padLeft(2, '0');
+    notifyManager.updateNotification('$minutes:$seconds');
+  }
+
   void _startTick() {
     _timer?.cancel();
+
+    // tick ngay khi start/resume/chuyển phase
+    _pushStateAndNotification();
+
     _timer = Timer.periodic(const Duration(seconds: 1), (t) async {
-      try {
-        if (!state.isRunning) {
-          t.cancel();
-          return;
-        }
-
-        final remaining = state.remainingSeconds;
-
-        service.invoke('update', {
-          "current_duration": remaining,
-          "initial_duration": state.initialDuration,
-          "is_running": true,
-          "round": state.round,
-          "total_rounds": state.totalRounds,
-          "mode": state.mode,
-          "timeMode": state.currentTimeMode,
-        });
-
-        final minutes = (remaining ~/ 60).toString().padLeft(2, '0');
-        final seconds = (remaining % 60).toString().padLeft(2, '0');
-        notifyManager.updateNotification("$minutes:$seconds");
-
-        if (remaining <= 0) {
-          await _handleSessionFinished();
-          return;
-        }
-      } catch (e) {
-        debugPrint('Error in timer tick: $e');
+      if (!state.isRunning) {
+        t.cancel();
+        return;
       }
+
+      final remaining = state.remainingSeconds;
+      if (remaining <= 0) {
+        await _handleSessionFinished();
+        return;
+      }
+
+      _pushStateAndNotification();
     });
   }
 
@@ -218,7 +249,7 @@ class BackgroundTimerController {
           'work_duration_seconds': state.workDuration,
         });
 
-        await audioManager.stopNoise(); // Stop noise when work session is done
+        audioManager.stopNoise(); // Stop noise when work session is done
         if (state.round < state.totalRounds) {
           audioManager.playAlarm(state.alarmWorkPath, state.volumeWorkAlarm);
           final nextDuration = state.breakDuration;
@@ -229,11 +260,9 @@ class BackgroundTimerController {
           state.mode = 'break';
           state.isRunning = true;
 
-          _broadcastUpdate();
           _startTick();
-          notifyManager.refreshIfNeeded(state);
         } else {
-          await notifyManager.updateNotification("Finish!");
+          notifyManager.updateNotification("Finish!");
           service.invoke('finished');
 
           await audioManager.playAlarmAndWait(
@@ -259,12 +288,10 @@ class BackgroundTimerController {
         state.isRunning = true;
 
         if (state.isSoundEnabled) {
-          await audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
+          audioManager.playNoise(state.noiseAudioPath, state.volumeNoise);
         }
 
-        _broadcastUpdate();
         _startTick();
-        notifyManager.refreshIfNeeded(state);
       }
     } catch (e) {
       debugPrint('Error handling session finished: $e');

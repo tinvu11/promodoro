@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 class BackgroundAudioManager {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final AudioPlayer _noisePlayer = AudioPlayer();
+  String? _currentNoisePath;
 
   BackgroundAudioManager() {
     _noisePlayer.setLoopMode(LoopMode.one);
@@ -18,18 +19,24 @@ class BackgroundAudioManager {
     if (path.isEmpty) return;
     try {
       await _noisePlayer.setVolume(volumePercent / 100.0);
-      if (path.startsWith('assets/')) {
-        await _noisePlayer.setAsset(path);
-      } else {
-        final file = File(path);
-        if (await file.exists()) {
-          await _noisePlayer.setFilePath(path);
+      final shouldReloadSource = _currentNoisePath != path;
+
+      if (shouldReloadSource) {
+        if (path.startsWith('assets/')) {
+          await _noisePlayer.setAsset(path);
         } else {
-          debugPrint("Noise audio file does not exist: $path");
-          return;
+          final file = File(path);
+          if (await file.exists()) {
+            await _noisePlayer.setFilePath(path);
+          } else {
+            debugPrint("Noise audio file does not exist: $path");
+            return;
+          }
         }
+        _currentNoisePath = path;
+        await _noisePlayer.seek(Duration.zero);
       }
-      await _noisePlayer.seek(Duration.zero);
+
       await _noisePlayer.play();
     } catch (e) {
       debugPrint("Error playing noise: $e");
@@ -42,6 +49,7 @@ class BackgroundAudioManager {
 
   Future<void> stopNoise() async {
     await _noisePlayer.stop();
+    _currentNoisePath = null;
   }
 
   Future<void> playAlarm(String assetPath, double volumePercent) async {
