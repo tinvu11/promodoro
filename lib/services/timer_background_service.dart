@@ -27,6 +27,9 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
   service.on('requestState').listen((_) => controller.broadcast());
+
+  // Signal that listeners are attached and the isolate is ready to receive commands.
+  service.invoke('service_ready');
 }
 
 class PomodoroBackgroundService {
@@ -36,6 +39,20 @@ class PomodoroBackgroundService {
   PomodoroBackgroundService._internal();
 
   final service = FlutterBackgroundService();
+
+  Future<void> _ensureRunningAndReady() async {
+    final isRunning = await service.isRunning();
+    if (isRunning) return;
+
+    // Subscribe before startService to avoid missing early ready events.
+    final readyFuture = service
+        .on('service_ready')
+        .first
+        .timeout(const Duration(seconds: 5), onTimeout: () => null);
+
+    await service.startService();
+    await readyFuture;
+  }
 
   Future<void> initialize() async {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -75,11 +92,7 @@ class PomodoroBackgroundService {
   }
 
   Future<void> start() async {
-    final isRunning = await service.isRunning();
-    if (!isRunning) {
-      await service.startService();
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
+    await _ensureRunningAndReady();
     service.invoke('start');
   }
 
@@ -104,11 +117,7 @@ class PomodoroBackgroundService {
   }
 
   Future<void> setSettings(Map<String, dynamic> settings) async {
-    final isRunning = await service.isRunning();
-    if (!isRunning) {
-      await service.startService();
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
+    await _ensureRunningAndReady();
     service.invoke('setSettings', settings);
   }
 }
