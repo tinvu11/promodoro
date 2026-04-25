@@ -38,8 +38,6 @@ class PomodoroBackgroundService {
   final service = FlutterBackgroundService();
 
   Future<void> initialize() async {
-    print('Initializing Pomodoro Background Service');
-
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'pomodoro_timer_channel', // id
       'Pomodoro Timer', // name
@@ -79,11 +77,8 @@ class PomodoroBackgroundService {
   Future<void> start() async {
     final isRunning = await service.isRunning();
     if (!isRunning) {
-      print('Starting Pomodoro Background Service');
       await service.startService();
       await Future.delayed(const Duration(milliseconds: 300));
-    } else {
-      print('Service is already running');
     }
     service.invoke('start');
   }
@@ -110,10 +105,10 @@ class PomodoroBackgroundService {
 
   Future<void> setSettings(Map<String, dynamic> settings) async {
     final isRunning = await service.isRunning();
-    // if (!isRunning) {
-    //   await service.startService();
-    //   await Future.delayed(const Duration(milliseconds: 300));
-    // }
+    if (!isRunning) {
+      await service.startService();
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
     service.invoke('setSettings', settings);
   }
 }

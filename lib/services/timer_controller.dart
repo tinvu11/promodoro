@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pomodoro/data/repositories/stat_repository.dart';
+import 'package:pomodoro/services/audio_service.dart';
 
 enum PomodoroSession { work, shortBreak, longBreak }
 
@@ -11,11 +12,13 @@ class PomodoroTimerController {
   final ServiceInstance service;
   final FlutterLocalNotificationsPlugin notifications;
   final StatRepository statRepository;
+  final PomodoroAudioService audioService;
 
   PomodoroTimerController({
     required this.service,
     required this.notifications,
     required this.statRepository,
+    required this.audioService,
   });
 
   // Trạng thái Timer
@@ -32,12 +35,31 @@ class PomodoroTimerController {
   DateTime? _resumeTime;
   Timer? _timer;
 
+  String currentThemeId = 'default';
+  String alarmWorkPath = '';
+  String alarmBreakPath = '';
+  double currentVolume = 90;
+  double volumeAlarmWork = 90;
+  double volumeAlarmBreak = 90;
+  bool isSoundEnabled = true;
+  String l10nFocus = 'Focus';
+  String l10nBreak = 'Break';
+
   // PomodoroTimerController(this.service, this.notifications);
 
   void updateSettings(Map<String, dynamic> settings) {
     workTime = settings['workTime'] ?? workTime;
     breakTime = settings['breakTime'] ?? breakTime;
     repeatCount = settings['repeatCount'] ?? repeatCount;
+    currentThemeId = settings['selectedThemeId'] ?? currentThemeId;
+    currentVolume = settings['volumeNoise'] ?? currentVolume;
+    alarmWorkPath = settings['alarmWorkPath'] ?? alarmWorkPath;
+    alarmBreakPath = settings['alarmBreakPath'] ?? alarmBreakPath;
+    volumeAlarmWork = settings['volumeAlarmWork'] ?? volumeAlarmWork;
+    volumeAlarmBreak = settings['volumeAlarmBreak'] ?? volumeAlarmBreak;
+    isSoundEnabled = settings['isSoundEnabled'] ?? isSoundEnabled;
+    l10nFocus = settings['l10nFocus'] ?? l10nFocus;
+    l10nBreak = settings['l10nBreak'] ?? l10nBreak;
 
     if (currentStatus == TimerStatus.initial) {
       totalDuration = currentSession == PomodoroSession.work
@@ -48,15 +70,17 @@ class PomodoroTimerController {
   }
 
   void start() {
-    if (currentStatus == TimerStatus.running) {
-      return;
-    }
+    if (currentStatus == TimerStatus.running) return;
     _resumeTime = DateTime.now();
     currentStatus = TimerStatus.running;
     _timer?.cancel();
-
     _timer = Timer.periodic(const Duration(milliseconds: 500), (_) => _tick());
     broadcast();
+    if (isSoundEnabled && currentSession == PomodoroSession.work) {
+      audioService.playNoise(themeId: currentThemeId, volume: currentVolume);
+    } else {
+      audioService.pauseNoise();
+    }
     _updateNotification();
   }
 
@@ -66,10 +90,51 @@ class PomodoroTimerController {
     currentStatus = TimerStatus.paused;
     _timer?.cancel();
     broadcast();
+    if (isSoundEnabled) {
+      audioService.pauseNoise();
+    }
     _updateNotification();
   }
 
-  void next() {
+  void autoNext() async {
+    _timer?.cancel();
+
+    if (isSoundEnabled) {
+      // Tạm dừng nhạc nền để tiếng chuông rõ ràng hơn
+      audioService.pauseNoise();
+
+      // Phát chuông báo tương ứng với session vừa kết thúc
+      final alarmPath = (currentSession == PomodoroSession.work)
+          ? alarmWorkPath
+          : alarmBreakPath;
+      final alarmVolume = (currentSession == PomodoroSession.work)
+          ? volumeAlarmWork
+          : volumeAlarmBreak;
+
+      // Sử dụng hàm phát chuông đã gộp
+      audioService.playAlarm(alarmPath, alarmVolume);
+    }
+
+    _previouslyElapsedSeconds = 0;
+    _resumeTime = null;
+    currentStatus = TimerStatus.initial;
+
+    // Chuyển đổi Session
+    if (currentSession == PomodoroSession.work) {
+      currentSession = PomodoroSession.shortBreak;
+      totalDuration = breakTime;
+    } else {
+      currentSession = PomodoroSession.work;
+      totalDuration = workTime;
+      currentCycle >= repeatCount ? currentCycle = 1 : currentCycle++;
+    }
+
+    broadcast();
+    // notifications.cancel(id: 888);
+    start();
+  }
+
+  void next() async {
     _timer?.cancel();
     _previouslyElapsedSeconds = 0;
     _resumeTime = null;
@@ -84,7 +149,6 @@ class PomodoroTimerController {
       currentCycle >= repeatCount ? currentCycle = 1 : currentCycle++;
     }
     broadcast();
-    notifications.cancel(id: 888);
     start();
   }
 
@@ -96,12 +160,14 @@ class PomodoroTimerController {
     _previouslyElapsedSeconds = 0;
     _resumeTime = null;
     totalDuration = workTime;
+    audioService.stopNoise();
+    notifications.cancel(id: 888);
+    service.stopSelf();
     broadcast();
   }
 
   // save stats when session works finishes
   void saveStats(int workDurationSeconds) {
-    print('Saving stats: $workDurationSeconds seconds');
     final minutes = (workDurationSeconds / 60).round();
     if (minutes <= 0) return;
 
@@ -120,11 +186,18 @@ class PomodoroTimerController {
         (_previouslyElapsedSeconds + _calculateElapsedSinceResume());
 
     if (remaining <= 0) {
-      if (currentCycle >= repeatCount) {
+      if (isSoundEnabled) {
+        audioService.playAlarm(alarmWorkPath, volumeAlarmWork);
+      }
+      if (currentCycle >= repeatCount &&
+          currentSession == PomodoroSession.work) {
+        saveStats(totalDuration);
         reset();
       } else {
-        saveStats(currentSession == PomodoroSession.work ? totalDuration : 0);
-        next();
+        if (currentSession == PomodoroSession.work) {
+          saveStats(totalDuration);
+        }
+        autoNext();
       }
     } else {
       _updateNotification(remaining);
@@ -164,9 +237,9 @@ class PomodoroTimerController {
     notifications.show(
       id: 888,
       title: currentSession == PomodoroSession.work
-          ? 'Working ($currentCycle/$repeatCount)'
-          : 'Break Time',
-      body: '$mins:$secs remaining',
+          ? '$l10nFocus ($currentCycle/$repeatCount)'
+          : l10nBreak,
+      body: '$mins:$secs',
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'pomodoro_timer_channel',
@@ -175,6 +248,7 @@ class PomodoroTimerController {
           priority: Priority.low,
           ongoing: true,
           onlyAlertOnce: true,
+          showWhen: false,
           icon: "@mipmap/ic_launcher",
         ),
       ),

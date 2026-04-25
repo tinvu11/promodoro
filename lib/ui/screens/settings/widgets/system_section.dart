@@ -5,6 +5,8 @@ import 'package:pomodoro/l10n/generated/app_localizations.dart';
 import 'package:pomodoro/services/locale_service.dart';
 import 'package:pomodoro/ui/bloc/locale/locale_cubit.dart';
 import 'package:pomodoro/ui/screens/settings/widgets/sectionwrapper.dart';
+import '../../../commons/widgets/stop_dialog.dart';
+import '../../timer/bloc/timer_bloc.dart';
 
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
@@ -39,7 +41,19 @@ class SystemSection extends StatelessWidget {
                   context,
                   l10n.language,
                   LocaleService.displayName(currentLangCode),
-                  onTap: () => context.push(RoutePaths.language),
+                  onTap: () {
+                    final timerState = context.read<TimerBloc>().state;
+                    if (timerState.status == 1 || timerState.status == 2) {
+                      StopDialog.show(
+                        context,
+                        onConfirm: () {
+                          context.push(RoutePaths.language);
+                        },
+                      );
+                      return;
+                    }
+                    context.push(RoutePaths.language);
+                  },
                 ),
                 const Divider(
                   color: AppColors.glassSecondary,

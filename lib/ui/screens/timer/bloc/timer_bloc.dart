@@ -23,7 +23,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       event,
     ) {
       if (event != null) {
-        print('Received timer update: $event');
         add(
           PomodoroTimerTick(
             event['status'] as int,
@@ -32,8 +31,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
             event['cycle'] as int,
           ),
         );
-      } else {
-        print('Received null timer update');
       }
     });
 

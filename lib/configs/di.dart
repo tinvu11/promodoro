@@ -19,6 +19,7 @@ import 'package:pomodoro/ui/screens/timer/ticker.dart';
 import 'package:pomodoro/services/timer_controller.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:pomodoro/services/audio_service.dart';
 
 import '../data/data_sources/local_data.dart';
 import '../ui/bloc/iap/iap_bloc.dart';
@@ -78,11 +79,15 @@ class DI {
     sl.registerLazySingleton<FlutterLocalNotificationsPlugin>(
       () => FlutterLocalNotificationsPlugin(),
     );
+    sl.registerLazySingleton<PomodoroAudioService>(
+      () => PomodoroAudioService(themeStorageService: sl()),
+    );
     sl.registerFactoryParam<PomodoroTimerController, ServiceInstance, void>(
       (service, _) => PomodoroTimerController(
         service: service,
         notifications: sl<FlutterLocalNotificationsPlugin>(),
         statRepository: sl<StatRepository>(),
+        audioService: sl<PomodoroAudioService>(),
       ),
     );
 

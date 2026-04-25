@@ -26,30 +26,22 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: AppBar(
-        titleSpacing: showLeading ? 36 : 0,
-        leadingWidth: 0,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-
-        title:
-            titleWidget ??
-            (title != null
-                ? Text(title!, style: AppFonts.mediumWhite28)
-                : null),
-        leading: showLeading
-            ? (leading ?? _buildDefaultLeading(context))
-            : null,
-        actions: actions?.map((action) => action).toList(),
-      ),
+    return AppBar(
+      automaticallyImplyLeading: false,
+      titleSpacing: showLeading ? 0 : 20,
+      leadingWidth: showLeading ? 56 : 0,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: false,
+      title:
+          titleWidget ??
+          (title != null ? Text(title!, style: AppFonts.mediumWhite28) : null),
+      leading: showLeading ? (leading ?? _buildDefaultLeading(context)) : null,
+      actions: [...?actions, const SizedBox(width: 16)],
     );
   }
 
-  // Nút Back mặc định với phong cách GlassBox
   Widget _buildDefaultLeading(BuildContext context) {
     return Center(
       child: GestureDetector(

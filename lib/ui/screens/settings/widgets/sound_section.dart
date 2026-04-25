@@ -67,16 +67,16 @@ class SoundSection extends StatelessWidget {
                         ThemeStorageService.getDefaultThemeName(langCode);
                   }(),
                   onTap: () {
-                    final timerState = context.read<TimerBloc>().state;
-                    if (timerState.status == 1 || timerState.status == 2) {
-                      StopDialog.show(
-                        context,
-                        onConfirm: () {
-                          context.push(RoutePaths.noises);
-                        },
-                      );
-                      return;
-                    }
+                    // final timerState = context.read<TimerBloc>().state;
+                    // if (timerState.status == 1 || timerState.status == 2) {
+                    //   StopDialog.show(
+                    //     context,
+                    //     onConfirm: () {
+                    //       context.push(RoutePaths.noises);
+                    //     },
+                    //   );
+                    //   return;
+                    // }
                     context.push(RoutePaths.noises);
                   },
                 ),

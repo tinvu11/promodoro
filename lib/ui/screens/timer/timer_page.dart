@@ -14,6 +14,7 @@ import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:pomodoro/ui/screens/timer/widgets/glass_timer_page.dart';
 import 'package:pomodoro/utils/time_formatting.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/common_appbar.dart';
@@ -33,6 +34,7 @@ class _TimerPageState extends State<TimerPage> {
   void initState() {
     super.initState();
     PomodoroBackgroundService().initialize();
+    _requestPermissions();
   }
 
   @override
@@ -67,13 +69,9 @@ class _TimerPageState extends State<TimerPage> {
         ),
         BlocListener<SettingsBloc, SettingsState>(
           listenWhen: (prev, curr) {
-            print(
-              'Setting state prev: ${prev.runtimeType}, curr: ${curr.runtimeType}',
-            );
             if (prev is! SuccessSettingState || curr is! SuccessSettingState) {
               return false;
             }
-            print("Settings changed, checking if timer update is needed...");
             final prevSettings = prev.settingsModel;
             final currSettings = curr.settingsModel;
             return prevSettings.selectedThemeId !=
@@ -94,12 +92,7 @@ class _TimerPageState extends State<TimerPage> {
             // _sendSettingsToTimer(context, updatedSettings);
 
             if (state is SuccessSettingState) {
-              print("Settings changed, updating timer...");
               _sendSettingsToTimer(context, state.settingsModel);
-            } else {
-              print(
-                'failed to update timer, settings state is: ${state.runtimeType}',
-              );
             }
           },
         ),
@@ -130,9 +123,6 @@ class _TimerPageState extends State<TimerPage> {
                       RepaintBoundary(
                         child: GestureDetector(
                           onTap: () {
-                            print(
-                              "Timer display tapped. Status: ${state.status}",
-                            );
                             _onToggleTimer(context, state, settings);
                           },
                           child: _buildTimerDisplay(context, state, settings),
@@ -195,7 +185,6 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   void _sendSettingsToTimer(BuildContext context, SettingsModel settings) {
-    debugPrint("Updating timer with new settings: ${settings.toString()}");
     context.read<TimerBloc>().add(
       PomodoroTimerSettingsUpdated({
         'workTime': settings.workTime,
@@ -208,6 +197,8 @@ class _TimerPageState extends State<TimerPage> {
         'volumeBreakAlarm': settings.volumeBreakAlarm.toDouble(),
         'volumeNoise': settings.volumeNoise.toDouble(),
         'selectedThemeId': settings.selectedThemeId,
+        'l10nFocus': AppLocalizations.of(context)!.work,
+        'l10nBreak': AppLocalizations.of(context)!.breakLabel,
       }),
     );
   }
@@ -269,48 +260,34 @@ class _TimerPageState extends State<TimerPage> {
     );
   }
 
+  Future<void> _requestPermissions() async {
+    if (!mounted) return;
+    await Future.delayed(const Duration(seconds: 1));
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
+  }
+
   void _onToggleTimer(
     BuildContext context,
     TimerState state,
     SettingsModel settings,
   ) {
     final bloc = context.read<TimerBloc>();
+
     if (state.status == 0 || state.status == 3) {
       _sendSettingsToTimer(context, settings);
       bloc.add(PomodoroTimerStarted());
     } else if (state.status == 1) {
-      print("Pausing timer");
       bloc.add(PomodoroTimerPaused());
     } else if (state.status == 2) {
-      print("Resuming timer");
       bloc.add(PomodoroTimerResumed());
     }
   }
-
-  // void _onToggleTimer(
-  //   BuildContext context,
-  //   TimerState state,
-  //   SettingsModel settings,
-  // ) async {
-  //   // Thêm async ở đây
-  //   final bloc = context.read<TimerBloc>();
-  //   final backgroundService = PomodoroBackgroundService();
-
-  //   if (state.status == 0 || state.status == 3) {
-  //     // Trạng thái Initial hoặc Finished
-  //     _sendSettingsToTimer(context, settings);
-
-  //     // KÍCH HOẠT CHẠY NGẦM Ở ĐÂY
-  //     // Hàm start() này sẽ gọi service.startService() bên trong
-  //     await backgroundService.start();
-
-  //     bloc.add(PomodoroTimerStarted());
-  //   } else if (state.status == 1) {
-  //     bloc.add(PomodoroTimerPaused());
-  //   } else if (state.status == 2) {
-  //     bloc.add(PomodoroTimerResumed());
-  //   }
-  // }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, dynamic settings) {
     final langCode = Localizations.localeOf(context).languageCode;
