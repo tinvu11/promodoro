@@ -7,12 +7,7 @@ abstract class TimerEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class PomodoroTimerStarted extends TimerEvent {
-  final Map<String, dynamic> settings;
-  const PomodoroTimerStarted(this.settings);
-  @override
-  List<Object?> get props => [settings];
-}
+class PomodoroTimerStarted extends TimerEvent {}
 
 class PomodoroTimerPaused extends TimerEvent {}
 

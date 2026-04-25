@@ -76,7 +76,7 @@ class _SliderMinuteState extends State<SliderMinute> {
         const SizedBox(height: 25),
         Slider(
           value: _displayVal.clamp(1, 180),
-          min: 5,
+          min: 1,
           max: 180,
           divisions: 36,
           inactiveColor: AppColors.glassPrimary,

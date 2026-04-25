@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:pomodoro/services/pomodoro_background_service.dart';
+import 'package:pomodoro/services/timer_background_service.dart';
 import 'package:equatable/equatable.dart';
 part 'timer_event.dart';
 part 'timer_state.dart';
@@ -23,6 +23,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       event,
     ) {
       if (event != null) {
+        print('Received timer update: $event');
         add(
           PomodoroTimerTick(
             event['status'] as int,
@@ -31,14 +32,16 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
             event['cycle'] as int,
           ),
         );
+      } else {
+        print('Received null timer update');
       }
     });
 
     _service.requestState();
   }
 
-  void _onStarted(PomodoroTimerStarted event, Emitter<TimerState> emit) {
-    _service.start();
+  void _onStarted(PomodoroTimerStarted event, Emitter<TimerState> emit) async {
+    await _service.start();
   }
 
   void _onPaused(PomodoroTimerPaused event, Emitter<TimerState> emit) {
@@ -60,8 +63,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   void _onSettingsUpdated(
     PomodoroTimerSettingsUpdated event,
     Emitter<TimerState> emit,
-  ) {
-    _service.setSettings(event.settings);
+  ) async {
+    await _service.setSettings(event.settings);
   }
 
   void _onTick(PomodoroTimerTick event, Emitter<TimerState> emit) {

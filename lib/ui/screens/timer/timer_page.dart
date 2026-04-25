@@ -8,7 +8,7 @@ import 'package:pomodoro/data/data_sources/local_data.dart';
 import 'package:pomodoro/data/models/settings_model.dart';
 import 'package:pomodoro/l10n/generated/app_localizations.dart';
 import 'package:pomodoro/navigation/app_router.dart';
-import 'package:pomodoro/services/pomodoro_background_service.dart';
+import 'package:pomodoro/services/timer_background_service.dart';
 import 'package:pomodoro/services/theme_storage_service.dart';
 import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:pomodoro/ui/screens/timer/widgets/glass_timer_page.dart';
@@ -19,9 +19,7 @@ import '../../../core/Theme/app_colors.dart';
 import '../../commons/widgets/common_appbar.dart';
 import '../../commons/widgets/glass_box.dart';
 import '../../commons/widgets/paywall_dialog.dart';
-import '../../bloc/pomodoro_timer/pomodoro_timer_bloc.dart';
-import '../../bloc/pomodoro_timer/pomodoro_timer_event.dart';
-import '../../bloc/pomodoro_timer/pomodoro_timer_state.dart';
+import 'bloc/timer_bloc.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -46,147 +44,159 @@ class _TimerPageState extends State<TimerPage> {
 
     final settings = settingsState.settingsModel;
 
-    return BlocProvider(
-      create: (context) => PomodoroTimerBloc(),
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<PomodoroTimerBloc, PomodoroTimerState>(
-            listenWhen: (prev, curr) => prev.status != curr.status,
-            listener: (context, state) {
-              if (state.status == 1) {
-                // 1 = running
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  SystemChrome.setEnabledSystemUIMode(
-                    SystemUiMode.immersiveSticky,
-                  );
-                  if (settings.alwaysOnScreen) WakelockPlus.enable();
-                });
-              } else {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-                  WakelockPlus.disable();
-                });
-              }
-            },
-          ),
-          BlocListener<SettingsBloc, SettingsState>(
-            listenWhen: (prev, curr) {
-              if (prev is! SuccessSettingState ||
-                  curr is! SuccessSettingState) {
-                return false;
-              }
-              final prevSettings = prev.settingsModel;
-              final currSettings = curr.settingsModel;
-              return prevSettings.selectedThemeId !=
-                      currSettings.selectedThemeId ||
-                  prevSettings.volumeNoise != currSettings.volumeNoise ||
-                  prevSettings.isSoundEnabled != currSettings.isSoundEnabled;
-            },
-            listener: (context, state) {
-              if (state is! SuccessSettingState) {
-                debugPrint("Settings not loaded yet, skipping timer update");
-                return;
-              }
-              ;
-              final timerState = context.read<PomodoroTimerBloc>().state;
-              final isTimerActive = timerState.status == 0;
-              if (isTimerActive == false) return;
-              final updatedSettings = state.settingsModel;
-              _sendSettingsToTimer(context, updatedSettings);
-            },
-          ),
-        ],
-        child: BlocBuilder<PomodoroTimerBloc, PomodoroTimerState>(
-          builder: (context, state) {
-            final bool isRunning = state.status == 1; // running
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              extendBodyBehindAppBar: true,
-              appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(kToolbarHeight),
-                child: RepaintBoundary(
-                  child: AnimatedOpacity(
-                    opacity: isRunning ? 0.0 : 1.0,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    child: _buildAppBar(context, settings),
-                  ),
-                ),
-              ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      children: [
-                        RepaintBoundary(
-                          child: GestureDetector(
-                            onTap: () {
-                              _onToggleTimer(context, state, settings);
-                            },
-                            child: _buildTimerDisplay(context, state, settings),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                    const SizedBox(height: 50),
-                    AnimatedOpacity(
-                      opacity: state.status == 2 ? 1.0 : 0.0, // Paused
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Opacity(
-                            opacity: 0.0,
-                            child: Icon(Icons.stop_outlined),
-                          ),
-                          const SizedBox(width: 30),
-                          GestureDetector(
-                            onTap: () {
-                              if (state.status == 2) {
-                                context.read<PomodoroTimerBloc>().add(
-                                  PomodoroTimerReset(),
-                                );
-                              }
-                            },
-                            child: const Icon(Icons.stop_outlined),
-                          ),
-                          const SizedBox(width: 30),
-
-                          GestureDetector(
-                            onTap: () {
-                              if (state.status == 2 &&
-                                  state.cycle < settings.repeatCount) {
-                                context.read<PomodoroTimerBloc>().add(
-                                  PomodoroTimerNext(),
-                                );
-                              }
-                            },
-                            child: Opacity(
-                              opacity: state.cycle >= settings.repeatCount
-                                  ? 0.5
-                                  : 1.0,
-                              child: const Icon(Icons.skip_next_outlined),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TimerBloc, TimerState>(
+          listenWhen: (prev, curr) => prev.status != curr.status,
+          listener: (context, state) {
+            if (state.status == 1) {
+              // 1 = running
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.immersiveSticky,
+                );
+                if (settings.alwaysOnScreen) WakelockPlus.enable();
+              });
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                WakelockPlus.disable();
+              });
+            }
           },
         ),
+        BlocListener<SettingsBloc, SettingsState>(
+          listenWhen: (prev, curr) {
+            print(
+              'Setting state prev: ${prev.runtimeType}, curr: ${curr.runtimeType}',
+            );
+            if (prev is! SuccessSettingState || curr is! SuccessSettingState) {
+              return false;
+            }
+            print("Settings changed, checking if timer update is needed...");
+            final prevSettings = prev.settingsModel;
+            final currSettings = curr.settingsModel;
+            return prevSettings.selectedThemeId !=
+                    currSettings.selectedThemeId ||
+                prevSettings.volumeNoise != currSettings.volumeNoise ||
+                prevSettings.isSoundEnabled != currSettings.isSoundEnabled;
+          },
+          listener: (context, state) {
+            // if (state is! SuccessSettingState) {
+            //   debugPrint("Settings not loaded yet, skipping timer update");
+            //   return;
+            // }
+            // ;
+            // final timerState = context.read<TimerBloc>().state;
+            // final isTimerActive = timerState.status == 0;
+            // if (isTimerActive == false) return;
+            // final updatedSettings = state.settingsModel;
+            // _sendSettingsToTimer(context, updatedSettings);
+
+            if (state is SuccessSettingState) {
+              print("Settings changed, updating timer...");
+              _sendSettingsToTimer(context, state.settingsModel);
+            } else {
+              print(
+                'failed to update timer, settings state is: ${state.runtimeType}',
+              );
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<TimerBloc, TimerState>(
+        builder: (context, state) {
+          final bool isRunning = state.status != 1;
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            extendBodyBehindAppBar: true,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(kToolbarHeight),
+              child: RepaintBoundary(
+                child: AnimatedOpacity(
+                  opacity: isRunning ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  child: _buildAppBar(context, settings),
+                ),
+              ),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    children: [
+                      RepaintBoundary(
+                        child: GestureDetector(
+                          onTap: () {
+                            print(
+                              "Timer display tapped. Status: ${state.status}",
+                            );
+                            _onToggleTimer(context, state, settings);
+                          },
+                          child: _buildTimerDisplay(context, state, settings),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                  const SizedBox(height: 50),
+                  AnimatedOpacity(
+                    opacity: state.status == 2 ? 1.0 : 0.0, // Paused
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Opacity(
+                          opacity: 0.0,
+                          child: Icon(Icons.stop_outlined),
+                        ),
+                        const SizedBox(width: 30),
+                        GestureDetector(
+                          onTap: () {
+                            if (state.status == 2) {
+                              context.read<TimerBloc>().add(
+                                PomodoroTimerReset(),
+                              );
+                            }
+                          },
+                          child: const Icon(Icons.stop_outlined),
+                        ),
+                        const SizedBox(width: 30),
+
+                        GestureDetector(
+                          onTap: () {
+                            if (state.status == 2 &&
+                                state.cycle < settings.repeatCount) {
+                              context.read<TimerBloc>().add(
+                                PomodoroTimerNext(),
+                              );
+                            }
+                          },
+                          child: Opacity(
+                            opacity: state.cycle >= settings.repeatCount
+                                ? 0.5
+                                : 1.0,
+                            child: const Icon(Icons.skip_next_outlined),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
   void _sendSettingsToTimer(BuildContext context, SettingsModel settings) {
     debugPrint("Updating timer with new settings: ${settings.toString()}");
-    context.read<PomodoroTimerBloc>().add(
+    context.read<TimerBloc>().add(
       PomodoroTimerSettingsUpdated({
         'workTime': settings.workTime,
         'breakTime': settings.breakTime,
@@ -194,9 +204,9 @@ class _TimerPageState extends State<TimerPage> {
         'isSoundEnabled': settings.isSoundEnabled,
         'alarmWorkPath': settings.alarmWork.path,
         'alarmBreakPath': settings.alarmBreak.path,
-        'volumeWorkAlarm': settings.volumeWorkAlarm,
-        'volumeBreakAlarm': settings.volumeBreakAlarm,
-        'volumeNoise': settings.volumeNoise,
+        'volumeWorkAlarm': settings.volumeWorkAlarm.toDouble(),
+        'volumeBreakAlarm': settings.volumeBreakAlarm.toDouble(),
+        'volumeNoise': settings.volumeNoise.toDouble(),
         'selectedThemeId': settings.selectedThemeId,
       }),
     );
@@ -204,28 +214,22 @@ class _TimerPageState extends State<TimerPage> {
 
   Widget _buildTimerDisplay(
     BuildContext context,
-    PomodoroTimerState state,
+    TimerState state,
     SettingsModel settingsModel,
   ) {
-    int totalDuration = state.session == 0
+    final bool isWorkSession = state.session == 0;
+    final int totalDuration = isWorkSession
         ? settingsModel.workTime
         : settingsModel.breakTime;
-    if (state.session == 2) {
-      // Long break
-      totalDuration = settingsModel.breakTime * 2;
-    }
-
-    final int currentSeconds = state.remainingSeconds;
-
-    double progress = totalDuration > 0 ? currentSeconds / totalDuration : 0.0;
-
-    String modeText;
-    if (state.session == 0) {
-      modeText = AppLocalizations.of(context)!.work;
-    } else {
-      modeText = AppLocalizations.of(context)!.breakLabel;
-    }
-
+    final int currentSeconds = state.status == 0 || state.status == 3
+        ? totalDuration
+        : state.remainingSeconds;
+    final double progress = totalDuration > 0
+        ? currentSeconds / totalDuration
+        : 0.0;
+    final String modeText = isWorkSession
+        ? AppLocalizations.of(context)!.work
+        : AppLocalizations.of(context)!.breakLabel;
     String roundText = "${state.cycle} / ${settingsModel.repeatCount}";
     String roundBreakText = "${state.cycle} / ${settingsModel.repeatCount - 1}";
 
@@ -247,7 +251,7 @@ class _TimerPageState extends State<TimerPage> {
             ),
             const SizedBox(height: 100),
             Text(
-              (state.session != 0 && state.cycle > 0)
+              state.cycle > 0 && state.session == 1
                   ? roundBreakText
                   : roundText,
               style: AppFonts.mediumWhite20,
@@ -267,20 +271,46 @@ class _TimerPageState extends State<TimerPage> {
 
   void _onToggleTimer(
     BuildContext context,
-    PomodoroTimerState state,
+    TimerState state,
     SettingsModel settings,
   ) {
-    final bloc = context.read<PomodoroTimerBloc>();
-
+    final bloc = context.read<TimerBloc>();
     if (state.status == 0 || state.status == 3) {
       _sendSettingsToTimer(context, settings);
       bloc.add(PomodoroTimerStarted());
     } else if (state.status == 1) {
+      print("Pausing timer");
       bloc.add(PomodoroTimerPaused());
     } else if (state.status == 2) {
+      print("Resuming timer");
       bloc.add(PomodoroTimerResumed());
     }
   }
+
+  // void _onToggleTimer(
+  //   BuildContext context,
+  //   TimerState state,
+  //   SettingsModel settings,
+  // ) async {
+  //   // Thêm async ở đây
+  //   final bloc = context.read<TimerBloc>();
+  //   final backgroundService = PomodoroBackgroundService();
+
+  //   if (state.status == 0 || state.status == 3) {
+  //     // Trạng thái Initial hoặc Finished
+  //     _sendSettingsToTimer(context, settings);
+
+  //     // KÍCH HOẠT CHẠY NGẦM Ở ĐÂY
+  //     // Hàm start() này sẽ gọi service.startService() bên trong
+  //     await backgroundService.start();
+
+  //     bloc.add(PomodoroTimerStarted());
+  //   } else if (state.status == 1) {
+  //     bloc.add(PomodoroTimerPaused());
+  //   } else if (state.status == 2) {
+  //     bloc.add(PomodoroTimerResumed());
+  //   }
+  // }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, dynamic settings) {
     final langCode = Localizations.localeOf(context).languageCode;

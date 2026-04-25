@@ -16,6 +16,9 @@ import 'package:pomodoro/ui/screens/settings/bloc/settings_bloc.dart';
 import 'package:pomodoro/ui/screens/static/bloc/static_bloc.dart';
 import 'package:pomodoro/ui/screens/timer/bloc/timer_bloc.dart';
 import 'package:pomodoro/ui/screens/timer/ticker.dart';
+import 'package:pomodoro/services/timer_controller.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import '../data/data_sources/local_data.dart';
 import '../ui/bloc/iap/iap_bloc.dart';
@@ -72,6 +75,17 @@ class DI {
     sl.registerLazySingleton<StaticBloc>(
       () => StaticBloc(statRepository: sl())..add(LoadStaticEvent()),
     );
+    sl.registerLazySingleton<FlutterLocalNotificationsPlugin>(
+      () => FlutterLocalNotificationsPlugin(),
+    );
+    sl.registerFactoryParam<PomodoroTimerController, ServiceInstance, void>(
+      (service, _) => PomodoroTimerController(
+        service: service,
+        notifications: sl<FlutterLocalNotificationsPlugin>(),
+        statRepository: sl<StatRepository>(),
+      ),
+    );
+
     // Delay noise loading until the Noises page is opened.
     sl.registerLazySingleton<NoisesBloc>(
       () => NoisesBloc(remoteDataRepo: sl(), themeStorageService: sl()),
