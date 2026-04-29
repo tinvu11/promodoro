@@ -1,9 +1,9 @@
 import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:pomodoro/configs/hive/app_hive.dart';
 import 'package:pomodoro/data/repositories/stat_repository.dart';
-
 import '../../../../data/models/daily_stat.dart';
 
 part 'static_event.dart';
@@ -14,6 +14,7 @@ class StaticBloc extends Bloc<StaticEvent, StaticState> {
 
   StaticBloc({required this.statRepository}) : super(StaticInitial()) {
     on<LoadStaticEvent>(_onLoadStatic);
+    on<RefreshStaticEvent>(_onRefreshStatic);
     on<SeedSampleDataEvent>(_onSeedSampleData);
   }
 
@@ -25,7 +26,7 @@ class StaticBloc extends Bloc<StaticEvent, StaticState> {
     try {
       final now = DateTime.now();
 
-      final allStats = statRepository.getAllDailyStats()
+      final allStats = List<DailyStat>.from(statRepository.getAllDailyStats())
         ..sort((a, b) => a.date.compareTo(b.date));
       final todayStat = statRepository.getDailyStatByDate(now);
       final totalMinutes = statRepository.getTotalMinutes();
@@ -44,27 +45,36 @@ class StaticBloc extends Bloc<StaticEvent, StaticState> {
     }
   }
 
-  //   Future<void> _onSeedSampleData(
-  //     SeedSampleDataEvent event,
-  //     Emitter<StaticState> emit,
-  //   ) async {
-  //     final random = Random();
-  //     final now = DateTime.now();
-  //
-  //     for (int day = 1; day <= 60; day++) {
-  //       final date = DateTime(now.year, now.month, day);
-  //       if (date.isAfter(now)) break;
-  //
-  //       final minutes = random.nextInt(120); // 0 ~ 120 phút
-  //       final sessions = (minutes / 25).ceil(); // ~25 phút/session
-  //
-  //       final stat = DailyStat(date: date, minutes: minutes, sessions: sessions);
-  //       await statRepository.saveDailyStat(stat);
-  //     }
-  //
-  //     // Reload data sau khi seed
-  //     add(LoadStaticEvent());
-  //   }
+  // refresh data khi người dùng kéo xuống để refresh
+  Future<void> _onRefreshStatic(
+    RefreshStaticEvent event,
+    Emitter<StaticState> emit,
+  ) async {
+    try {
+      // Reload box from disk because background isolate might have updated it
+      if (Hive.isBoxOpen(AppHive.dailyStatisKey)) {
+        await Hive.box<DailyStat>(AppHive.dailyStatisKey).close();
+      }
+      await Hive.openBox<DailyStat>(AppHive.dailyStatisKey);
+      final now = DateTime.now();
+      final allStats = List<DailyStat>.from(statRepository.getAllDailyStats())
+        ..sort((a, b) => a.date.compareTo(b.date));
+      final todayStat = statRepository.getDailyStatByDate(now);
+      final totalMinutes = statRepository.getTotalMinutes();
+      final totalSessions = statRepository.getTotalSessions();
+
+      emit(
+        StaticLoaded(
+          allStats: allStats,
+          todayStat: todayStat,
+          totalMinutes: totalMinutes,
+          totalSessions: totalSessions,
+        ),
+      );
+    } catch (e) {
+      emit(StaticError(message: e.toString()));
+    }
+  }
 
   Future<void> _onSeedSampleData(
     SeedSampleDataEvent event,

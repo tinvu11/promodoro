@@ -25,7 +25,7 @@ class PomodoroTimerController {
   int workTime = 25 * 60;
   int breakTime = 5 * 60;
   int repeatCount = 4;
-
+  int _lastBroadcastedRemaining = -1;
   PomodoroSession currentSession = PomodoroSession.work;
   TimerStatus currentStatus = TimerStatus.initial;
   int currentCycle = 1;
@@ -52,11 +52,13 @@ class PomodoroTimerController {
     breakTime = settings['breakTime'] ?? breakTime;
     repeatCount = settings['repeatCount'] ?? repeatCount;
     currentThemeId = settings['selectedThemeId'] ?? currentThemeId;
-    currentVolume = settings['volumeNoise'] ?? currentVolume;
     alarmWorkPath = settings['alarmWorkPath'] ?? alarmWorkPath;
     alarmBreakPath = settings['alarmBreakPath'] ?? alarmBreakPath;
-    volumeAlarmWork = settings['volumeAlarmWork'] ?? volumeAlarmWork;
-    volumeAlarmBreak = settings['volumeAlarmBreak'] ?? volumeAlarmBreak;
+    currentVolume = (settings['volumeNoise'] ?? currentVolume).toDouble();
+    volumeAlarmWork = (settings['volumeWorkAlarm'] ?? volumeAlarmWork)
+        .toDouble();
+    volumeAlarmBreak = (settings['volumeBreakAlarm'] ?? volumeAlarmBreak)
+        .toDouble();
     isSoundEnabled = settings['isSoundEnabled'] ?? isSoundEnabled;
     l10nFocus = settings['l10nFocus'] ?? l10nFocus;
     l10nBreak = settings['l10nBreak'] ?? l10nBreak;
@@ -110,7 +112,6 @@ class PomodoroTimerController {
       final alarmVolume = (currentSession == PomodoroSession.work)
           ? volumeAlarmWork
           : volumeAlarmBreak;
-
       // Sử dụng hàm phát chuông đã gộp
       audioService.playAlarm(alarmPath, alarmVolume);
     }
@@ -186,9 +187,9 @@ class PomodoroTimerController {
         (_previouslyElapsedSeconds + _calculateElapsedSinceResume());
 
     if (remaining <= 0) {
-      if (isSoundEnabled) {
-        audioService.playAlarm(alarmWorkPath, volumeAlarmWork);
-      }
+      // if (isSoundEnabled) {
+      //   audioService.playAlarm(alarmWorkPath, volumeAlarmWork);
+      // }
       if (currentCycle >= repeatCount &&
           currentSession == PomodoroSession.work) {
         saveStats(totalDuration);
@@ -200,13 +201,16 @@ class PomodoroTimerController {
         autoNext();
       }
     } else {
-      _updateNotification(remaining);
-      service.invoke('update', {
-        'status': currentStatus.index,
-        'session': currentSession.index,
-        'remainingSeconds': remaining,
-        'cycle': currentCycle,
-      });
+      if (remaining != _lastBroadcastedRemaining) {
+        _updateNotification(remaining);
+        service.invoke('update', {
+          'status': currentStatus.index,
+          'session': currentSession.index,
+          'remainingSeconds': remaining,
+          'cycle': currentCycle,
+        });
+        _lastBroadcastedRemaining = remaining;
+      }
     }
   }
 

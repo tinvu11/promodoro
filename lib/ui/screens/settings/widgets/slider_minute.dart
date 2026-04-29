@@ -36,7 +36,6 @@ class _SliderMinuteState extends State<SliderMinute> {
   void _updateValues(double newValue) {
     setState(() {
       _val = newValue;
-      // Cập nhật displayVal nếu nó là bội số của 5 để slider di chuyển mượt
       if (_val % 5 == 0) _displayVal = _val;
     });
   }
@@ -75,10 +74,10 @@ class _SliderMinuteState extends State<SliderMinute> {
         ),
         const SizedBox(height: 25),
         Slider(
-          value: _displayVal.clamp(1, 180),
-          min: 1,
+          value: _displayVal.clamp(5, 180),
+          min: 5,
           max: 180,
-          divisions: 36,
+          divisions: 35,
           inactiveColor: AppColors.glassPrimary,
           activeColor: AppColors.textPrimary,
           onChanged: (v) {
@@ -98,6 +97,7 @@ class _SliderMinuteState extends State<SliderMinute> {
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Icon(icon, color: Colors.white70, size: 30),
     );

@@ -108,48 +108,51 @@ class _HomeNavigationState extends State<HomeNavigation> {
         builder: (context, state) {
           final bool isRunning = state.status == 1;
           return RepaintBoundary(
-            child: AnimatedOpacity(
-              // Nếu đang chạy (isRunning) thì mờ đi (0.0), nếu không thì hiện rõ (1.0)
-              opacity: isRunning ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 500), // Thời gian mờ dần
-              curve: Curves.easeInOut,
-              child: NavigationBar(
-                height: 56,
-                elevation: 0,
-                indicatorColor: Colors.transparent,
-                selectedIndex: widget.navigationShell.currentIndex,
-                onDestinationSelected: _onTap,
-                backgroundColor: Colors.transparent,
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                destinations: [
-                  NavigationDestination(
-                    icon: Icon(
-                      Icons.timer_outlined,
-                      color: AppColors.textSecondary,
+            child: IgnorePointer(
+              ignoring: isRunning,
+              child: AnimatedOpacity(
+                // Nếu đang chạy (isRunning) thì mờ đi (0.0), nếu không thì hiện rõ (1.0)
+                opacity: isRunning ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 500), // Thời gian mờ dần
+                curve: Curves.easeInOut,
+                child: NavigationBar(
+                  height: 56,
+                  elevation: 0,
+                  indicatorColor: Colors.transparent,
+                  selectedIndex: widget.navigationShell.currentIndex,
+                  onDestinationSelected: _onTap,
+                  backgroundColor: Colors.transparent,
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  destinations: [
+                    NavigationDestination(
+                      icon: Icon(
+                        Icons.timer_outlined,
+                        color: AppColors.textSecondary,
+                      ),
+                      selectedIcon: Icon(Icons.timer, color: Colors.white),
+                      label: AppLocalizations.of(context)!.timerTab,
                     ),
-                    selectedIcon: Icon(Icons.timer, color: Colors.white),
-                    label: AppLocalizations.of(context)!.timerTab,
-                  ),
-                  NavigationDestination(
-                    icon: Icon(
-                      Icons.stacked_bar_chart_rounded,
-                      color: AppColors.textSecondary,
+                    NavigationDestination(
+                      icon: Icon(
+                        Icons.stacked_bar_chart_rounded,
+                        color: AppColors.textSecondary,
+                      ),
+                      selectedIcon: Icon(
+                        Icons.stacked_bar_chart_rounded,
+                        color: Colors.white,
+                      ),
+                      label: AppLocalizations.of(context)!.statisticsTab,
                     ),
-                    selectedIcon: Icon(
-                      Icons.stacked_bar_chart_rounded,
-                      color: Colors.white,
+                    NavigationDestination(
+                      icon: Icon(
+                        Icons.settings_outlined,
+                        color: AppColors.textSecondary,
+                      ),
+                      selectedIcon: Icon(Icons.settings, color: Colors.white),
+                      label: AppLocalizations.of(context)!.settingsTab,
                     ),
-                    label: AppLocalizations.of(context)!.statisticsTab,
-                  ),
-                  NavigationDestination(
-                    icon: Icon(
-                      Icons.settings_outlined,
-                      color: AppColors.textSecondary,
-                    ),
-                    selectedIcon: Icon(Icons.settings, color: Colors.white),
-                    label: AppLocalizations.of(context)!.settingsTab,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

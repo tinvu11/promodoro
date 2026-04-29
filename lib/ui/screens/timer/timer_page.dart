@@ -33,8 +33,8 @@ class _TimerPageState extends State<TimerPage> {
   @override
   void initState() {
     super.initState();
-    PomodoroBackgroundService().initialize();
     _requestPermissions();
+    PomodoroBackgroundService().initialize();
   }
 
   @override
@@ -52,7 +52,6 @@ class _TimerPageState extends State<TimerPage> {
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) {
             if (state.status == 1) {
-              // 1 = running
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 SystemChrome.setEnabledSystemUIMode(
                   SystemUiMode.immersiveSticky,
@@ -106,11 +105,14 @@ class _TimerPageState extends State<TimerPage> {
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
               child: RepaintBoundary(
-                child: AnimatedOpacity(
-                  opacity: isRunning ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  child: _buildAppBar(context, settings),
+                child: IgnorePointer(
+                  ignoring: state.status == 1,
+                  child: AnimatedOpacity(
+                    opacity: isRunning ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: _buildAppBar(context, settings),
+                  ),
                 ),
               ),
             ),
@@ -250,7 +252,8 @@ class _TimerPageState extends State<TimerPage> {
           ],
         ),
         Text(
-          currentSeconds.toTimer(),
+          // currentSeconds.toTimer(),
+          '25:00',
           style: AppFonts.semiboldWhite40.copyWith(
             fontSize: 60,
             fontFeatures: const [FontFeature.tabularFigures()],
@@ -298,7 +301,6 @@ class _TimerPageState extends State<TimerPage> {
     final displayName =
         theme?.getLocalizedName(langCode) ??
         ThemeStorageService.getDefaultThemeName(langCode);
-
     return CommonAppBar(
       showLeading: false,
       actions: [

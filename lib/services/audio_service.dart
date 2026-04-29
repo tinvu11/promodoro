@@ -114,7 +114,7 @@ class PomodoroAudioService {
     await completer.future;
 
     timer.cancel();
-    await sub?.cancel();
+    await sub.cancel();
   }
 
   // --- DISPOSE ---

@@ -19,6 +19,7 @@ void main() async {
 
   // Initialize DI after Firebase because some services depend on it.
   await DI.init();
+  // await PomodoroBackgroundService().initialize();
 
   Bloc.observer = SimpleBlocObserver();
   runApp(

@@ -10,8 +10,6 @@ import 'package:pomodoro/ui/screens/settings/widgets/sectionwrapper.dart';
 import '../../../../core/Theme/app_colors.dart';
 import '../../../../core/Theme/app_fonts.dart';
 import '../../../../navigation/app_router.dart';
-import '../../../commons/widgets/stop_dialog.dart';
-import '../../timer/bloc/timer_bloc.dart';
 import '../bloc/settings_bloc.dart';
 
 class SoundSection extends StatelessWidget {

@@ -72,25 +72,25 @@ class _StaticPageState extends State<StaticPage> {
         title: l10n.statistics,
         showLeading: false,
         actions: [
+          // GestureDetector(
+          //   onTap: () {
+          //     context.read<StaticBloc>().add(SeedSampleDataEvent());
+          //   },
+          //   child: const GlassBox(
+          //     child: Padding(
+          //       padding: EdgeInsets.all(8.0),
+          //       child: Icon(
+          //         Icons.science,
+          //         color: AppColors.textSecondary,
+          //         size: 22,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
-              context.read<StaticBloc>().add(SeedSampleDataEvent());
-            },
-            child: const GlassBox(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.science,
-                  color: AppColors.textSecondary,
-                  size: 22,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () {
-              context.read<StaticBloc>().add(LoadStaticEvent());
+              context.read<StaticBloc>().add(RefreshStaticEvent());
             },
             child: const GlassBox(
               child: Padding(
@@ -122,6 +122,8 @@ class _StaticPageState extends State<StaticPage> {
                   context,
                 ).copyWith(overscroll: false),
                 child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+
                   child: Column(
                     children: [
                       BannerAdWidget(

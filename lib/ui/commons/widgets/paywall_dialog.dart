@@ -79,12 +79,12 @@ class _PaywallDialogState extends State<PaywallDialog> {
         final String lifetimeTitle = cleanTitle(lifetimeProduct.title);
         final String yearlyTitle = cleanTitle(yearlyProduct.title);
 
-        final String? lifetimeDescription = lifetimeProduct.description;
-        final String? secondaryDescription = yearlyProduct.description;
+        final String lifetimeDescription = lifetimeProduct.description;
+        final String secondaryDescription = yearlyProduct.description;
 
-        if (lifetimeDescription == null || secondaryDescription == null) {
-          return const SizedBox.shrink();
-        }
+        // if (lifetimeDescription == null || secondaryDescription == null) {
+        //   return const SizedBox.shrink();
+        // }
         return Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),

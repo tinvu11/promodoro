@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pomodoro/configs/di.dart';
+
 import 'timer_controller.dart';
 
 @pragma('vm:entry-point')
@@ -15,7 +17,6 @@ void onStart(ServiceInstance service) async {
 
   final controller = DI.sl<PomodoroTimerController>(param1: service);
 
-  // Đăng ký Listeners
   service
       .on('setSettings')
       .listen((event) => controller.updateSettings(event!));
@@ -35,7 +36,9 @@ void onStart(ServiceInstance service) async {
 class PomodoroBackgroundService {
   static final PomodoroBackgroundService _instance =
       PomodoroBackgroundService._internal();
+
   factory PomodoroBackgroundService() => _instance;
+
   PomodoroBackgroundService._internal();
 
   final service = FlutterBackgroundService();
