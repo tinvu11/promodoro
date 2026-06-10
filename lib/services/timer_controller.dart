@@ -238,24 +238,37 @@ class PomodoroTimerController {
     final mins = (seconds / 60).floor().toString().padLeft(2, '0');
     final secs = (seconds % 60).toString().padLeft(2, '0');
 
+    final title = currentSession == PomodoroSession.work
+        ? '$l10nFocus ($currentCycle/$repeatCount)'
+        : l10nBreak;
+    final body = '$mins:$secs';
+
+    // Luôn sử dụng flutter_local_notifications để set ongoing: true
+    // (setForegroundNotificationInfo của plugin background service không có option ongoing)
     notifications.show(
       id: 888,
-      title: currentSession == PomodoroSession.work
-          ? '$l10nFocus ($currentCycle/$repeatCount)'
-          : l10nBreak,
-      body: '$mins:$secs',
+      title: title,
+      body: body,
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'pomodoro_timer_channel',
           'Pomodoro Timer',
           importance: Importance.low,
           priority: Priority.low,
-          ongoing: true,
+          ongoing: true, // Ngăn người dùng xoá thông báo (swipe to dismiss)
+          autoCancel: false,
           onlyAlertOnce: true,
           showWhen: false,
           icon: "@mipmap/ic_launcher",
         ),
       ),
     );
+
+    if (service is AndroidServiceInstance) {
+    (service as AndroidServiceInstance).setForegroundNotificationInfo(
+      title: title,
+      content: body,
+    );
+  }
   }
 }

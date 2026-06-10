@@ -252,8 +252,7 @@ class _TimerPageState extends State<TimerPage> {
           ],
         ),
         Text(
-          // currentSeconds.toTimer(),
-          '25:00',
+          currentSeconds.toTimer(),
           style: AppFonts.semiboldWhite40.copyWith(
             fontSize: 60,
             fontFeatures: const [FontFeature.tabularFigures()],

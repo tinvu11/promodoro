@@ -27,6 +27,11 @@ void onStart(ServiceInstance service) async {
     controller.reset();
     service.stopSelf();
   });
+  service.on('stopIfPaused').listen((_) {
+    if (controller.currentStatus != TimerStatus.running) {
+      service.stopSelf();
+    }
+  });
   service.on('requestState').listen((_) => controller.broadcast());
 
   // Signal that listeners are attached and the isolate is ready to receive commands.
